@@ -1,0 +1,82 @@
+{
+  "config": {
+    "reps": 200,
+    "n": 3000,
+    "batch": 250,
+    "alpha": 0.05,
+    "seed": 31337,
+    "quick": false
+  },
+  "results": {
+    "in-model control": {
+      "false_edge": 0,
+      "false_arrow": 0,
+      "reps": 200,
+      "premise_broken": "none",
+      "edge_ci": [
+        0.0,
+        0.018846005918320894
+      ],
+      "arrow_ci": [
+        0.0,
+        0.018846005918320894
+      ]
+    },
+    "Assumption 1 violated (needs |S|=3, k=2)": {
+      "false_edge": 200,
+      "false_arrow": 26,
+      "reps": 200,
+      "premise_broken": "separator size",
+      "edge_ci": [
+        0.9811539940816791,
+        1.0
+      ],
+      "arrow_ci": [
+        0.09028141365225628,
+        0.18366463072730121
+      ]
+    },
+    "latent common cause of the pair": {
+      "false_edge": 200,
+      "false_arrow": 38,
+      "reps": 200,
+      "premise_broken": "causal sufficiency",
+      "edge_ci": [
+        0.9811539940816791,
+        1.0
+      ],
+      "arrow_ci": [
+        0.14167093792456506,
+        0.250013585744794
+      ]
+    },
+    "nonlinear mechanism": {
+      "false_edge": 200,
+      "false_arrow": 142,
+      "reps": 200,
+      "premise_broken": "linearity of the primitive",
+      "edge_ci": [
+        0.9811539940816791,
+        1.0
+      ],
+      "arrow_ci": [
+        0.6436239464268834,
+        0.7684607310874219
+      ]
+    },
+    "Poisson counts, shared latent rate": {
+      "false_edge": 200,
+      "false_arrow": 28,
+      "reps": 200,
+      "premise_broken": "linear-Gaussian primitive",
+      "edge_ci": [
+        0.9811539940816791,
+        1.0
+      ],
+      "arrow_ci": [
+        0.09866918625271481,
+        0.19489993800847627
+      ]
+    }
+  }
+}

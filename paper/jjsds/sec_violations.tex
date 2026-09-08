@@ -1,2 +1,75 @@
+
 \subsection{Where the certificates are void}\label{sec:exp-violations}
-Placeholder.
+
+The word ``certificate'' transfers authority, so the conditions under which a
+certificate means nothing have to be measured and named rather than left in a
+remark. We constructed four regimes, each breaking one premise of
+Theorem~\ref{thm:main} while leaving the others intact, plus an in-model
+control, and ran $200$ replications of each at $\alpha = 0.05$, $n = 3000$.
+Table~\ref{tab:violations} reports how often a false edge and a false
+arrowhead were certified.
+
+\begin{table}[t]
+\centering
+\caption{Probability that a false edge or a false arrowhead is ever certified,
+$200$ replications per regime at $\alpha = 0.05$, $n = 3000$, Wilson $95\%$
+intervals. Each regime breaks exactly one premise. When a premise fails, the
+bound is \emph{void}, not merely loose---and the table shows what void looks
+like.}\label{tab:violations}
+\footnotesize
+\begin{tabular}{@{}llcc@{}}
+\toprule
+regime & premise broken & false edge & false arrowhead \\
+\midrule
+in-model control & none
+  & $0.000$ \tiny{[.000,.019]} & $0.000$ \tiny{[.000,.019]} \\
+separator needs $|S|=3$, run at $k=2$ & Assumption~\ref{ass:sep}
+  & $1.000$ \tiny{[.981,1.00]} & $0.130$ \tiny{[.090,.184]} \\
+latent common cause of the pair & causal sufficiency
+  & $1.000$ \tiny{[.981,1.00]} & $0.190$ \tiny{[.142,.250]} \\
+nonlinear mechanism & linearity
+  & $1.000$ \tiny{[.981,1.00]} & $0.710$ \tiny{[.644,.768]} \\
+Poisson counts, shared latent rate & linear-Gaussian model
+  & $1.000$ \tiny{[.981,1.00]} & $0.140$ \tiny{[.099,.195]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The false-edge column is the same in every broken regime: a false edge is
+certified in every single run. This is worth stating without softening. The
+family-wise bound of Theorem~\ref{thm:main} does not degrade gracefully when
+its premises fail; it stops applying, and the observed error rate goes to one.
+A reader who takes $\alpha = 0.05$ from the output and does not check the
+premises is not getting a conservative answer, they are getting no guarantee
+at all.
+
+Three of the four regimes break the \emph{primitive} rather than the
+construction. PC with a Fisher-$z$ test fails identically on the
+latent-confounder, nonlinear and count-data rows, for the same reason: a
+linear-Gaussian conditional-independence test cannot see a nonlinear
+dependence, and no causally sufficient method survives an unmeasured common
+cause. Proposition~\ref{prop:adjacency} is indifferent to the primitive
+(Remark~\ref{rem:faithfulness}), so substituting a nonparametric sequential
+test \citep{he2026sequential} would repair the last two rows at a cost in
+power. The first row is different: it breaks Assumption~\ref{ass:sep}, which
+is a premise of the construction itself and cannot be repaired by changing the
+primitive, only by raising $k$.
+
+The arrowhead column is the one that matters most in practice, because an
+arrowhead is what a practitioner acts on. It is lower than the edge column
+throughout---between $0.13$ and $0.19$ in three regimes, and $0.71$ under a
+nonlinear mechanism---but ``lower'' is not ``controlled''. Every entry is far
+above the $0.025$ that the direction half of the budget allows. Under a
+nonlinear mechanism the certificate is worse than uninformative: it points the
+wrong way in the majority of runs while carrying a label that says otherwise.
+This is the simulated counterpart of the protein-signalling result in
+Section~\ref{sec:exp-sachs}, and the two should be read together.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{figs/exp9_assumption_violations.png}
+\caption{Certified false edges and false arrowheads when one premise is broken
+at a time, against the in-model control. The dashed lines are the two halves
+of the budget. When a premise fails the bound does not degrade---it stops
+applying.}\label{fig:exp9}
+\end{figure}
