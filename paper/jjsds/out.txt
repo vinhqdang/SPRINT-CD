@@ -1,0 +1,2133 @@
+Certificate-Only Causal Discovery: Anytime-Valid
+            Adjacency and Orientation
+
+                             Quang-Vinh Dang1*
+           1*
+                British University Vietnam, Hung Yen, Vietnam.
+
+
+      Corresponding author(s). E-mail(s): vinh.dq4@buv.edu.vn;
+
+
+                                     Abstract
+ Constraint-based causal discovery removes an edge when a conditional-
+ independence test fails to reject, converting absence of evidence into evidence of
+ absence. This is why finite-sample correctness for such methods requires faith-
+ fulness, and it is why their output cannot distinguish a feature the data support
+ from one about which nothing was learned. We develop a discovery algorithm
+ built on a single rule: assert a feature of the graph only by rejecting a null that
+ is true whenever that feature is absent, and never assert anything by failing to
+ reject. Two certificates implement the rule. For adjacency, the statement “some
+ conditioning set separates the pair” is a union null, and the minimum of the per-
+ set e-processes is an e-process for it; crossing a threshold certifies an edge under
+ the Markov condition alone, with no faithfulness assumption. For orientation,
+ the two directions of a pair induce different joint densities under a linear non-
+ Gaussian model, so a sequential universal-inference e-process against the reversed
+ factorisation certifies an arrowhead, and abstains automatically under Gaussian
+ noise, where the direction is not identified. Both certificates are anytime-valid,
+ so the estimate may be monitored continuously and the run stopped by any
+ data-dependent rule. The resulting algorithm, CERT-CD, grows from the empty
+ graph, reports undecided pairs as undecided, and bounds by α the probability
+ that any certified edge or arrowhead is ever wrong, uniformly over time. On
+ simulated instances that violate δ-strong faithfulness, CERT-CD stays within
+ its budget while methods that delete on non-rejection lose a true edge in most
+ runs; on premise-satisfying instances it orients 96% of certified edges, against a
+ Markov-equivalence-class ceiling of 33%. On the observational protein-signalling
+ data of Sachs and colleagues the two halves of the output diverge instructively:
+ every certified edge lies in the published consensus skeleton, while every certified
+ arrowhead is reversed relative to it—a disagreement we trace to the linear non-
+ Gaussian model rather than to the inferential machinery, since DirectLiNGAM
+ reverses the same arcs.
+
+
+
+                                          1
+     Keywords: causal discovery, e-values, anytime-valid inference, safe testing,
+     family-wise error rate, LiNGAM
+
+     MSC Classification: 62H22 , 62L12 , 62F03
+
+
+
+
+1 Introduction
+A causal discovery algorithm returns a graph, and a practitioner reading that graph
+would like to know which of its features the data support. Causal graphical mod-
+els have become a standard language for that question (Pearl, 2009; Peters, Janzing,
+& Schölkopf, 2017), and the algorithms that estimate them from observational data
+are correspondingly consequential. Methods in the constraint-based tradition—PC,
+FCI and their descendants (Colombo, Maathuis, Kalisch, & Richardson, 2012; Spirtes,
+Glymour, & Scheines, 2000; Spirtes, Meek, & Richardson, 1995)—answer this ques-
+tion poorly, and the reason is structural rather than incidental. They begin from the
+complete graph and delete an edge whenever a conditional-independence test fails to
+reject. Failure to reject is not evidence of independence. It is compatible with inde-
+pendence, with a dependence too weak for the test to see at the current sample size,
+and with a test that had little power against the alternative in question. The deletion
+happens regardless, and the resulting absence of an edge is reported with the same
+authority as the presence of one.
+    Two consequences follow, and both are well known in their separate literatures.
+First, finite-sample guarantees for these methods require faithfulness or a quantitative
+strengthening of it, because only such an assumption converts “the test did not reject”
+into “the variables are independent”. Robins, Scheines, Spirtes, and Wasserman (2003)
+showed that no uniformly consistent estimator of causal structure exists without such
+a strengthening, and Uhler, Raskutti, Bühlmann, and Yu (2013) showed that the set
+of parameter values violating λ-strong faithfulness has substantial measure even in
+modest graphs. The assumption is doing work the data cannot do. Second, the output
+of these methods is two-valued where the evidence is three-valued: a missing edge
+means either “the data indicate no edge” or “nothing was established about this pair”,
+and the graph does not say which.
+    This paper takes the opposite discipline. We adopt a single rule and follow it to
+its consequences:
+  Assert a feature of the graph only by rejecting a null hypothesis that is true whenever that
+  feature is absent. Never assert anything by failing to reject.
+
+    We call this the certificate-only rule, and an assertion licensed by such a rejection a
+certificate. The rule is restrictive, and its consequences are not cosmetic. An algorithm
+obeying it cannot begin from the complete graph, because it has no licence to delete; it
+must begin from the empty graph and add. It cannot report an edge as absent, only as
+undecided. And the quantity it controls is the probability of asserting something false,
+not the probability of missing something true. Power becomes a descriptive property
+of a run rather than part of the guarantee.
+
+
+                                               2
+   Making the rule operational requires two certificates, and their statistical situations
+are quite different.
+
+Adjacency.
+For a pair (i, j ), the null that is true whenever the edge is absent is composite: some
+conditioning set separates them. This is a union over conditioning sets, and the min-
+imum of the per-set e-processes is an e-process for a union null (Section 4). Two
+consequences matter more than the construction itself. Validity uses no faithfulness
+assumption—if i and j are non-adjacent in the true graph then pa(i) or pa(j ) separates
+them, so the null holds and Ville’s inequality applies—and the multiplicity correction
+runs over pairs rather than over (pair, conditioning set) triples, because one hypothesis
+is tested per pair.
+
+Orientation.
+Orientation error is not uncontrolled in the literature. PC-p (Strobl, Spirtes, &
+Visweswaran, 2019) attaches edge-specific p-values to unshielded colliders and Meek-
+rule orientations and controls their false discovery rate; Shimizu and Kano (2008)
+test the direction of causation between two variables using non-normality; Strieder
+and Drton (2023) construct confidence statements for causal effects under structure
+uncertainty. What has not been available is orientation error control that is simulta-
+neously finite-sample, time-uniform, family-wise over a whole graph, and not confined
+to the Markov equivalence class. Constraint-based orientation tests are confined to
+that class by construction, so an edge lying in no v-structure is unorientable in prin-
+ciple by any of them. The functional-model methods that escape the class—LiNGAM
+and its descendants (Hyvärinen & Smith, 2013; Shimizu, Hoyer, Hyvärinen, & Ker-
+minen, 2006; Shimizu et al., 2011)—choose a direction by comparing scores, and the
+comparison itself carries no error statement. Under a linear non-Gaussian model the
+two orientations of a pair induce different joint densities and exactly one is correct, so
+“the direction is j → i” is a genuine null hypothesis; a sequential universal-inference
+e-process against it certifies the arrowhead i → j (Section 5). Under Gaussian noise
+the two factorisations are observationally indistinguishable, the process does not grow,
+and no certificate is issued—the procedure abstains exactly where the direction is
+unidentified, without being told to.
+
+Why anytime-valid.
+Both certificates are built as e-processes rather than as fixed-sample tests, and the
+choice is not decorative. A discovery run on streaming or accumulating data invites
+the analyst to look at the current graph, and looking is a form of optional stopping.
+A fixed-sample guarantee is void the moment the analyst stops on the basis of what
+they saw. Section 9.2 quantifies the gap: at nominal α = 0.05, a Fisher-z test inspected
+after every observation rejects a true null in 34.6% of runs, against 5.6% when it is
+evaluated once. An e-process pays for time-uniformity in power, and we report that
+price rather than eliding it.
+
+
+
+
+                                            3
+Contributions.
+The paper makes four.
+1. An e-process for the composite separability null, obtained as a minimum over condi-
+   tioning sets, giving time-uniform certification of adjacency under the Markov con-
+   dition and a bound on separator size, with no faithfulness assumption (Section 4).
+   We give the exact per-set primitive for the linear-Gaussian case in closed form,
+   together with the confidence sequence obtained by inverting it.
+2. A sequential certificate for causal orientation (Section 5) that is valid at any
+   stopping time, is not confined to the Markov equivalence class, and abstains auto-
+   matically under Gaussianity. We identify a requirement the construction imposes
+   on the fitting procedure—the null-model fit must genuinely attain its supremum—
+   which is easy to violate and which silently inflates the e-process when violated
+   (Section 5.3).
+3. CERT-CD, an algorithm combining both certificates under one budget (Section 6).
+   Its output is a three-valued graph in which every asserted edge and arrowhead
+   carries a certificate and undecided pairs are explicit, with a whole-graph guarantee
+   that is proved rather than assumed.
+4. An empirical study (Section 9) that stratifies instances by whether the premise of
+   the competing guarantee holds, rather than pooling them; measures the assump-
+   tions of our own theorem instead of asserting them; reports the regimes in which
+   the certificates are void (Section 9.11); and applies the method to the observational
+   protein-signalling data of Sachs, Perez, Pe’er, Lauffenburger, and Nolan (2005),
+   where the adjacency and orientation halves of the output behave very differently.
+   We are explicit throughout about which components are standard. Section 8 gives
+that accounting in detail, including three claims of novelty we made in earlier drafts
+and then withdrew after reading the prior art.
+
+Notation and outline.
+Section 2 fixes notation and reviews e-processes and the graphical setting. Section 3
+states the certificate-only rule formally and derives its structural consequences.
+Sections 4 and 5 develop the two certificates. Section 6 assembles CERT-CD and proves
+the whole-graph guarantee; Section 7 extends it to latent confounders. Section 8 posi-
+tions the work. Section 9 reports experiments and Section 10 discusses limitations.
+Proofs and derivations omitted from the main text are in the appendices.
+
+2 Background
+2.1 E-variables, e-processes and Ville’s inequality
+Let (Ω, F, (Ft )t≥0 , P) be a filtered probability space and let H0 be a set of distributions
+on it.
+
+Definition 1 (E-variable) A non-negative random variable E is an e-variable for H0 if
+EP [E] ≤ 1 for every P ∈ H0 .
+
+
+                                             4
+Definition 2 (E-process) A non-negative, adapted process (Et )t≥0 is an e-process for H0
+if EP [Eτ ] ≤ 1 for every P ∈ H0 and every stopping time τ (finite or not, with E∞ :=
+lim inf t Et ).
+
+
+    Every non-negative supermartingale starting at one is an e-process, by optional
+stopping (Shafer & Vovk, 2019); the converse fails, and the distinction matters for
+composite nulls, where an e-process need not be a supermartingale under any single
+null distribution (Ramdas, Grünwald, Vovk, & Shafer, 2023). Both of our constructions
+are e-processes that are dominated pointwise by a P -supermartingale for each P ∈
+H0 , with the dominating process depending on P . That is the standard route to an
+e-process for a composite null, and it is the route both proofs below take.
+    The operational content of Definition 2 is Ville’s inequality (Ville, 1939): for an
+e-process (Et ) and any α ∈ (0, 1),
+                                           
+                    P ∃ t ≥ 0 : Et ≥ 1/α       ≤ α     for every P ∈ H0 .                   (1)
+
+The quantifier is inside the probability. This is what licenses continuous monitoring:
+an analyst may inspect the evidence after every observation and stop whenever they
+wish, and the probability that the process ever crosses the threshold under the null
+is still at most α. A p-value offers no analogue. A fixed-sample p-value controls the
+rejection probability at one pre-specified sample size, and the guarantee is destroyed
+by looking; the phenomenon is familiar from sequential clinical trials and from online
+experimentation (Johari, Koomen, Pekelis, & Walsh, 2022).
+    E-values also compose in ways p-values do not, and we use two such composition
+                                                     (1)          (m)
+rules. If E (1) , . . . , E (m) are e-variables for H0 , . . . , H0     then mink E (k) is an e-
+             S         (k)                               P          (k)
+                                                                                     P
+variable for k H0 , and any convex combination k wk E with wk ≥ 0, k wk = 1
+                            T    (k)
+is an e-variable for k H0 , under arbitrary dependence between the components
+(Vovk & Wang, 2021). The first rule is what makes the adjacency certificate possible;
+the second is what makes the multiplicity discussion of Section 6.4 non-trivial.
+    Recent work has developed e-processes for a wide range of settings—bounded
+means (Waudby-Smith & Ramdas, 2024), linear models (Lindon, Ham, Tingley, &
+Bojinov, 2026), stratified counts (Turner & Grünwald, 2023)—and has characterised
+admissible constructions (Ramdas et al., 2023). Two general recipes recur below. The
+first is the method of mixtures : under a group-invariant null, integrating the likeli-
+hood ratio against the right-Haar measure on the nuisance group yields an exact test
+martingale (Berger, Pericchi, & Varshavsky, 1998; Grünwald, de Heide, & Koolen,
+2024; Hendriksen, de Heide, & Grünwald, 2021). Section 4.3 instantiates it for partial
+correlation. The second is universal inference (Wasserman, Ramdas, & Balakrishnan,
+2020): for a null model {Dθ : θ ∈ Θ0 } and any alternative fitted on past data, the
+ratio of a sequentially-fitted alternative likelihood to the maximised null likelihood is
+an e-process, with no regularity conditions on Θ0 beyond the existence of the supre-
+mum. Section 5 instantiates it for causal direction. Universal inference is known to be
+conservative (Tse & Davison, 2022), and Section 9.7 measures how conservative it is
+here.
+
+
+
+                                               5
+2.2 Causal discovery setting
+Let G ⋆ be a directed acyclic graph (DAG) with vertex set V = {1, . . . , d} identified
+with random variables X1 , . . . , Xd , and let P be the joint law of X = (X1 , . . . , Xd ).
+We write pa(i) for the parents of i in G ⋆ and de(i) for its descendants. Throughout,
+observations o1 , o2 , . . . are drawn i.i.d. from P and arrive in batches; Ft is the σ -field
+generated by the first t observations.
+
+Assumption 1 (Markov condition) P is Markov to G ⋆ : whenever S d-separates i from j in
+G ⋆ , Xi ⊥
+         ⊥ Xj | XS under P .
+
+
+    Assumption 1 is the direction of the correspondence that follows from the causal
+structure itself: it says that the graph’s separations are reflected in the distribution.
+Its converse—faithfulness, that every conditional independence in P corresponds to a
+d-separation in G ⋆ —does not follow from the causal structure, and is the assumption
+we do not make for validity.
+    Write Sk (i, j ) = {S ⊆ V \ {i, j} : |S| ≤ k} for the family of admissible conditioning
+sets. This family is determined by d and k and is fixed before any data are seen;
+nothing about it adapts to the sample. We say the pair (i, j ) is separable within Sk
+under P if Xi ⊥  ⊥ Xj | XS for some S ∈ Sk (i, j ).
+
+Assumption 2 (Separator size) Every non-adjacent pair of G ⋆ has a d-separating set of size
+at most k.
+
+
+    Assumption 2 is structural rather than distributional: it constrains G ⋆ , not P , and
+it can be guaranteed by choosing k large enough. It holds whenever k is at least the
+maximum in-degree of G ⋆ , since for non-adjacent i, j either j ∈   / de(i), in which case
+pa(i) d-separates them, or i ∈/ de(j ), in which case pa(j ) does. Taking k = d − 2 makes
+it vacuous at the cost of an exponential family Sk ; the trade-off is computational, not
+inferential, and we return to it in Section 6.3. Section 9.4 measures how often Assump-
+tion 2 holds at the k we use, and compares it with how often δ -strong faithfulness
+holds on the same instances.
+
+2.3 Faithfulness and its quantitative strengthenings
+Since the argument of this paper is about what faithfulness is doing, it is worth being
+precise about the versions in play.
+    Faithfulness holds if every conditional independence in P is implied by d-separation
+in G ⋆ ; Meek (1995b) showed that it fails only on a Lebesgue-null set of parameters for a
+fixed graph, which is the result usually cited in its defence and which Uhler et al. (2013)
+showed to be misleading in finite samples. Adjacency-faithfulness (Ramsey, Spirtes, &
+Zhang, 2006) is the weaker requirement that adjacent variables are dependent given
+every conditioning set. δ-strong faithfulness (Kalisch & Bühlmann, 2007; Uhler et al.,
+2013) is the quantitative strengthening that every partial correlation not forced to
+
+
+
+                                              6
+zero by d-separation has absolute value at least δ ; it is what turns consistency into a
+finite-sample statement, and it is the premise of the comparators in Section 9.5.
+    The asymmetry we exploit is this. Faithfulness in any of its forms is an assump-
+tion about which dependences exist. A procedure that asserts an edge by rejecting an
+independence null needs it only for power : without it, a genuinely adjacent pair whose
+dependence is cancelled will fail to be certified, and the pair stays undecided. A pro-
+cedure that asserts a non -edge by failing to reject needs it for validity : without it, a
+cancelled dependence produces a confidently deleted edge. The same assumption sits
+on opposite sides of the guarantee depending on which direction of the inference the
+algorithm runs. J. Zhang and Spirtes (2008) and Ramsey et al. (2006) respond to this
+by detecting or tolerating unfaithfulness within a delete-on-non-rejection architecture;
+we respond by changing the architecture.
+
+3 The certificate-only principle
+We state the rule formally and record what it forces.
+
+Definition 3 (Certificate) Let ϕ be a feature of G ⋆ —a proposition such as “i and j are
+adjacent” or “G ⋆ contains the arrowhead i → j”. A certifying null for ϕ is a hypothesis Hϕ
+with the property that P ∈ Hϕ whenever ϕ is false. A certificate for ϕ at level α is the event
+that an e-process for Hϕ exceeds 1/α.
+
+
+   The implication in Definition 3 runs one way only, and that is the whole point.
+Hϕ must be true whenever ϕ is false; it may also be true in some cases where ϕ is
+true, and then the certificate simply never fires. This asymmetry is what buys validity
+without faithfulness, and what costs power.
+
+Proposition 1 (Soundness of a single certificate) If (Et ) is an e-process for a certifying null
+Hϕ , then P(∃t : ϕ is certified at level α and ϕ is false) ≤ α.
+
+
+
+Proof If ϕ is false then P ∈ Hϕ by Definition 3, so (Et ) is an e-process under P and (1)
+bounds the probability that it ever exceeds 1/α by α. If ϕ is true the event in question is
+empty.                                                                                   □
+
+   Proposition 1 is elementary; we state it to make explicit that the burden of
+the design is entirely in constructing Hϕ , not in the inference. Three structural
+consequences follow, and they shape everything below.
+
+The algorithm cannot delete.
+There is no certifying null for the proposition “i and j are non-adjacent”. Such a null
+would have to be true whenever the pair is adjacent, that is, it would have to be a
+dependence hypothesis rejected by evidence of independence; but evidence of indepen-
+dence is exactly what a hypothesis test does not provide. Equivalence testing supplies
+the nearest available substitute—one can reject “the partial correlation exceeds δ in
+
+
+                                               7
+absolute value”—but the resulting statement is “the association is smaller than δ ”,
+which is a claim about effect size, not about absence. We return to this in Section 6.5.
+In the absence of such a null, an algorithm obeying the rule must start from the empty
+graph.
+
+The output is three-valued.
+Each pair is in exactly one of three states: certified adjacent (with or without a cer-
+tified orientation), undecided, or—if the extension of Section 6.5 is enabled—certified
+negligible at margin δ . The absence of an edge in the output graph is not an assertion.
+
+Power is descriptive, not guaranteed.
+Nothing in Proposition 1 promises that a true edge is ever certified. Whether it is
+depends on adjacency-faithfulness, on the sample size, and on the primitive’s power.
+This is a real limitation and we treat it as one: Section 9 reports certification rates
+alongside error rates throughout, and reports the fraction of pairs left undecided rather
+than suppressing it.
+
+4 The adjacency certificate
+4.1 The separability null
+Fix a pair (i, j ) and consider
+                    sep
+                   Hij  :    ∃ S ∈ Sk (i, j ) such that Xi ⊥⊥ Xj | XS .                  (2)
+
+                                    sep
+Lemma 2 Under Assumptions 1 and 2, Hij  is a certifying null for the adjacency of i and j.
+
+
+
+Proof Suppose i and j are non-adjacent in G ⋆ . By Assumption 2 there is a set S with |S| ≤ k
+that d-separates them, and S ⊆ V \ {i, j}, so S ∈ Sk (i, j). By Assumption 1, Xi ⊥⊥ Xj | XS
+                       sep
+under P . Hence P ∈ Hij    .                                                               □
+
+    Note what the lemma does not require. It says nothing about adjacent pairs. If i
+                                                   sep
+and j are adjacent, P may or may not lie in Hij        : an adjacent pair whose dependence
+is exactly cancelled by a path through some S satisfies the null too, and then the
+certificate cannot fire. That is the failure of adjacency-faithfulness, and it costs power,
+not validity.
+
+4.2 The minimum construction
+       (S)
+Let (Et )t≥0 be an e-process for the point null Xi ⊥
+                                                   ⊥ Xj | XS , for each S ∈ Sk (i, j ),
+all built from the same data stream. Define
+                                                            (S)
+                              At (i, j ) =     min        Et (i, j ).                    (3)
+                                             S∈Sk (i,j)
+
+
+
+
+                                                8
+                                            sep
+Proposition 3 (At )t≥0 is an e-process for Hij  .
+
+
+               sep
+Proof Let P ∈ Hij  . By (2) there exists S ⋆ ∈ Sk (i, j) with Xi ⊥
+                                                                 ⊥ Xj | XS ⋆ under P , so P
+                                      (S ⋆ )                                     (S ⋆ )
+satisfies the point null for which (Et         ) is an e-process. By (3), At ≤ Et         pointwise for
+                          ⋆
+                        (S )
+every t, hence Aτ ≤ Eτ         for every stopping time τ , and non-negativity gives EP [Aτ ] ≤
+     (S ⋆ )
+EP [Eτ ] ≤ 1.                                                                                □
+
+     Combining Lemma 2, Proposition 3 and Proposition 1 gives the adjacency guar-
+antee: the probability that At (i, j ) ever exceeds 1/α for a non-adjacent pair is at most
+α.
+     That a minimum of e-values is an e-value for a union null is standard (Vovk &
+Wang, 2021), and the proof above is the standard one. What is specific here is the iden-
+tification of adjacency as the complement of such a union, and the two consequences
+that follow.
+
+Remark 1 (No faithfulness) The proof uses only that (2) is true for non-adjacent pairs,
+which follows from Assumptions 1 and 2. Faithfulness enters only through power: adjacency-
+faithfulness (Ramsey et al., 2006) is what makes every E (S) grow for a genuinely adjacent
+pair, and hence what makes the minimum grow. An instance where it fails leaves pairs
+undecided rather than producing wrong edges. Stated exactly, validity requires three things:
+the Markov condition, Assumption 2, and a valid per-set e-process. The third is not free. Our
+default primitive (Section 4.3) is a linear-Gaussian safe test, so that model is assumed there;
+substituting a nonparametric sequential test (He & Sutherland, 2026) removes it at a cost in
+power. Proposition 3 is indifferent to which primitive is used, and Section 9.3 measures the
+primitive’s calibration under six noise laws, including three outside its model.
+
+
+Remark 2 (Multiplicity over pairs) The construction tests one hypothesis per pair, not one per
+(pair, conditioning set) triple. A union bound over the adjacency family therefore runs over
+ d                             d                                            4   4   4
+ 2 hypotheses rather than 2 · |Sk |. At d = 6 and k = 2 we have |Sk | = 0 + 1 + 2 = 11,
+so the per-hypothesis level is 11 times larger than a triple-indexed budget would allow. The
+saving grows with k: at d = 10, k = 3 it is 93. This is not a free lunch—the minimum in (3)
+is itself conservative, since it discards all but the least favourable conditioning set—but the
+conservatism is of a different kind from a multiplicity correction, and it is the kind that
+vanishes as the least favourable set becomes uninformative.
+
+
+4.3 The per-set primitive
+Proposition 3 needs an e-process for each point null Xi ⊥   ⊥ Xj | XS . For linear-
+Gaussian data we use an exact one, obtained as a Bayes factor with right-Haar priors
+on the nuisance parameters. Write the hypothesis in regression form,
+
+                      Xi = XS⊤ α + βXj + ε,                   ε ∼ N (0, σ 2 ),                     (4)
+
+so that the null is β = 0 with nuisance parameters (α, σ ) shared between the hypothe-
+ses. Place the right-Haar prior π (α, σ ) ∝ σ −1 on the nuisance block under both
+
+
+                                                    9
+hypotheses, and β | σ ∼ N (0, σ 2 g ) on the tested coefficient under the alternative, in the
+manner of Zellner’s g -prior (Zellner, 1986). The right-Haar choice on the nuisance block
+is the invariance-based prior of Jeffreys (1946) specialised to this group. Integrating
+both marginal likelihoods in closed form (Appendix A) gives, after n observations,
+
+                                        −(n−p)/2                                 G
+        En = (1 + G)−1/2 1 − κ r̂n2                 ,    G = g Syy ,      κ =        ,       (5)
+                                                                                 1+G
+
+where p = |S| + 1; Sxx , Sxy , Syy are the cross-products of the XS -residualised versions
+of Xj and Xi ; and r̂n2 = Sxy
+                            2
+                               /(Sxx Syy ) is the squared sample partial correlation.
+
+Proposition 4 Under the linear-Gaussian model (4) with β = 0, the process (En ) of (5)
+is a test martingale with respect to the filtration generated by the observations, and hence an
+e-process.
+
+
+    The proof (Appendix A) is the standard right-Haar argument (Berger et al., 1998;
+Hendriksen et al., 2021): the null model is invariant under the group of location shifts
+in the XS directions and scale changes, the right-Haar prior is relatively invariant
+under that group, and the resulting Bayes factor is a ratio of marginal likelihoods
+of the maximal invariant, whose null distribution is free of the nuisance parameters.
+Bayes factors of this form are exactly the ones for which optional stopping is valid,
+which is why not every Bayes factor would do here.
+    Two properties of (5) drive the implementation.
+
+Sufficiency.
+E
+Pn depends on the data          only through Schur complements of the running Gram matrix
+                            ⊤
+      (
+  s≤n so  − ō )( o s − ō )  .  A single O(d2 ) sufficient statistic therefore serves the entire
+hypothesis family {(i, j, S )} simultaneously: no per-hypothesis state is stored, and the
+cost of an update is O(d2 ) regardless of how many hypotheses are live. This is what
+makes it feasible to keep every pair’s minimum in (3) current after every batch.
+
+The prior scale must be fixed in advance.
+g enters through G = gSyy , and Syy grows with n. A prior scale chosen to adapt to the
+running sample size—for instance by rescaling g so that G stays constant—destroys
+the martingale property, because the “prior” would then depend on the data it is being
+used to weigh. We fix g from a warm-up prefix of the stream that is excluded from
+every e-process, using it only to set standardisation constants. The warm-up length
+appears in the experiments as a tuning parameter and nowhere in the guarantee.
+
+Remark 3 (Calibration was verified, not assumed) Proposition 4 is a theorem, but the imple-
+mentation of a theorem can be wrong, and a miscalibrated primitive would invalidate every
+downstream claim while leaving all the proofs intact. We therefore verified calibration by sim-
+ulation: monitoring (5) after every observation over 3000 replications and 1500 time points
+under a true null gave realised crossing rates of 0.149, 0.076, 0.041 and 0.008 against nominal
+α ∈ {0.20, 0.10, 0.05, 0.01}. Section 9.3 repeats the exercise under six noise laws.
+
+
+                                               10
+4.4 Confidence sequence by inversion
+Because (5) is available in closed form for every value of the tested coefficient, it
+can be inverted to give a confidence sequence—a sequence of intervals covering β
+simultaneously at all times with probability 1 − α (Howard, Ramdas, McAuliffe, &
+Sekhon, 2021). Writing β̂ = Sxy /Syy for the least-squares estimate of the coefficient
+of Xj in the residualised regression, the level-(1 − α) confidence sequence is
+                   s                                "
+                                    2
+                                                              2/(n−p) #
+                       τ Sxx Syy − Sxy
+                                                        
+              1                                   1         α
+        β̂ ±                             ,    τ =     1− √                ,           (6)
+             Syy            1−τ                   κ        1+G
+
+valid whenever τ > 0, and the whole line otherwise. The derivation is in Appendix B.
+We report it because it is the natural summary of evidence about an edge’s strength,
+because it is what the equivalence-testing extension of Section 6.5 uses, and because
+it provides an independent check on the implementation: (6) must agree with a brute-
+force inversion of (5), and an early version of our code did not. The discrepancy was
+a sign error in the log(1 + G) term, which produced intervals roughly half the correct
+width—a defect invisible in any Type-I error simulation of the test itself, since the test
+was correct and only the reported interval was wrong. Agreement between the closed
+form and a numerical inversion is now a unit test.
+
+4.5 Beyond the linear-Gaussian primitive
+Conditional independence testing is hard in general: Shah and Peters (2020) show
+that no test can have non-trivial power against all alternatives while controlling size
+over all null distributions with continuous conditional laws. Every usable primitive
+therefore buys power with a model. The two mainstream routes are the Model-X
+framework (Candès, Fan, Janson, & Lv, 2018), which assumes the conditional law
+of Xi given XS is known, and parametric or kernel-based assumptions on the joint
+law. Sequential conditional-independence tests to date have largely taken the Model-X
+route; Csillag, Struchiner, and Goedert (2025) note that the requirement is typically
+inaccessible in a discovery setting, where the conditional laws are precisely what is
+unknown. Construction (5) avoids it by assuming linearity and Gaussianity instead,
+which is a strong assumption but a checkable one. Section 9.11 reports what happens
+when it fails.
+
+5 The direction certificate
+5.1 Why a direction can be a null hypothesis
+Within a Markov equivalence class no observational statistic distinguishes the member
+DAGs, so “the direction is j → i” is not a testable proposition there: both directions
+have the same likelihood under every distribution. The statement becomes testable
+exactly when a functional restriction breaks the symmetry, and the classical such
+restriction is linear non-Gaussianity.
+
+
+
+                                             11
+Proposition 5 (Shimizu et al., 2006, after Darmois, 1953 and Comon, 1994) Let Xi =
+βXj + ei with Xj ⊥ ⊥ ei , E[ei ] = 0 and β ̸= 0. If at most one of Xj , ei is Gaussian, there is
+no δ, ej with Xj = δXi + ej and Xi ⊥  ⊥ ej . If both are Gaussian, such a representation always
+exists.
+
+
+    Proposition 5 is the identifiability statement that LiNGAM rests on, and it says
+two things we use in opposite ways. Under non-Gaussianity, exactly one of the two
+factorisations of the pair is compatible with the model, so the wrong one is a genuine,
+false, testable hypothesis. Under Gaussianity, both are compatible, so no evidence can
+separate them and any method that reports a direction anyway is reporting an artefact
+of its tie-breaking rule. Our construction inherits both halves.
+    DirectLiNGAM (Shimizu et al., 2011) and the pairwise measures of Hyvärinen and
+Smith (2013) exploit the first half by comparing the two directions’ scores and taking
+the larger. Shimizu and Kano (2008) take a step towards inference by testing non-
+normality-based direction hypotheses in a structural equation modelling framework,
+and Komatsu, Shimizu, and Shimodaira (2010) assess LiNGAM’s reliability by multi-
+scale bootstrap. What we add is a sequential e-process, which converts the comparison
+into a family-wise, time-uniform error statement over a whole graph.
+
+5.2 The direction null and its e-process
+Fix an ordered pair (i, j ) whose adjacency has been certified, and a conditioning block
+Z (Section 5.5 explains how Z is chosen and why it is then frozen). The two competing
+factorisations of (Xi , Xj ) given Z are
+
+                  Dj→i :        Xj = a⊤ Z + u,         Xi = βXj + γ ⊤ Z + e,                (7)
+                      i→j               ⊤                                 ⊤
+                  D         :   Xi = b Z + v,          Xj = δXi + η Z + w,                  (8)
+
+with u ⊥⊥ Z , e ⊥⊥ (Xj , Z ) and correspondingly for the second. Both are conditional
+densities of the pair (Xi , Xj ) given Z , so the marginal law of Z is a common factor
+and cancels from any ratio; this is why we may work with the conditional likelihoods
+and never model Z .
+   The certifying null for the arrowhead i → j is
+  dir
+ Hj→i :     the pair was generated by the j → i factorisation = {Dθj→i : θ ∈ Θ}, (9)
+
+                                                                                       dir
+where θ = (a, β, γ, noise parameters). Under Proposition 5 and non-Gaussianity, Hj→i
+is true whenever the arrowhead i → j is absent, so it is a certifying null in the sense
+of Definition 3.
+    We test it by sequential universal inference (Wasserman et al., 2020). Let θ̂s−1 be
+any estimator of the alternative’s parameters computed from o1 , . . . , os−1 , and set
+                                X                              X
+                  log Et =            log Dθ̂i→j (os ) − sup         log Dθj→i (os ).      (10)
+                                            s−1
+                                                        θ∈Θ
+                                s≤t                            s≤t
+
+
+
+
+                                                  12
+                                                               dir
+Proposition 6 (Et )t≥0 defined by (10) is an e-process for Hj→i     , provided the supremum in
+the second term is attained (or exceeded) by the fitting procedure.
+
+
+
+Proof Let P = Dθj→i
+                 ⋆
+                       dir
+                    ∈ Hj→i and define
+                                               i→j
+                                      Y Dθ̂s−1 (os )
+                              Mt =         j→i
+                                                        ,      M0 = 1.
+                                      s≤t Dθ ⋆ (os )
+
+Since θ̂s−1 is Fs−1 -measurable and Di→j (·) is a probability density for each fixed value of
+                                           θ̂s−1
+θ̂s−1 ,
+                              Di→j (os )
+                                                  
+                                                        Z
+                           θ̂s−1
+                      EP  j→i              Fs−1  =        Di→j (o) do ≤ 1,
+                          Dθ⋆ (os )                          θ̂s−1
+
+so (Mt ) is a non-negative supermartingale (a martingale when the densities are mutually
+absolutely continuous) with M0 = 1. The subtracted term in (10) is a supremum over Θ and
+θ⋆ ∈ Θ, so it is at least s≤t log Dθj→i
+                           P
+                                       ⋆  (os ), giving Et ≤ Mt pointwise. Optional stopping
+yields EP [Eτ ] ≤ EP [Mτ ] ≤ 1 for every stopping time τ .                                 □
+
+    The argument is the standard universal-inference one, and it is worth being clear
+that its strength is also its cost. It requires no regularity conditions on Θ, no asymp-
+totics, and no correctly specified alternative—the numerator may be fitted however
+one likes, since it only needs to integrate to one. In exchange, subtracting a maximised
+likelihood rather than an integrated one makes the resulting e-process conservative,
+typically by a factor related to the null model’s dimension (Tse & Davison, 2022).
+Section 9.7 measures this: the certificate orients 88% of the edges DirectLiNGAM
+orients, which is the price of attaching an error statement to the answer.
+
+5.3 Fitting the null, and the requirement that the supremum
+    be real
+We fit both factorisations with generalised Gaussian (exponential power) noise,
+
+                                   κ        n r κo
+                fσ,κ (r) =               exp −     ,                 σ > 0, κ > 0,       (11)
+                               2σ Γ(1/κ)       σ
+
+a family (Box & Tiao, 1973; Subbotin, 1923) whose shape parameter spans Laplace
+(κ = 1), Gaussian (κ = 2) and, as κ → ∞, the uniform limit. Given κ, the coefficients
+are fitted by iteratively reweighted least squares on the |r|κ loss and σ is profiled out
+in closed form; κ is then chosen to maximise the profile likelihood.
+    Proposition 6 makes a demand on this last step that is easy to overlook, and we
+state it as a remark because we violated it.
+
+Remark 4 (The supremum must be attained) The inequality Et ≤ Mt in the proof holds
+because the subtracted term is at least the log-likelihood at θ⋆ . If the fitting procedure
+maximises over a strict subset of Θ that excludes θ⋆ , the subtracted term can fall below
+
+
+                                                   13
+the log-likelihood at θ⋆ , Et can exceed Mt , and the e-process property fails—silently, since
+nothing in the output signals it.
+    Our first implementation profiled κ over the fixed grid {0.7, 0.9, 1.2, 1.5, 2.0, 3.0, 5.0},
+which omits κ = 1. On a correctly specified Laplace null, the fitted “supremum” fell below
+the likelihood at the true parameter in 32 of 200 replications, with a worst shortfall of 2.397
+nats—an inflation of Et by a factor of up to 11, and hence a certificate issued at a true level
+of up to 11α. The fix is to treat the grid as a bracketing device only and refine κ continuously
+by bounded scalar optimisation of the profile likelihood; the same check then gives 0 of 200
+violations and zero shortfall. We report this because the defect is generic to universal infer-
+ence with a discretised nuisance search, because it is invisible to a Type-I error simulation
+run at the same grid (the grid is wrong for the truth, not for itself), and because the correct
+check is cheap: simulate under the null at a known θ⋆ and verify that the fitted supremum
+never falls below the likelihood there.
+
+
+5.4 Abstention under Gaussianity
+Proposition 7 Suppose (Xi , Xj ) given Z is jointly Gaussian. Then the null and alternative
+models in (10) have identical maximised likelihoods, and log Et ≤ 0 for every t.
+
+
+
+Proof Under joint Gaussianity both (7) and (8) parameterise the same set of joint condi-
+tionalPdensities—the bivariate Gaussians with mean P
+                                                   linear in Z—by Proposition 5. Hence
+supθ s log Dθj→i (os ) = supθ s log Dθi→j (os ) ≥             i→j
+                               P
+                                                      s log D     (os ), the last inequality
+                                                                 θ̂s−1
+because a sequentially fitted parameter cannot beat the maximised one on the same data.
+Substituting into (10) gives log Et ≤ 0.                                             □
+
+    The procedure therefore abstains exactly where the direction is not identified, and
+it does so as a consequence of the construction rather than because a Gaussianity pre-
+test told it to. This matters practically: a pre-test would itself have a Type-II error,
+and a method that orients whenever the pre-test fails to reject Gaussianity is once
+again asserting on non-rejection. Ding and Zhang (2025) give the underlying equiv-
+alence in a usable form—Gaussianity of the forward model’s noise is equivalent to
+independence between regressor and residual in the reverse regression—and use it to
+avoid an explicit Gaussianity test in a different way. Section 9.7 shows the absten-
+tion empirically: under Gaussian noise the certificate orients 0 of 692 edges over 200
+replications, while DirectLiNGAM orients all 692 and gets 356 of them wrong.
+
+5.5 Freezing the conditioning block
+The block Z in (7)–(8) is chosen when a pair’s adjacency is certified: it is the set of
+that pair’s already-certified neighbours at that moment. The direction process for the
+pair then begins accumulating, and Z is never changed.
+    Freezing is not a convenience. A conditioning block that kept changing would
+change the hypothesis under test, and Ville’s inequality bounds the crossing proba-
+bility for a fixed null. There is a second, subtler issue: Z is chosen using the data,
+since it depends on which adjacencies have been certified. The resulting guarantee is
+therefore conditional on the σ -field FT at the (stopping) time T at which the pair’s
+
+
+                                              14
+adjacency is certified. Because the direction process uses only observations after T ,
+and these are independent of FT given the model, the supermartingale argument in
+Proposition 6 goes through conditionally on FT , and the unconditional bound follows
+by taking expectations. We make this precise in Appendix C. The consequence for the
+implementation is that the direction process must discard every observation before T ,
+which costs power at pairs certified late.
+
+Remark 5 (An implementation constraint that was a bug first) The observations scored
+by the numerator of (10) and those entering the denominator’s maximised likelihood must
+be the same index set. A denominator ranging over additional observations subtracts their
+log-density with no matching numerator term, which adds to log Et a quantity of order
+the number of extra observations. In our testing this certified both directions of every pair,
+including under Gaussian noise, where Proposition 7 guarantees the opposite. The symptom
+is diagnostic: whenever a direction procedure certifies both directions of a pair, the index sets
+are misaligned.
+
+
+Remark 6 (Misspecification is the main theoretical risk) Proposition 6 needs the denomina-
+tor’s supremum to dominate the likelihood at the true null parameter. When the noise lies
+outside the fitted family (11), the supremum is taken over a model that does not contain
+the truth and no such domination is guaranteed. This is the certificate’s principal theoretical
+gap, and unlike Remark 4 it cannot be closed by better optimisation.
+    Empirically the certificate is more robust than that suggests. Against noise laws breaking
+each property of the family in turn—Student-t3 (polynomial rather than exponential tails),
+shifted exponential (asymmetric) and a two-component mixture (bimodal)—the reversed
+direction was certified in 0 of 12 runs in each case at α = 0.05, with full power retained. But
+0 of 12 is a weak bound, the study is bivariate, and Section 9.10 shows what happens on real
+data where the linear model itself is wrong: the certificate is confidently and systematically
+inverted. We regard bounding the misspecification gap analytically as the most important
+open problem the construction raises.
+
+
+6 CERT-CD
+6.1 The algorithm
+CERT-CD maintains a three-valued status for every unordered pair and a two-valued
+status for every ordered pair. It streams data in batches. After each batch it updates
+the running Gram matrix, recomputes At (i, j ) for every undecided pair, and certifies
+adjacency when the running maximum of At (i, j ) crosses the pair’s threshold. At
+that moment the pair’s conditioning block is frozen and its two direction processes
+are opened. Certified arrowheads are added when a direction process crosses its own
+threshold.
+    Budgets are fixed before any data  arrive. The total budget splits as α = αA + αD ;
+αA is divided evenly over the d2 adjacency nulls and αD evenly over the d(d − 1)
+                                   
+
+
+
+
+                                               15
+Algorithm 1 CERT-CD
+Require: stream o1 , o2 , . . . ; budget α; order k ; warm-up m
+ 1: αA , αD ← split of α; λA , λD as in (12)
+ 2: consume o1 , . . . , om to fix standardisation constants and the prior scale g ; discard
+    them
+ 3: status(i, j ) ← Undecided for all pairs; arrow(i, j ) ← false for all ordered pairs
+ 4: Ā(i, j ) ← 0; Ē (i, j ) ← 0                                          ▷ running maxima
+ 5: for each batch B do
+ 6:     update the running Gram matrix with B
+ 7:     for all pairs (i, j ) with status(i, j ) = Undecided do
+ 8:           A ← minS∈Sk (i,j) E (S) (i, j )         ▷ Schur complements of the Gram matrix
+ 9:           Ā(i, j ) ← max{Ā(i, j ), A}
+10:           if Ā(i, j ) ≥ λA then
+11:                status(i, j ) ← CertifiedEdge
+12:                Zij ← { ℓ : status(i, ℓ) or status(j, ℓ) = CertifiedEdge }        ▷ frozen
+13:                open direction processes for (i, j ) and (j, i), starting from the next
+    observation
+14:           end if
+15:     end for
+16:     for all open ordered pairs (i, j ) do
+17:           update log E (i, j ) by (10) on the observations since the pair was opened
+18:           Ē (i, j ) ← max{Ē (i, j ), E (i, j )}
+19:           if Ē (i, j ) ≥ λD then arrow(i, j ) ← true
+20:           end if
+21:     end for
+22:     output the three-valued graph; the analyst may stop here
+23: end for
+
+
+
+direction nulls, so the thresholds are
+                                      d
+                                          
+                                      2                  d(d − 1)
+                              λA =            ,   λD =            .                       (12)
+                                     αA                    αD
+
+Nothing about the split adapts to the data. Which certificates the algorithm happens
+to evaluate—it only opens direction processes for certified pairs—does not enter the
+bound, so the graph-dependent order in which pairs are examined is free.
+    The output graph contains only certified edges. An edge carries an arrowhead at an
+end where a direction certificate has fired and a circle otherwise, in the mark notation
+of Richardson and Spirtes (2002). The absence of an edge means undecided,
+not certified absent.
+
+6.2 The whole-graph guarantee
+Theorem 8 (Whole-graph anytime validity) Suppose Assumptions 1 and 2 hold, the per-set
+processes E (S) are e-processes for their point nulls, and—for the direction certificates only—
+the pairs are generated by the linear non-Gaussian model of Section 5 with the supremum
+
+
+                                                  16
+in (10) attained. Then
+                                                                       
+                    ∃ t ≥ 0 : some edge certified by time t is absent
+            P         ⋆                                                   ≤ α.                (13)
+                from G , or some arrowhead certified by time t is wrong
+In particular, for any stopping time τ —including one chosen by inspecting the output—the
+graph reported at time τ satisfies P(it contains a false certified edge or arrowhead) ≤ α.
+
+
+
+Proof Index the adjacency nulls by pairs and the direction nulls by ordered pairs; both
+families are determined by d and k and are fixed before any observation. Consider a single
+                                                                                           sep
+adjacency null for a pair (i, j) that is non-adjacent in G ⋆ . By Lemma 2, P ∈ Hij             ; by
+Proposition 3, (At (i, j)) is an e-process for that null; so by (1) the probability that At (i, j)
+ever reaches λA = d2 /αA is at most αA / d2 . Since the algorithm certifies the edge exactly
+                                                
+
+on that event, the probability that this pair is ever falsely certified is at most αA / d2 .
+                                                                                          
+
+     Similarly, consider an ordered pair (i, j) for which the arrowhead i → j is absent from G ⋆ .
+               dir
+Then P ∈ Hj→i      , which by Proposition 6 (applied conditionally on FT , see Appendix C) has
+(Et (i, j)) as an e-process, and the probability that it ever reaches λD is at most αD /(d(d−1)).
+     The event in (13) is the union, over the at most d2 non-adjacent pairs and at most d(d−1)
+                                                         
+
+absent arrowheads, of these events. A union bound gives d2 ·αA / d2 +d(d−1)·αD /(d(d−1)) =
+                                                                      
+
+αA + αD = α.
+     The final statement follows because the event in (13) contains, for every stopping time
+τ , the event that the graph at time τ contains a false certified assertion; the bound is time-
+uniform, so no separate argument per stopping time is needed.                                     □
+
+    We stress the form of the quantifier. The theorem does not say “for each fixed τ ,
+the error at τ is at most α”, which would be a family of pointwise statements requiring
+a further union bound to combine. It says that the probability of the trajectory ever
+containing a false certified assertion is at most α, and every stopping-time statement
+is a consequence. This is the difference between a fixed-sample guarantee applied
+repeatedly and a time-uniform one, and Section 9.2 measures how large that difference
+is in practice.
+
+Remark 7 (What the theorem does not cover) Theorem 8 bounds the probability of a false
+assertion. It says nothing about the pairs left undecided, and it does not bound the proba-
+bility that a true edge is missed—there is no such bound, and there cannot be one without
+a faithfulness-type assumption. It also does not cover the analyst’s use of the output for
+anything else: an intervention chosen on the basis of a certified arrowhead inherits the α,
+but a downstream effect estimate computed from the certified graph does not automatically
+inherit anything, and would need its own analysis; the estimand there is the intervention-
+effect problem of Maathuis, Kalisch, and Bühlmann (2009), and combining a certified graph
+with a valid effect interval is a genuinely open question.
+
+
+6.3 Complexity
+Per batch, the Gram-matrix update is O(d2 ) per observation. Recomputing At (i, j )
+                              3
+for
+P a pair
+       d−2
+           costs Ok(|Sk | · k ), dominated by the Schur complements, and |Sk | =
+   r≤k  r    = O ( d ). Summed    over pairs, an update of the whole adjacency layer is
+
+
+                                                17
+O(dk+2 k 3 ), with no dependence on n: all the data enter through the sufficient statistic.
+Only undecided pairs are updated, so the cost falls as the run proceeds.
+    The direction layer is the expensive part. Each open ordered pair requires a
+generalised-Gaussian fit at every batch, which is an IRLS loop plus a scalar optimisa-
+tion over κ, and it does not reduce to a sufficient statistic because the fit is nonlinear
+in the residuals. The cost is O(d2 · nbatch · |Z| · iterations) per batch, and it is the rea-
+son our experiments stop at d = 11. This is an implementation limit, not a limit of
+the construction: the numerator’s parameters may be refitted at any frequency (refit-
+ting less often only costs power, since the numerator needs to be Fs−1 -measurable and
+nothing more), and the denominator’s maximised likelihood admits warm starts across
+batches. We have not pursued either optimisation and regard scaling as unproven; see
+Section 10.
+
+6.4 On the multiplicity layer
+Theorem 8 uses a union bound over a fixed family, and a union bound is the least pow-
+erful admissible way to combine evidence. It is reasonable to ask why we do not use
+a sharper procedure. E-value-based family-wise error control has advanced consider-
+ably: Hartog and Lei (2026) show that e-closed testing with weighted arithmetic-mean
+local tests strictly dominates e-Bonferroni, and their e-Holm procedure achieves this
+at O(m log m) cost. Crucially, the arithmetic-mean local test is valid under arbitrary
+dependence between the base e-values, so the fact that all our per-hypothesis processes
+are functions of the same running Gram matrix is not an obstacle. An earlier draft of
+this paper claimed it was; that claim was wrong, and we correct it here.
+    The actual obstruction is different and, we think, more interesting. Our certificates
+fire on the running maximum Āt = sups≤t As of an e-process, because that is what
+a monitored run rejects on. A running maximum is not an e-value. Ville’s inequality
+bounds P(Ā∞ ≥ 1/α) by α, which makes Āt what Hartog and Lei (2026) call a
+pseudo e-value, but E[Āτ ] generally exceeds one, and closed testing takes e-values as
+inputs, not pseudo e-values. Feeding running maxima into an e-closed procedure is not
+licensed by the theory. Hartog and Lei (2026) address this case directly and recover a
+bound of α + O(α2 log α−1 ) for pseudo e-values, but only under independence across
+hypotheses—and that is where our shared sufficient statistic does bite.
+    So the situation is: dependence is fine for e-closed testing with e-values; running
+maxima are fine under independence; we have running maxima under dependence, and
+no result covers the combination. The union bound over Ville events is what remains
+available, and it is exact for what it does. Closing this gap—a family-wise procedure for
+dependent pseudo e-values that improves on Bonferroni—would immediately improve
+the power of every method in this paper, and we regard it as the most valuable piece
+of the surrounding theory that is missing.
+    Two weaker improvements are available now and we note     P them. First, the budget
+split need not be uniform: any fixed weights wh > 0 with h wh = 1 give thresholds
+1/(αwh ) and the same bound, so prior knowledge about which pairs are likely adja-
+cent can be spent as unequal weights, decided before the data arrive. Second, if the
+analyst wants false-discovery-rate rather than family-wise control, the e-BH procedure
+of Wang and Ramdas (2022) applies to e-values under arbitrary dependence, as do
+
+
+                                             18
+the martingale-based merging rules of Vovk and Wang (2024), and would replace the
+union bound directly—but only at a fixed stopping time, since it again takes e-values
+rather than running maxima as inputs.
+
+6.5 An optional fourth verdict: certified negligible
+Section 3 argued that there is no certifying null for non-adjacency. There is, however,
+one for a weaker proposition, and analysts who need it can have it at the cost of a
+stated margin. Fix δ > 0 and consider the interval null
+                                   big
+                                  Hij,S :    |ρij·S | ≥ δ,                             (14)
+
+where ρij·S is the partial correlation. Rejecting it for every S in a chosen set certifies
+that the pair’s association is smaller than δ given each of those conditioning sets—a
+statement about effect size, not about the graph. The confidence sequence (6) supplies
+the test directly: reject when the interval excludes [−δ, δ ]. The resulting verdict, cer-
+tified negligible at margin δ , is honest in a way that a deleted edge is not, because δ is
+reported alongside it and the reader can judge whether an association below δ mat-
+ters for their purpose. It is also strictly less than the claim a delete-on-non-rejection
+method makes, which is presumably why that claim is popular. We implement this
+verdict but do not use it in the experiments below, since the comparisons there are
+with methods that assert absence outright.
+
+7 Latent confounders
+The adjacency certificate does not require causal sufficiency; nothing in Lemma 2
+assumes that all common causes are observed. What changes under latent confounding
+is the interpretation of a certified edge and the availability of the direction certificate.
+    If G ⋆ is a DAG over observed and latent variables and we observe only V , the rele-
+vant object is the maximal ancestral graph over V (Richardson & Spirtes, 2002), and
+the relevant separation notion is m-separation. Assumption 2 becomes the require-
+ment that every non-adjacent pair in the MAG has an m-separating set of size at
+most k among the observed variables—which, unlike the DAG case, is not guaranteed
+by bounding an in-degree, and is why FCI searches Possible-D-SEP sets rather than
+neighbourhoods. With that caveat, Lemma 2 and Proposition 3 go through verbatim
+with d-separation replaced by m-separation, and a certified edge means “i and j are
+adjacent in the MAG”, that is, neither is separable from the other by any observed
+set—which is compatible with a direct effect, a latent common cause, or both.
+    We therefore implement CERT-FCI: run the adjacency certificates to obtain a
+certified skeleton, apply the FCI orientation rules R1–R4 (originally Spirtes et al.,
+1995, in the formulation of J. Zhang, 2008) to the certified edges only, and report the
+resulting partial ancestral graph. Orientations produced by the FCI rules inherit the
+adjacency certificates’ guarantee only in the weak sense that they are sound given a
+correct skeleton and correct sepsets; we do not claim a family-wise bound for them,
+and we flag this as the principal gap in the latent-variable extension. The direction
+
+
+
+                                            19
+certificate of Section 5 is unavailable here, because Proposition 5 assumes no unob-
+served common cause of the pair. Section 9.8 reports what CERT-FCI recovers, and
+Section 9.11 reports what latent confounding does to the direction certificate when it
+is applied anyway.
+
+8 Related work
+Most of the primitives used in this paper are standard, and the value of the contri-
+bution depends on saying precisely which. We therefore separate the accounting into
+what is not new, what we believe is new, and—because we think this is the more use-
+ful disclosure—three claims of novelty we made in earlier drafts and withdrew after
+reading the prior art.
+
+8.1 What is not new
+The minimum of e-values.
+That mink E (k) is an e-value for a union null is standard (Vovk & Wang, 2021), and
+Proposition 3 is that fact applied to a particular union.
+
+Edge-level aggregation over conditioning sets.
+PC-p (Strobl et al., 2019) upper-bounds an edge’s p-value by the maximum p-value
+over conditioning sets—the exact p-value analogue of (3)—and controls the false
+discovery rate of the resulting edge decisions with Benjamini–Yekutieli (Benjamini
+& Yekutieli, 2001). Treating adjacency rather than conditional independence as the
+object being tested is also the premise of DAT (Amin & Wilson, 2024), which replaces
+the exponential family of tests with a relaxed optimisation problem solved by neural
+networks.
+
+One-sided, faithfulness-free false-edge control.
+This is exactly Theorem 2 of ϵ-CUT (Shaska & Mitra, 2025), reached by the same
+reasoning we use: a guarantee against false edges needs a correct null, not faithfulness.
+We had believed this was ours; it is not.
+
+Abstention and three-valued output.
+FCI leaves unidentifiable edges undirected; the conservative PC of Ramsey et al. (2006)
+marks ambiguous triples rather than resolving them; Uehara (2026) attaches per-edge
+resolved/impossible codes with tiers that abstain when a precondition test rejects;
+and Prakash, Xia, and Erosheva (2024) give a bivariate direction test with an explicit
+inconclusive outcome.
+
+Sequential e-values inside a constraint-based algorithm.
+Csillag et al. (2025) already do this, calibrating batched Fisher-z p-values into per-test
+e-values within PC.
+
+
+
+
+                                           20
+Residual-based direction criteria.
+DirectLiNGAM (Shimizu et al., 2011) and the pairwise likelihood ratios of Hyvärinen
+and Smith (2013) use exactly the comparison in (10)’s two branches, and Ruiz,
+Madrid Padilla, and Zhou (2022) learn a topological ordering from likelihood-
+ratio scores on residuals. The entropy-based approximations underlying the pairwise
+measures go back to Hyvärinen (1998).
+
+Orientation error control per se.
+Strobl et al. (2019) control the FDR of orientations, using the rule set of Meek (1995a);
+Shimizu and Kano (2008) test direction of causation using non-normality; Komatsu
+et al. (2010) attach bootstrap reliability to LiNGAM outputs; Strieder and Drton
+(2023) give confidence statements under structure uncertainty for equal-variance mod-
+els. None of these is a time-uniform family-wise statement, but the general project
+of attaching error control to orientation decisions is well established, and it would be
+wrong to present it as new.
+
+8.2 Three withdrawn claims
+We record these because the accounting above is only credible if the failures are visible
+too.
+1. “Orientation error is uncontrolled in the literature.” False. PC-p (Strobl et al.,
+   2019) controls the FDR of unshielded-collider and Meek-rule orientations, and
+   Shimizu and Kano (2008)—published in this journal’s subject area two decades
+   ago—tests direction of causation directly.
+2. “Faithfulness-free finite-sample false-edge control is new.” False. It is Theorem 2
+   of Shaska and Mitra (2025), at each fixed n.
+3. “Sequential anytime-valid e-values have not been used inside constraint-based
+   discovery.” False; see Csillag et al. (2025).
+
+8.3 What we believe is new
+Three claims survive that accounting. We state each in the narrowest form we can
+defend.
+
+(i) Orientation error control that is simultaneously finite-sample,
+time-uniform, family-wise over a graph, and not confined to the Markov
+equivalence class.
+Each of these four properties has precedent separately. Strobl et al. (2019) is finite-
+sample and family-wise (in the FDR sense) but confined to the equivalence class, so
+an edge in no v-structure is unorientable by it in principle. Shimizu and Kano (2008)
+escapes the class and is a genuine test, but is bivariate and fixed-sample. Ruiz et
+al. (2022) is closest in statistic—likelihood-ratio scores on residuals—but proves only
+population-level identifiability, requires all noise terms to come from a single scale-
+location family, and its “sequential” refers to greedy sorting rather than to sequential
+inference. Strieder and Drton (2023) is finite-sample and escapes the class but assumes
+
+
+                                           21
+   Table 1 Positioning against the closest prior work. “Beyond MEC” means the method can
+   orient an edge lying in no v-structure. “Time-uniform” means the error statement holds
+   simultaneously at all sample sizes. “Faithfulness-free” refers to the validity of the method’s
+   assertions, not to its power.
+
+                                               error control on       beyond     time-     faithf.-
+   method                                  adjacency    orientation    MEC      uniform     free
+   PC (Spirtes et al., 2000)                   –             –          no        no        no
+   PC-p (Strobl et al., 2019)                FDR           FDR          no        no        no
+   ϵ-CUT (Shaska & Mitra, 2025)            one-sided         –          no        no        yes
+   DAT (Amin & Wilson, 2024)                   –             –          no        no        no
+   PPE-PC (Csillag et al., 2025)            per-test         –          no        yes       no
+   DirectLiNGAM (Shimizu et al., 2011)         –             –          yes       no        n/a
+   Shimizu and Kano (2008)                     –           test         yes       no        n/a
+   Ruiz et al. (2022)                          –             –          yes       no        n/a
+   Strieder and Drton (2023)                   –         conf. set      yes       no        n/a
+   Uehara (2026)                          provenance    provenance      no        no        no
+   CERT-CD (this paper)                     FWER          FWER          yes       yes        yes
+
+
+
+
+equal error variances and targets causal effects rather than arrowheads. Uehara (2026)
+certifies provenance —which theorem licensed a direction—rather than error, and its
+Theorem 1 bounds expert query counts under an ideal-oracle assumption. We are not
+aware of a predecessor combining all four properties.
+
+(ii) A whole-graph guarantee proved rather than assumed.
+Per-test anytime-validity in discovery is not new (Csillag et al., 2025), but graph-
+level validity there is obtained by assumption: their Assumption 2.5 states that the
+downstream algorithm is valid whenever its inputs are, and they note the multiple-
+comparison concern without resolving it. Theorem 8 proves the statement over a fixed
+family and extends it to orientations. The proof is not deep—it is a union bound over
+Ville events—but the statement is the one a practitioner needs and it was previously
+an assumption.
+
+(iii) Time-uniformity on the adjacency side.
+ϵ-CUT (Shaska & Mitra, 2025) holds the same one-sided, faithfulness-free ground
+at each fixed n. Bounding the probability that a false edge is ever certified over a
+monitored run is a different statement, and it is the one a monitored run needs;
+Section 9.2 measures the size of the gap. Secondarily, minimising over the complete
+family Sk performs all the tests that PC-p’s maximum-p bound requires, so PC-p’s
+zero-Type-II-error assumption is not needed here.
+
+8.4 Other neighbouring literatures
+Score-based and permutation-based discovery.
+GES (Chickering, 2002) and greedy permutation methods (Solus, Wang, & Uhler,
+2021) search over equivalence classes or orderings with consistency guarantees; they
+do not attach finite-sample error statements to individual features, and the certificate-
+only rule has no direct analogue there, since a score comparison is not a test.
+
+
+                                                22
+Functional causal models beyond LiNGAM.
+Additive noise models (Hoyer, Janzing, Mooij, Peters, & Schölkopf, 2009), post-
+nonlinear models (K. Zhang & Hyvärinen, 2009), causal additive models (Bühlmann,
+Peters, & Ernest, 2014) and equal-variance Gaussian models (Peters & Bühlmann,
+2014) all break the equivalence class by restricting the functional form. Any of them
+could in principle replace the generalised-Gaussian likelihoods in (10), provided the
+resulting null model admits a computable supremum; this is the most direct route to
+relaxing Remark 6.
+
+Invariance-based methods.
+Invariant causal prediction (Peters, Bühlmann, & Meinshausen, 2016) identifies a set
+of causal parents by intersecting the environments in which a candidate set is invari-
+ant, and controls the probability that the returned set is not a subset of the true
+parents. The logic is close to ours in spirit—it asserts by rejecting non-invariance,
+and returns the empty set rather than guessing—and it is the one established method
+whose guarantee has the same one-sided shape. Section 9.9 reports an anytime-valid
+variant of it built on the same primitives.
+
+Terminology.
+“Anytime FCI” (Spirtes, 2001) denotes a computational property: the outer loop over
+conditioning-set sizes may be interrupted and the algorithm still returns a sound graph.
+“Anytime-valid” in this paper is an inferential property: time-uniform error control
+at data-dependent stopping times. The two notions are unrelated, and the collision of
+names is unfortunate.
+
+9 Experiments
+9.1 Protocol
+Every experiment streams data in batches and inspects the estimate after every batch,
+scoring the worst case over the whole trajectory rather than the state at a single sample
+size. This is deliberate: a time-uniform guarantee is a claim about trajectories, and
+evaluating it at a single n would measure something else. Where a comparator has
+only a fixed-sample guarantee we report both its trajectory-worst behaviour (which is
+what an analyst monitoring it would experience) and its behaviour at the final sample
+size (which is what its guarantee covers), because reporting only the first would be
+unfair and reporting only the second would miss the point.
+    Random DAGs are drawn with independent edge probabilities in a random topo-
+logical order, with coefficients uniform on ±[0.5, 1.2]. Noise is Laplace unless stated.
+Binomial proportions carry Wilson 95% intervals. Code, seeds and figures are avail-
+able in the repository (Section 11); every number below is reproduced by a script in
+experiments/.
+    Two comparators recur. PC is the standard algorithm with a Fisher-z test, re-run
+from scratch at each sample size on the same stream. SPRINT-CD is an anytime-
+valid PC variant we also implemented, which deletes an edge when a confidence
+
+
+                                           23
+        Table 2 Probability of ever rejecting a true null over a monitored run (2000
+        replications, n ≤ 1000), with Wilson 95% intervals. “Fisher-z, monitored”
+        inspects after every observation; “Fisher-z, once” evaluates only at n = 1000.
+
+        nominal α    Fisher-z, monitored        Fisher-z, once      e-process (monitored)
+        0.01         0.100 [0.088, 0.114]    0.010 [0.006, 0.015]    0.007 [0.004, 0.012]
+        0.05         0.346 [0.325, 0.367]    0.056 [0.046, 0.066]    0.024 [0.018, 0.031]
+        0.10         0.565 [0.543, 0.586]    0.103 [0.090, 0.117]    0.049 [0.040, 0.059]
+        0.20         0.816 [0.798, 0.832]    0.193 [0.176, 0.211]    0.091 [0.079, 0.104]
+
+
+
+
+sequence for the partial correlation falls entirely inside a region of practical equiva-
+lence; it is unpublished and is included here as the strongest available representative of
+delete-on-non-rejection with sequential machinery, so that the comparison isolates the
+deletion rule rather than the fixed-sample/sequential distinction. Both decide absence
+by failing to find evidence of presence; that is the property under test.
+
+9.2 What monitoring costs a fixed-sample test
+Data are generated under a true conditional independence and the analyst inspects the
+evidence as observations accumulate. Over 2000 replications monitored to n = 1000,
+Table 2 reports the probability that each procedure ever rejects.
+    The middle column confirms that the Fisher-z test is correctly calibrated for the
+guarantee it makes; the first column shows that the guarantee does not survive looking.
+At α = 0.05 the realised error rate under monitoring is 0.346, seven times nominal.
+The e-process stays below nominal throughout—conservatively so, which is the other
+half of the story.
+
+The price in power.
+Time-uniformity is not free, and we report the cost directly. Against a fixed-sample
+Fisher-z test evaluated once at n = 1000, over 500 replications per setting, the e-
+process detects a coefficient of β = 0.04 in 5% of runs against 21%; β = 0.06 in
+16% against 47%; β = 0.08 in 32% against 72%; β = 0.10 in 58% against 91%; and
+β = 0.15 in 96% against 100%. Median stopping times where the e-process does fire
+range from 360 to 520 observations. When the sample size can honestly be fixed
+in advance, a fixed-sample test is the better instrument, and by a wide margin
+at small effect sizes. The e-process earns its keep only when the analyst intends to
+look, which in a discovery setting is usually. Figure 1 shows both panels.
+
+9.3 The primitive under six noise laws
+Proposition 4 assumes Gaussian noise. Since the adjacency guarantee inherits whatever
+the primitive assumes (Remark 1), we measured the primitive’s calibration under six
+noise laws—Gaussian, Laplace, uniform, Student-t5 , shifted exponential and a two-
+component mixture—over 2000 replications each, monitored to n = 800. Realised
+crossing rates never exceeded nominal: the largest ratio of realised to nominal was 0.95
+(uniform noise at α = 0.20), and the Gaussian and Laplace columns agree to within
+
+
+                                               24
+Fig. 1 Left: probability of ever rejecting a true null under continuous monitoring, against nominal
+level. Right: power against a fixed-sample test at the same n. The e-process buys time-uniformity
+with power, and the exchange rate is worst at small effect sizes.
+
+
+
+
+Fig. 2 Realised versus nominal crossing rates for the per-set primitive under six noise laws, 2000
+replications each. The dashed line is y = x.
+
+
+Monte Carlo error. Full numbers are in Appendix D, Table D1, and Figure 2 plots
+them.
+   This does not prove validity outside the Gaussian model—it is six laws, not a
+theorem—but it does bound the practical risk, and it locates the model sensitivity
+where it belongs: in the direction certificate (Remark 6), not in the adjacency one.
+
+9.4 Measuring our own premise
+Assumption 2 replaces faithfulness, and it would be self-serving to compare a method
+that assumes one to a method that assumes the other without saying how often each
+holds. Both are properties of the generating model, computable before any data are
+
+
+                                                25
+       Table 3 How often each method’s premise holds, over 2000 random DAGs per
+       setting. Assumption 2 is checked directly by d-separation, not via the sufficient
+       in-degree condition. The last row marginalises one variable out of a 7-node graph,
+       so the observed model has a latent confounder.
+
+       setting                              Assumption 2 at k = 2   0.15-strong faithfulness
+       d = 5, edge prob. 0.35                       0.988                    0.748
+       d = 6, edge prob. 0.30                       0.972                    0.667
+       d = 7, edge prob. 0.35                       0.815                    0.331
+       d = 7, one latent marginalised                —                       0.187
+
+
+
+
+                 Table 4 PLACEHOLDER — awaiting the high-replication rerun.
+
+                                         CERT-CD            SPRINT-CD         PC
+                 stratum       false edge    wrong arrow     lost edge     lost edge
+                 placeholder     0.000          0.000          0.000         0.000
+
+
+
+
+simulated, so the comparison is cheap. Over 2000 random DAGs per setting, Table 3
+reports how often each premise holds at k = 2 and δ = 0.15.
+    Two things follow. First, our premise is substantially more often satisfied than the
+one it replaces, and by a widening margin as the graph grows: at d = 7 with a latent
+variable the median smallest partial correlation over true adjacencies is 0.034, so 0.15-
+strong faithfulness holds in under a fifth of instances. Second—and this is the reason
+to report the table rather than assert the first point—Assumption 2 is not always
+satisfied either, and its violation is just as silent as unfaithfulness: if a non-adjacent
+pair has no separating set within Sk , the separability null is false for that pair, (At )
+is not an e-process for it, and a false edge can be certified with no bound at all.
+Section 9.11 measures what happens then.
+
+9.5 Certificate-only against delete-on-non-rejection
+This is the central comparison. Instances are stratified by whether 0.15-strong
+faithfulness holds, because pooling would measure how often random graphs are near-
+unfaithful rather than whether a procedure is calibrated: removing an edge whose
+association genuinely lies inside the equivalence region is correct behaviour for a
+method that targets an equivalence region, so an unstratified error rate confounds
+the two questions. Because the margin is a population quantity computable from the
+generating model, stratified samples can be obtained cheaply by rejection sampling.
+    Placeholder text.
+
+9.6 Skeleton recovery and sample efficiency
+The comparison above is at d = 5 with orientation enabled. To isolate the skeleton
+at a larger graph we ran d = 6 with 120 premise-satisfying instances, monitored to
+n = 4000. Here the quantity of interest for the comparators is a lost edge—an edge of
+
+
+                                                   26
+Fig. 3 Left: probability of an unsound assertion at any point in a monitored run, by stratum. Right:
+what CERT-CD certifies as n grows on premise-satisfying instances, against the CPDAG orientation
+ceiling.
+
+
+
+
+Fig. 4 Skeleton errors over monitored runs at d = 6. SPRINT-CD’s extra edges fall from 11.4 to
+0.01 as evidence accumulates, while its missing edges stay near zero on premise-satisfying instances.
+
+
+the true CPDAG that the method deletes at some point in the run—since that is the
+error mode that delete-on-non-rejection has and CERT-CD structurally cannot have.
+    SPRINT-CD ever loses a true edge in 1 of 120 premise-satisfying runs (0.008,
+Wilson 95% interval [0.001, 0.046]) against a budget of 0.1, and in 30 of 40 premise-
+violating runs (0.750). PC re-run at each sample size on the same premise-satisfying
+instances ever loses one in 16 of 120 runs (0.133, [0.083, 0.207])—above the 0.1 level it
+is nominally run at, which is the monitoring effect of Section 9.2 appearing at graph
+level. These are SPRINT-CD’s and PC’s numbers, not CERT-CD’s: CERT-CD never
+deletes, so “lost edge” is not defined for it, and the corresponding quantity—a pair that
+is truly adjacent and never certified—is a power statement, reported in Section 9.5.
+Figure 4 shows the trajectories.
+
+
+
+
+                                                 27
+Fig. 5 Left: distribution of data-dependent stopping times and the resulting structural Hamming
+distance, against PC evaluated at fixed sample sizes. Right: sensitivity to the equivalence-region
+width.
+
+
+                 Table 5 Orientation over 200 replications at d = 5, n = 3000,
+                 α = 0.1. “Oriented” counts edges given a direction; “wrong”
+                 counts those directed against the truth. Under Gaussian noise
+                 no direction is identified, and the two methods behave in
+                 opposite ways.
+
+                             CERT-CD direction certificate     DirectLiNGAM
+                 noise       oriented          wrong           oriented   wrong
+                 Laplace     609/689             3             689/689      0
+                 Gaussian     0/692              0             692/692     356
+
+
+
+
+    Sample efficiency is reported separately (Figure 5). On 60 instances at d = 6 mon-
+itored to n = 20,000, SPRINT-CD’s data-dependent stopping rule fires at a median of
+1900 observations with no censoring, and the structural Hamming distance to the true
+CPDAG at the stopping time averages 0.83 (standard error 0.22), against PC’s 1.20
+at a fixed n = 2000 and 0.90 at n = 8000. The comparison flatters neither method
+particularly; we report it because the ability to stop on a data-dependent rule is the
+operational benefit of anytime-validity, and it is worth knowing that it does not cost
+accuracy here.
+
+9.7 Orientation against DirectLiNGAM
+The direction certificate’s natural comparator is DirectLiNGAM (Shimizu et al., 2011),
+which shares the linear non-Gaussian model and the pairwise likelihood-ratio statistic
+but takes the larger score rather than testing. Over 200 replications at d = 5, n = 3000,
+Table 5 reports both under Laplace and Gaussian noise.
+   Under Laplace noise the certificate orients 88% of the edges DirectLiNGAM ori-
+ents and gets 3 wrong out of 609, in 3 of 200 runs—inside the α = 0.1 family-wise
+
+
+
+                                               28
+Fig. 6 Orientation under Laplace and Gaussian noise. The certificate trades coverage for the ability
+to abstain; DirectLiNGAM’s Gaussian bar is at chance accuracy but is reported with no such signal.
+
+
+budget, and the 12% shortfall in coverage is the conservatism of universal inference
+(Section 5.2) made concrete. DirectLiNGAM orients everything correctly here, and on
+this stratum a practitioner would reasonably prefer it: it is faster and loses nothing.
+    The Gaussian row is the reason not to. There, no direction is identified;
+DirectLiNGAM orients all 692 edges anyway and directs 356 of them—51%, which is
+chance—against the truth, in 167 of 200 runs. The certificate orients none, as Propo-
+sition 7 requires. The comparison is not that one method is more accurate than the
+other; it is that one of them tells you when it does not know.
+
+9.8 Latent confounders
+CERT-FCI (Section 7) was run on 7-variable graphs with one variable marginalised
+out, α = 0.1, monitored to n = 4000. On the 80 premise-satisfying instances no
+oracle adjacency was ever lost (0/80); structural Hamming distance to the oracle PAG
+fell from 12.7 to 0.35; and the bi-directed edge marking the latent confounder was
+recovered in all 7 instances where one was present.
+    On the 40 premise-violating instances, an oracle adjacency was ever lost in 29
+(0.725). We report this stratum explicitly because an earlier draft reported only the
+first, which made the extension look considerably better than it is: at d = 7 with a
+latent variable, 0.15-strong faithfulness holds in only 19% of instances (Table 3), so
+the favourable stratum is the minority one, and a reader shown only it would form
+the wrong impression of what CERT-FCI does on a graph drawn at random.
+
+9.9 An anytime-valid invariant predictor
+Invariant causal prediction (Peters et al., 2016) shares the one-sided logic of Section 3:
+it accepts a candidate parent set only if invariance across environments is not rejected,
+and returns the intersection of the accepted sets, which is a subset of the true parents
+with high probability. Its guarantee is fixed-sample, so it degrades under monitoring
+in the same way Table 2 shows. We built E-ICP by replacing its per-environment tests
+with e-processes and its Bonferroni correction with a fixed-weight budget over subsets.
+
+
+                                                29
+Fig. 7 CERT-FCI under one marginalised latent variable: structural Hamming distance to the oracle
+PAG against sample size, and the distribution of δ-strong faithfulness margins showing how few
+instances satisfy the competing premise.
+
+
+
+
+Fig. 8 E-ICP against ICP under continuous monitoring: rejection of a true invariant set, and recovery
+of the true parent set.
+
+
+    Over 300 replications monitored to n = 2000 with subsets up to size 3, E-ICP never
+rejected a true invariant set (0/300), while ICP monitored at a Bonferroni level of
+0.0125 rejected in 24 runs and ICP evaluated once rejected in 2. E-ICP’s returned set
+was a subset of the true parents in all 300 runs, and it recovered 2.0 of 2 true parents
+on average against ICP’s 1.99. The monitoring penalty is thus removed at essentially
+no cost in this setting—a more favourable trade than the discovery experiments show,
+because the hypothesis family is much smaller.
+
+9.10 Real data: protein signalling
+Every result so far comes from a simulation whose generating model is the one the
+certificates assume. We therefore ran CERT-CD on the single-cell protein-signalling
+
+
+                                                 30
+data of Sachs et al. (2005), using the observational condition only—853 cells, 11
+phosphoproteins, in the continuous form distributed with bnlearn (Scutari, 2010).
+Measurements are log-transformed, as in the original analysis, since the raw fluores-
+cence intensities span three orders of magnitude and are strongly right-skewed. The
+interventional conditions that make the Sachs network identifiable are withheld, which
+makes this the hardest honest setting for a purely observational method. We compare
+against the published 17-arc consensus network, and we stress that this is a scientific
+consensus assembled from interventional experiments and prior literature, not ground
+truth; several of its arcs are contested.
+    At α = 0.1 and k = 2, streaming in batches of 50, CERT-CD certifies 6 edges
+out of 55 pairs and leaves 49 undecided. The two halves of the output behave very
+differently, and the contrast is the reason to report the experiment.
+
+The adjacency half does what it claims.
+All 6 certified edges lie in the consensus skeleton, and none outside it: Raf–Mek, PIP2–
+PIP3, Erk–Akt, Akt–PKA, PKC–P38 and PKC–Jnk. Six of 17 consensus edges is low
+recall, which is what one expects from 853 observations, a family-wise budget over
+55 pairs, and a certificate that must reject to assert. PC at the same level and order
+returns 7 edges, all also in the consensus skeleton, and then calls the remaining 48
+pairs absent —an assertion about 48 pairs that this sample cannot support, and the
+one CERT-CD declines to make. The difference between the two outputs is not the 6
+versus 7 edges; it is the 49 pairs one of them describes accurately.
+
+The orientation half is confidently wrong.
+All 4 certified arrowheads are reversed relative to the consensus: the certificate reports
+Mek → Raf, PIP2 → PIP3, Akt → Erk and P38 → PKC, against consensus arcs
+running the other way. Four out of four is not sampling variation, and we investigated
+it rather than reporting it as an anomaly.
+    The reversal is a property of these data under a linear non-Gaussian model, not
+of the inferential machinery. DirectLiNGAM, which shares the model but none of
+the sequential apparatus, produces a causal order that reverses the same four arcs
+(and agrees with the consensus on Akt–PKA and PKC–Jnk, which the certificate
+left unoriented). Two procedures with different estimators, different loss functions
+and different error criteria agreeing on all four reversals locates the disagreement in
+the shared assumption: the pairs in question are embedded in a densely confounded,
+demonstrably nonlinear signalling network, where the bivariate linear non-Gaussian
+model of Section 5 is simply false. Under misspecification the supremum in (10) is taken
+over a model not containing the truth, and Proposition 6 gives nothing (Remark 6).
+    We draw two conclusions and resist a third. First, the experiment is a clean illus-
+tration of the asymmetry the paper is about: the certificate whose null requires only
+the Markov condition behaves exactly as advertised on real data, while the certifi-
+cate whose null requires a parametric functional model fails exactly where that model
+fails. Second, it shows that the failure is not detectable from the output—the reversed
+arrowheads carry the same α = 0.1 label as any other, which is precisely why Remark 6
+
+
+
+                                           31
+Fig. 9 CERT-CD on the Sachs observational sample. Certified edges accumulate slowly and the
+undecided set stays large: at n = 853, 49 of 55 pairs remain undecided.
+
+
+names misspecification as the construction’s main theoretical risk rather than a foot-
+note. The conclusion we resist is that the consensus is wrong and the certificates are
+right; observational non-Gaussianity-based orientation disagreeing with interventional
+evidence is much more likely to be the model failing than the biology.
+
+9.11 Where the certificates are void
+Placeholder.
+
+10 Discussion
+10.1 What the output does not say
+The absence of an edge in a CERT-CD graph means undecided. The algorithm can-
+not report that an edge is missing, and a pair may remain undecided indefinitely if
+adjacency-faithfulness fails for it—which is exactly the situation in which a delete-on-
+non-rejection method returns a confident wrong answer. This is the price of the rule.
+We regard stating it as preferable to concealing it, but it is a real cost: on the Sachs
+data the honest output is six certified edges and forty-nine shrugs, and a practitioner
+who needs a complete graph will not get one from this method. The optional fourth
+verdict of Section 6.5 recovers part of the missing information at the cost of naming
+a margin δ , and we think that trade is usually worth making in applications; we did
+not use it in the comparisons above because the comparators assert absence outright
+and the comparison should be with what they actually claim.
+
+10.2 Limitations
+We list these in what we take to be decreasing order of severity.
+
+
+                                            32
+1. Misspecification of the direction certificate is not controlled. Proposition 6 requires
+   the fitted supremum to dominate the likelihood at the true null parameter, which
+   is guaranteed only when the noise lies in the fitted family. Section 9.10 shows this
+   failing on real data, systematically and without any signal in the output. Bounding
+   the gap—or replacing the generalised-Gaussian family with one whose supremum
+   can be bounded under a nonparametric neighbourhood—is the most important
+   open problem we leave.
+2. Assumption 2 can fail, and fails silently. It is more often satisfied than δ -strong
+   faithfulness (Table 3), but “more often” is not “always”, and Section 9.11 shows
+   that when it fails the family-wise bound is void rather than degraded. It is as
+   unverifiable in practice as the assumption it replaces.
+3. Causal sufficiency for the direction certificate. The arrowhead null assumes no
+   unobserved common cause of the pair. Section 9.11 measures what latent confound-
+   ing does; the answer is that arrowheads become unreliable well before adjacencies
+   do. CERT-FCI (Section 7) drops the direction certificate for this reason, and its
+   FCI-rule orientations carry no family-wise guarantee.
+4. The multiplicity layer is a union bound. Section 6.4 explains why nothing sharper
+   is currently available for dependent pseudo e-values, and that a solution would
+   improve every result here.
+5. Scaling is unproven. The direction layer refits per pair per batch and does not
+   reduce to a sufficient statistic; experiments reach d = 11 on real data and d = 7
+   in simulation. Section 6.3 identifies two straightforward optimisations we have not
+   implemented, but we make no claim about behaviour at d in the hundreds.
+6. The FCI variant is incomplete. It implements orientation rules R1–R4 and omits
+   R5–R10, so its PAG is sound but not maximally informative.
+7. Power is unquantified in theory. We report certification rates empirically through-
+   out, but we prove nothing about them. A power analysis under adjacency-
+   faithfulness with a stated margin would be a natural companion result and we do
+   not have one.
+
+10.3 Outlook
+Three directions seem worth pursuing. The first is the multiplicity problem of
+Section 6.4: family-wise control for dependent pseudo e-values would be useful well
+beyond causal discovery. The second is replacing the generalised-Gaussian direction
+likelihoods with a family admitting a computable supremum under misspecification,
+which would close the gap that Section 9.10 exposes; the reverse-regression character-
+isation of Ding and Zhang (2025) and the nonparametric route of He and Sutherland
+(2026) both look promising. The third is interventional data, where the certificate-only
+rule has an obvious analogue—an intervention that changes a variable’s distribution
+certifies an ancestral relation by rejecting invariance—and where Peters et al. (2016)
+already provides the one-sided logic that Section 9.9 makes anytime-valid.
+
+
+
+
+                                           33
+11 Conclusion
+Constraint-based causal discovery deletes edges on non-rejection, and this single design
+decision is the source of both its dependence on faithfulness for finite-sample correct-
+ness and its inability to distinguish an established absence from an unexamined pair.
+We asked what an algorithm looks like if it refuses to do that: assert only by rejecting
+a null that is true whenever the asserted feature is absent.
+    The answer is an algorithm that grows from the empty graph, reports unde-
+cided pairs as undecided, and bounds by α the probability that any asserted edge or
+arrowhead is ever wrong, uniformly over time and over the whole graph. Adjacency
+is certified by an e-process for a union null, requiring the Markov condition and a
+separator-size bound but no faithfulness. Orientation is certified by sequential univer-
+sal inference against the reversed factorisation, escaping the Markov equivalence class
+and abstaining automatically under Gaussianity. What the design costs is power, and
+we have tried to report that cost as prominently as the guarantee—in the power curves
+of Section 9.2, the undecided fractions of Section 9.5, and the six-edges-out-of-fifty-five
+of Section 9.10.
+    The Sachs experiment also delivers the paper’s own counterexample. Where the
+certifying null rests on the Markov condition alone, the method behaves as advertised
+on real data. Where it rests on a parametric functional model, the method is confi-
+dently and systematically wrong, with nothing in its output to say so. A certificate is
+only ever as good as the null it certifies against, and we think making that dependence
+visible—rather than absorbing it into an assumption stated once and not revisited—is
+the more useful contribution.
+
+Statements and Declarations
+Competing interests.
+The author declares no competing interests.
+
+Funding.
+This research received no specific grant from any funding agency in the public,
+commercial, or not-for-profit sectors.
+
+Ethics approval.
+Not applicable. The study involves no human participants or animals. The protein-
+signalling data analysed in Section 9.10 are publicly available and were published by
+Sachs et al. (2005).
+
+Data and code availability.
+All simulation code, experiment scripts, random seeds and figure-generating scripts
+are available at https://github.com/vinhqdang/SPRINT-CD. The protein-signalling
+data of Sachs et al. (2005) are redistributed with the bnlearn package (Scutari, 2010)
+and are downloaded by the experiment script rather than included in the repository.
+
+
+
+                                            34
+Author contributions.
+The author is solely responsible for all aspects of this work.
+
+Appendix A              The safe linear e-process
+We derive (5) and prove Proposition 4.
+
+A.1     Setup
+Write y ∈ Rn for the stacked observations of Xi , x ∈ Rn for those of Xj , and W ∈
+Rn×q for the design matrix of the conditioning block XS together with an intercept,
+q = |S| + 1. The model is
+
+                       y = W α + βx + ε,            ε ∼ N (0, σ 2 In ),               (A1)
+
+with H0 : β = 0 and H1 : β ̸= 0, and nuisance parameters (α, σ ) ∈ Rq × (0, ∞)
+common to both.
+   Let M = In − W (W ⊤ W )−1 W ⊤ be the residual projector onto the orthogonal
+complement of the column space of W , and write ỹ = M y , x̃ = M x for the residualised
+vectors. Set
+                    Syy = x̃⊤ x̃,  Sxy = x̃⊤ ỹ,     Sxx = ỹ ⊤ ỹ,
+following the naming convention of the implementation, in which the first subscript
+refers to the response of the regression being examined. The squared sample partial
+correlation is r̂2 = Sxy
+                      2
+                         /(Sxx Syy ), and the least-squares estimate of β is β̂ = Sxy /Syy .
+
+A.2     Invariance and the right-Haar prior
+The null model (A1) with β = 0 is invariant under the group G of transformations
+
+                       gc,λ :   y 7→ λy + W c,      c ∈ Rq , λ > 0,
+
+acting on the parameters by α 7→ λα + c, σ 7→ λσ , and—under the alternative—
+β 7→ λβ once x is transformed correspondingly. The right-Haar measure for this group
+is π (α, σ ) dα dσ ∝ σ −1 dα dσ .
+    The relevant fact (Berger et al., 1998; Hendriksen et al., 2021) is that when the
+same right-Haar prior is placed on a nuisance group shared by both hypotheses, the
+resulting Bayes factor equals the Bayes factor based on the maximal invariant, whose
+distribution under the null does not depend on the nuisance parameters. Consequently
+the Bayes factor is a test martingale : its expectation under any null distribution,
+conditional on the past, is one, whatever the nuisance parameters happen to be. This
+is the property that fails for a generic Bayes factor and that makes optional stopping
+legitimate here.
+
+
+
+
+                                            35
+A.3     Integrating the marginal likelihoods
+Under H0 , integrating (A1) against π (α, σ ) ∝ σ −1 gives
+              Z ∞Z
+                                         ∥y − W α∥2 dα dσ
+                                                     
+                                                                            −(n−q)/2
+  m0 (y ) =           (2πσ 2 )−n/2 exp −        2
+                                                                = Cn,q Sxx             ,
+              0    Rq                        2σ           σ
+                                                                                    (A2)
+where Cn,q = 12 π −(n−q)/2 Γ n−q
+                                  ⊤ −1/2
+                               2   |W  W |     collects the terms that do not  depend   on
+the data through the residuals. The α-integral is Gaussian and contributes |W ⊤ W |−1/2
+together with the replacement of ∥y − W α∥2 by ∥ỹ∥2 = Sxx ; the σ -integral is then a
+gamma integral.
+   Under H1 we add β | σ ∼ N (0, σ 2 g ), independent of α. Completing the square in β
+against the residualised design gives a Gaussian integral with precision σ −2 (Syy + g −1 )
+and mean Sxy /(Syy + g −1 ), so
+                                                               !−(n−q)/2
+                                                         2
+                                       −1/2           Sxy
+              m1 (y ) = Cn,q 1 + gSyy        Sxx −
+                                                    Syy + g −1
+                                                            −(n−q)/2
+                      = Cn,q (1 + G)−1/2 Sxx
+                                          −(n−q)/2
+                                                   1 − κr̂2           ,               (A3)
+
+                                                         2           2
+                                                       Sxy         Sxy       Syy
+where G = gSyy and κ = G/(1 + G), using                      −1
+                                                                =        ·           =
+                                                 Sxx (Syy + g )   Sxx Syy Syy + g −1
+r̂2 κ.
+                                                   −(n−q)/2
+     Dividing (A3) by (A2), the constants and the Sxx       factors cancel:
+
+                           m1 (y )                         −(n−q)/2
+                   En =            = (1 + G)−1/2 1 − κr̂n2           ,                (A4)
+                           m0 (y )
+
+which is (5) with p = q = |S| + 1. Proposition 4 follows from the invariance argument
+above: (En ) is a ratio of marginal likelihoods under a shared right-Haar prior, so it is
+a test martingale under every null distribution, and by optional stopping an e-process.
+
+A.4     Two implementation notes
+Fixing g.
+G = gSyy grows with n because Syy does. The martingale property requires g to be
+F0 -measurable; setting it from the running data—for instance to hold G constant—
+breaks it. We choose g from a warm-up prefix that is discarded, so it is a constant as
+far as every e-process is concerned.
+
+Streaming.
+All of Sxx , Sxy , Syy are Schur complements of the running Gram matrix of the full
+observation vector. Maintaining that matrix costs O(d2 ) per observation and serves
+every (i, j, S ) triple, so adding hypotheses costs computation at query time but no
+additional state.
+
+
+                                            36
+Appendix B                Inverting the e-process into a
+                          confidence sequence
+Fix β0 and consider the null β = β0 . Replacing y by y −β0 x in (A4) gives the e-process
+for that null; the confidence sequence at level 1 − α is the set of β0 not rejected,
+                    n                                 −(n−q)/2      o
+                      β0 : (1 + G)−1/2 1 − κr̂2 (β0 )           < 1/α ,
+
+where r̂2 (β0 ) is the squared partial correlation computed from y − β0 x. Taking
+logarithms, the condition reads
+
+                    − 12 log(1 + G) − n−q           2
+                                                          
+                                       2 log 1 − κr̂ (β0 ) < − log α,
+
+that is r̂2 (β0 ) < τ with
+                                                           "              2/(n−q) #
+         1              2                              1
+                                                                  
+                                                                       α
+                                      1
+  τ =        1 − exp          log α − 2 log(1 + G)      =      1− √                     .
+         κ             n−q                                 κ          1+G
+                                                                                     (B5)
+Writing Sxy (β0 ) = Sxy − β0 Syy and Sxx (β0 ) = Sxx − 2β0 Sxy + β02 Syy , the condition
+Sxy (β0 )2 < τ Sxx (β0 )Syy is a quadratic inequality in β0 with leading coefficient (1 −
+    2
+τ )Syy > 0 whenever τ < 1, and solving it gives
+                                s                   
+                                                 2
+                                    τ Sxx Syy − Sxy
+                           1
+                     β̂ ±                             ,     β̂ = Sxy /Syy ,                (B6)
+                          Syy            1−τ
+                                                                 √
+which is (6). When τ ≤ 0—which happens at small n, since (α/ 1 + G)2/(n−q) → 1
+from above as n ↓ q —the inequality has no solution and the interval is the whole line.
+
+Remark 8 (A sign that mattered) The bracketed term in (B5) carries − 12 log(1 + G), not
++ 12 log(1+G). With the sign reversed, the formula still produces intervals of a plausible shape,
+still shrinks at the right rate, and still passes every Type-I error simulation of the underlying
+test, because the test is unaffected. It produces intervals roughly half the correct width. We
+caught it only by comparing (B6) against a brute-force numerical inversion of (A4) over a
+grid of β0 , which now runs as a unit test. Closed-form inversions of e-processes deserve this
+check as a matter of routine.
+
+
+Appendix C                The frozen conditioning block
+Proposition 6 is stated for a fixed null. In Algorithm 1 the conditioning block Zij
+is selected at the random time T at which the pair’s adjacency is certified, so the
+hypothesis being tested is itself chosen using data. We record why the guarantee
+survives.
+    Let T be the certification time of pair (i, j ); it is a stopping time with respect
+to (Ft ), since certification is triggered by the running maximum of At (i, j ), which is
+
+
+                                               37
+adapted. Let Zij be FT -measurable (it is: it is a function of the certified statuses at
+time T ). The direction process is built only from observations oT +1 , oT +2 , . . . .
+    Condition on FT . Because the observations are i.i.d. and T is a stopping time, the
+post-T observations are, conditionally on FT , i.i.d. from P ; and Zij is now a fixed set.
+The proof of Proposition 6 therefore applies verbatim to the conditional law, giving
+EP [ET +τ | FT ] ≤ 1 for every stopping time τ of the post-T filtration, on the event
+{T < ∞}. Taking expectations, EP [ET +τ 1{T < ∞}] ≤ P(T < ∞) ≤ 1, and Ville’s
+inequality applies to the post-T process. Defining Et = 1 for t ≤ T extends this to a
+process on the original time index without affecting the bound.
+    Two remarks. First, this is why the implementation must discard all observations
+before T : reusing them would break the conditional independence, and the constant
+they contribute is exactly the failure mode of Remark 5. Second, the argument is what
+licenses the graph-dependent execution order in Theorem 8: the algorithm may decide
+which direction hypotheses to examine using the data, because the union bound runs
+over the full fixed family {(i, j )} regardless, and each member of that family has a
+valid e-process whether or not the algorithm chooses to evaluate it.
+
+Appendix D              Additional experimental detail
+
+            Table D1 Realised crossing rates of the per-set primitive under six
+            noise laws, 2000 replications each, monitored to n = 800 after every
+            tenth observation. Every entry is at or below its nominal level; the
+            largest realised-to-nominal ratio anywhere in the table is 0.95.
+
+            noise law                 α = 0.20       α = 0.10   α = 0.05   α = 0.01
+            Gaussian                    0.091         0.046      0.023      0.003
+            Laplace                     0.092         0.047      0.024      0.003
+            uniform                     0.107         0.052      0.031      0.006
+            Student-t5                  0.093         0.044      0.020      0.004
+            shifted exponential         0.101         0.051      0.028      0.010
+            two-component mixture       0.097         0.049      0.028      0.006
+
+
+
+
+Hyperparameters.
+Unless stated otherwise: warm-up m = 50 observations (discarded), prior scale g = 0.5
+after standardisation, k = 2, adjacency share αA /α = 0.5, batch size 250 in the
+graph experiments and 100 in the skeleton experiments, and a minimum of 80 post-
+certification observations before a direction process is first evaluated. The equivalence-
+region width for SPRINT-CD is δ = 0.15 on the standardised scale, matching the δ
+used to define the strata.
+
+Reproduction.
+python experiments/run all.py reproduces every figure and table; individ-
+ual scripts accept --quick for a low-replication smoke test, which writes to
+
+
+                                                38
+results/quick/ so that it cannot overwrite the full-precision artefacts the paper cites.
+Seeds are fixed in each script.
+
+References
+Amin, A.N., & Wilson, A.G. (2024). Scalable and flexible causal discovery with an
+    efficient test for adjacency. Proceedings of the 41st international conference on
+    machine learning (Vol. 235).
+
+Benjamini, Y., & Yekutieli, D. (2001). The control of the false discovery rate in
+     multiple testing under dependency. The Annals of Statistics , 29 (4), 1165–1188,
+     https://doi.org/10.1214/aos/1013699998
+
+
+Berger, J.O., Pericchi, L.R., Varshavsky, J.A. (1998). Bayes factors and marginal
+     distributions in invariant situations. Sankhyā: The Indian Journal of Statistics
+     Series A, 60 (3), 307–321,
+
+
+Box, G.E.P., & Tiao, G.C. (1973). Bayesian inference in statistical analysis. Reading,
+     MA: Addison-Wesley.
+
+Bühlmann, P., Peters, J., Ernest, J. (2014). CAM: Causal additive models, high-
+     dimensional order search and penalized regression. The Annals of Statistics ,
+     42 (6), 2526–2556, https://doi.org/10.1214/14-AOS1260
+
+
+Candès, E., Fan, Y., Janson, L., Lv, J. (2018). Panning for gold: Model-X knockoffs for
+     high-dimensional controlled variable selection. Journal of the Royal Statistical
+     Society Series B: Statistical Methodology , 80 (3), 551–577, https://doi.org/
+     10.1111/rssb.12265
+
+
+Chickering, D.M. (2002). Optimal structure identification with greedy search. Journal
+     of Machine Learning Research , 3 , 507–554,
+
+
+Colombo, D., Maathuis, M.H., Kalisch, M., Richardson, T.S. (2012). Learning high-
+     dimensional directed acyclic graphs with latent and selection variables. The
+     Annals of Statistics , 40 (1), 294–321, https://doi.org/10.1214/11-AOS940
+
+
+Comon, P. (1994). Independent component analysis, a new concept? Signal Processing ,
+    36 (3), 287–314, https://doi.org/10.1016/0165-1684(94)90029-9
+
+
+
+
+                                          39
+Csillag, D., Struchiner, C.J., Goedert, G.T.       (2025).    Prediction-powered e-
+      values. Proceedings of the 42nd international conference on machine learning.
+      (arXiv:2502.04294)
+
+Darmois, G. (1953). Analyse générale des liaisons stochastiques. Revue de l’Institut
+    International de Statistique , 21 (1/2), 2–8, https://doi.org/10.2307/1401511
+
+
+Ding, Z., & Zhang, X.-P. (2025). GaussDetect-LiNGAM: Causal direction identifica-
+     tion without Gaussianity test. (Preprint, arXiv:2512.03428)
+
+Grünwald, P., de Heide, R., Koolen, W.M. (2024). Safe testing. Journal of the
+     Royal Statistical Society Series B: Statistical Methodology , 86 (5), 1091–1128,
+     https://doi.org/10.1093/jrsssb/qkae011
+
+
+Hartog, W., & Lei, L. (2026). Family-wise error rate control with e-values. (Preprint,
+     arXiv:2501.09015)
+
+He, Z., & Sutherland, D.J. (2026). Sequential kernel-based conditional independence
+     testing via adaptive betting. (Preprint, arXiv:2606.18993)
+
+Hendriksen, A., de Heide, R., Grünwald, P. (2021). Optional stopping with Bayes
+    factors: A categorization and extension of folklore results, with an application
+    to invariant situations. Bayesian Analysis , 16 (3), 961–989, https://doi.org/
+    10.1214/20-BA1234
+
+
+Howard, S.R., Ramdas, A., McAuliffe, J., Sekhon, J. (2021). Time-uniform, nonpara-
+    metric, nonasymptotic confidence sequences. The Annals of Statistics , 49 (2),
+    1055–1080, https://doi.org/10.1214/20-AOS1991
+
+
+Hoyer, P.O., Janzing, D., Mooij, J.M., Peters, J., Schölkopf, B. (2009). Nonlinear
+     causal discovery with additive noise models. Advances in neural information
+     processing systems 21 (pp. 689–696).
+
+Hyvärinen, A. (1998). New approximations of differential entropy for independent
+     component analysis and projection pursuit. Advances in Neural Information
+     Processing Systems , 10 , 273–279,
+
+
+Hyvärinen, A., & Smith, S.M. (2013). Pairwise likelihood ratios for estimation of non-
+     Gaussian structural equation models. Journal of Machine Learning Research ,
+     14 , 111–152,
+
+
+
+
+                                          40
+Jeffreys, H. (1946). An invariant form for the prior probability in estimation problems.
+      Proceedings of the Royal Society of London A, 186 (1007), 453–461, https://
+      doi.org/10.1098/rspa.1946.0056
+
+
+Johari, R., Koomen, P., Pekelis, L., Walsh, D. (2022). Always valid inference:
+     Continuous monitoring of A/B tests. Operations Research , 70 (3), 1806–1821,
+     https://doi.org/10.1287/opre.2021.2135
+
+
+Kalisch, M., & Bühlmann, P. (2007). Estimating high-dimensional directed acyclic
+      graphs with the PC-algorithm. Journal of Machine Learning Research , 8 , 613–
+      636,
+
+
+Komatsu, Y., Shimizu, S., Shimodaira, H. (2010). Assessing statistical reliability of
+    LiNGAM via multiscale bootstrap. Artificial neural networks – icann 2010 (Vol.
+    6354, pp. 309–314). Berlin: Springer.
+
+Lindon, M., Ham, D.W., Tingley, M., Bojinov, I. (2026). Anytime-valid inference in
+     linear models with applications to regression-adjusted causal inference. Jour-
+     nal of the American Statistical Association , 1–12, https://doi.org/10.1080/
+     01621459.2026.2692052
+
+
+Maathuis, M.H., Kalisch, M., Bühlmann, P. (2009). Estimating high-dimensional
+    intervention effects from observational data. The Annals of Statistics , 37 (6A),
+    3133–3164, https://doi.org/10.1214/09-AOS685
+
+
+Meek, C. (1995a). Causal inference and causal explanation with background knowl-
+     edge. Proceedings of the 11th conference on uncertainty in artificial intelligence
+     (pp. 403–410).
+
+Meek, C. (1995b). Strong completeness and faithfulness in Bayesian networks. Pro-
+     ceedings of the 11th conference on uncertainty in artificial intelligence (pp.
+     411–418).
+
+Pearl, J. (2009). Causal inference in statistics: An overview. Statistics Surveys , 3 ,
+      96–146, https://doi.org/10.1214/09-SS057
+
+
+Peters, J., & Bühlmann, P. (2014). Identifiability of Gaussian structural equation
+     models with equal error variances. Biometrika , 101 (1), 219–228, https://
+     doi.org/10.1093/biomet/ast043
+
+
+
+
+                                          41
+Peters, J., Bühlmann, P., Meinshausen, N. (2016). Causal inference by using invariant
+     prediction: Identification and confidence intervals. Journal of the Royal Statisti-
+     cal Society Series B: Statistical Methodology , 78 (5), 947–1012, https://doi.org/
+     10.1111/rssb.12167
+
+
+Peters, J., Janzing, D., Schölkopf, B. (2017). Elements of causal inference: Foundations
+     and learning algorithms. Cambridge, MA: MIT Press.
+
+Prakash, S., Xia, F., Erosheva, E. (2024). A diagnostic tool for functional causal
+     discovery. (Preprint, arXiv:2406.07787)
+
+Ramdas, A., Grünwald, P., Vovk, V., Shafer, G. (2023). Game-theoretic statistics
+    and safe anytime-valid inference. Statistical Science , 38 (4), 576–601, https://
+    doi.org/10.1214/23-STS894
+
+
+Ramsey, J., Spirtes, P., Zhang, J. (2006). Adjacency-faithfulness and conservative
+    causal inference. Proceedings of the 22nd conference on uncertainty in artificial
+    intelligence (pp. 401–408).
+
+Richardson, T., & Spirtes, P. (2002). Ancestral graph Markov models. The Annals of
+     Statistics , 30 (4), 962–1030, https://doi.org/10.1214/aos/1031689015
+
+
+Robins, J.M., Scheines, R., Spirtes, P., Wasserman, L. (2003). Uniform consistency in
+     causal inference. Biometrika , 90 (3), 491–515, https://doi.org/10.1093/biomet/
+     90.3.491
+
+
+Ruiz, G., Madrid Padilla, O.H., Zhou, Q. (2022). Sequentially learning the topological
+      ordering of causal directed acyclic graphs with likelihood ratio scores. (Preprint,
+      arXiv:2202.01748)
+
+Sachs, K., Perez, O., Pe’er, D., Lauffenburger, D.A., Nolan, G.P. (2005). Causal
+     protein-signaling networks derived from multiparameter single-cell data. Sci-
+     ence , 308 (5721), 523–529, https://doi.org/10.1126/science.1105809
+
+
+Scutari, M. (2010). Learning Bayesian networks with the bnlearn R package. Journal
+     of Statistical Software , 35 (3), 1–22, https://doi.org/10.18637/jss.v035.i03
+
+
+Shafer, G., & Vovk, V. (2019). Game-theoretic foundations for probability and finance.
+     Hoboken, NJ: Wiley.
+
+
+
+
+                                           42
+Shah, R.D., & Peters, J. (2020). The hardness of conditional independence testing and
+     the generalised covariance measure. The Annals of Statistics , 48 (3), 1514–1538,
+     https://doi.org/10.1214/19-AOS1857
+
+
+Shaska, J., & Mitra, U. (2025). Causal link discovery with unequal edge error tolerance.
+     (Preprint, arXiv:2507.21570)
+
+Shimizu, S., Hoyer, P.O., Hyvärinen, A., Kerminen, A. (2006). A linear non-Gaussian
+     acyclic model for causal discovery. Journal of Machine Learning Research , 7 ,
+     2003–2030,
+
+
+Shimizu, S., Inazumi, T., Sogawa, Y., Hyvärinen, A., Kawahara, Y., Washio, T., . . .
+     Bollen, K. (2011). DirectLiNGAM: A direct method for learning a linear non-
+     Gaussian structural equation model. Journal of Machine Learning Research ,
+     12 , 1225–1248,
+
+
+Shimizu, S., & Kano, Y. (2008). Use of non-normality in structural equation model-
+     ing: Application to direction of causation. Journal of Statistical Planning and
+     Inference , 138 (11), 3483–3491, https://doi.org/10.1016/j.jspi.2006.01.017
+
+
+Solus, L., Wang, Y., Uhler, C. (2021). Consistency guarantees for greedy permutation-
+      based causal inference algorithms. Biometrika , 108 (4), 795–814, https://doi
+      .org/10.1093/biomet/asaa104
+
+
+Spirtes, P. (2001). An anytime algorithm for causal inference. Proceedings of the 8th
+      international workshop on artificial intelligence and statistics (pp. 213–221).
+
+Spirtes, P., Glymour, C., Scheines, R. (2000). Causation, prediction, and search (2nd
+      ed.). Cambridge, MA: MIT Press.
+
+Spirtes, P., Meek, C., Richardson, T. (1995). Causal inference in the presence of latent
+      variables and selection bias. Proceedings of the 11th conference on uncertainty
+      in artificial intelligence (pp. 499–506).
+
+Strieder, D., & Drton, M. (2023). Confidence in causal inference under structure
+      uncertainty in linear causal models with equal variances. Journal of Causal
+      Inference , 11 (1), 20230030, https://doi.org/10.1515/jci-2023-0030
+
+
+Strobl, E.V., Spirtes, P.L., Visweswaran, S. (2019). Estimating and controlling the
+     false discovery rate of the PC algorithm using edge-specific p-values. ACM
+     Transactions on Intelligent Systems and Technology , 10 (5), 1–37, https://
+
+
+                                          43
+      doi.org/10.1145/3351342
+
+
+Subbotin, M.T. (1923). On the law of frequency of error. Matematicheskii Sbornik ,
+    31 (2), 296–301,
+
+
+Tse, T., & Davison, A.C. (2022). A note on universal inference. Stat , 11 (1), e501,
+     https://doi.org/10.1002/sta4.501
+
+
+Turner, R.J., & Grünwald, P.D. (2023). Safe sequential testing and effect estimation
+     in stratified count data. Proceedings of the 26th international conference on
+     artificial intelligence and statistics (Vol. 206, pp. 4880–4893).
+
+Uehara, E. (2026). Iterative causal discovery: Per-edge impossibility certificates, tier-
+     aware oracle queries, and the 1+k lower bound. (Preprint, arXiv:2605.27477)
+
+Uhler, C., Raskutti, G., Bühlmann, P., Yu, B. (2013). Geometry of the faithful-
+     ness assumption in causal inference. The Annals of Statistics , 41 (2), 436–463,
+     https://doi.org/10.1214/12-AOS1080
+
+
+Ville, J. (1939). Étude critique de la notion de collectif. Paris: Gauthier-Villars.
+
+Vovk, V., & Wang, R. (2021). E-values: Calibration, combination and applica-
+     tions. The Annals of Statistics , 49 (3), 1736–1754, https://doi.org/10.1214/
+     20-AOS2020
+
+
+Vovk, V., & Wang, R. (2024). Merging sequential e-values via martingales. Electronic
+     Journal of Statistics , 18 (1), 1185–1205, https://doi.org/10.1214/24-EJS2228
+
+
+Wang, R., & Ramdas, A. (2022). False discovery rate control with e-values. Journal of
+    the Royal Statistical Society Series B: Statistical Methodology , 84 (3), 822–852,
+    https://doi.org/10.1111/rssb.12489
+
+
+Wasserman, L., Ramdas, A., Balakrishnan, S. (2020). Universal inference. Proceedings
+     of the National Academy of Sciences , 117 (29), 16880–16890, https://doi.org/
+     10.1073/pnas.1922664117
+
+
+Waudby-Smith, I., & Ramdas, A. (2024). Estimating means of bounded random
+    variables by betting. Journal of the Royal Statistical Society Series B: Statistical
+    Methodology , 86 (1), 1–27, https://doi.org/10.1093/jrsssb/qkad009
+
+
+                                           44
+Zellner, A. (1986). On assessing prior distributions and Bayesian regression analysis
+      with g -prior distributions. P.K. Goel & A. Zellner (Eds.), Bayesian inference
+      and decision techniques (pp. 233–243). Amsterdam: North-Holland.
+
+Zhang, J. (2008). On the completeness of orientation rules for causal discovery in
+     the presence of latent confounders and selection bias. Artificial Intelligence ,
+     172 (16-17), 1873–1896, https://doi.org/10.1016/j.artint.2008.08.001
+
+
+Zhang, J., & Spirtes, P. (2008). Detection of unfaithfulness and robust causal inference.
+     Minds and Machines , 18 (2), 239–271, https://doi.org/10.1007/s11023-008-9096
+     -4
+
+
+Zhang, K., & Hyvärinen, A. (2009). On the identifiability of the post-nonlinear causal
+     model. Proceedings of the 25th conference on uncertainty in artificial intelligence
+     (pp. 647–655).
+
+
+
+
+                                           45
+
