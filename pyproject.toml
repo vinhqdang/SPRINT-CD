@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sprint-cd"
+version = "0.1.0"
+description = "Anytime-valid constraint-based causal discovery with e-processes"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Quang-Vinh Dang", email = "vinh.dq4@buv.edu.vn" }]
+keywords = ["causal discovery", "anytime-valid inference", "e-values", "sequential testing"]
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+experiments = ["matplotlib>=3.7", "pandas>=2.0"]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["sprint_cd*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
