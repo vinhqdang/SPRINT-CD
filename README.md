@@ -54,8 +54,11 @@ Markov condition** — `pa(i)` always separates a non-adjacent pair.
 Faithfulness buys only power. Multiplicity runs over `C(d,2)` pairs, not over
 (pair, conditioning set) triples.
 
-**Direction.** Nothing in the constraint-based literature controls orientation
-error; orientation is deterministic post-processing. Under a linear
+**Direction.** Constraint-based orientation error *can* be controlled — PC-p
+tests colliders and Meek-rule orientations under FDR — but only inside the
+Markov equivalence class, so an edge in no v-structure stays unorientable.
+Functional methods (LiNGAM and descendants) escape that class but decide
+directions by comparing scores, with no error control. Under a linear
 non-Gaussian model the two orientations induce different joint densities and
 exactly one is correct, so "the direction is `j -> i`" is a genuine null.
 A sequential universal-inference e-process against it certifies `i -> j`:
@@ -156,16 +159,33 @@ which `min_S E^(S)` is the e-value analogue), adjacency as a test target (DAT),
 asymmetric edge-error control (ε-CUT), residual independence for direction
 (DirectLiNGAM), universal inference, safe testing.
 
-What appears to be new is: **(1)** a certified, anytime-valid *orientation* —
-no constraint-based method controls orientation error and no functional method
-gives a time-uniform direction certificate; **(2)** the certificate-only rule
-and the growing, abstaining algorithm it forces; **(3)** turning the
-edge-level aggregate into an e-process, which makes PC-p's fixed-sample FDR
-statement time-uniform and reduces its validity requirement to the Markov
-condition alone.
+Five of the closest papers have now been read in full, and one of my earlier
+claims did not survive: **PC-p already controls orientation error**, via
+FDR-controlled hypothesis tests for colliders and Meek-rule orientations. What
+survives, stated narrowly:
 
-Citations were identified by web search and **have not been verified against
-publisher records**.
+1. **Error-controlled orientation *beyond* the Markov equivalence class.**
+   Constraint-based orientation tests have error control but are confined to
+   the equivalence class; functional methods (LiNGAM, DirectLiNGAM,
+   pairwise-LiNGAM, the sequential-ordering score of Ruiz et al.) escape it but
+   have no error control on the direction decision. The direction certificate
+   has both — 96% of edges oriented against a 33% CPDAG ceiling, with a
+   time-uniform bound on wrong arrowheads.
+2. **Time-uniformity.** Every comparable guarantee found is fixed-sample
+   (PC-p's FDR), asymptotic (Prakash et al.), population-level (Ruiz et al.),
+   or provenance-only (Uehara). None survives optional stopping.
+3. **Dropping PC-p's zero-Type-II-error assumption.** PC-p's max-p bound is
+   correct only if *all* possible CI tests are run; otherwise it assumes zero
+   Type II error. Minimising over the complete fixed family runs them all, so
+   the assumption is not needed, and validity reduces to the Markov condition.
+4. **Never asserting absence.** PC, FCI, PC-p and Uehara's Stage-1 skeleton all
+   assert non-adjacency. CERT-CD does not.
+
+Abstention itself is **not** new — see `docs/CERTCD.md` for the full accounting.
+
+Bibliographic details for the five papers read in full are verified; the
+remaining citations were identified by web search and **have not been checked
+against publisher records**.
 
 ---
 

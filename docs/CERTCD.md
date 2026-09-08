@@ -73,10 +73,27 @@ than SPRINT-CD's triple-indexed budget.
 
 ## Certificate 2 — direction
 
-This is the part with no counterpart in the literature. PC-p and its
-successors control *edge* errors; orientation is deterministic post-processing
-carried out with no error control at all. Yet the direction is usually the
-causal claim of interest.
+The literature splits cleanly here, and the gap is between the halves rather
+than in either one.
+
+*Constraint-based orientation tests have error control but cannot leave the
+equivalence class.* PC-p formulates edge-specific hypothesis tests for
+unshielded colliders and for Meek-rule orientations and controls their FDR
+(Benjamini–Yekutieli). But an edge lying in no v-structure is unorientable in
+principle by any such test: a chain is not orientable from conditional
+independence alone.
+
+*Functional methods leave the equivalence class but have no error control.*
+LiNGAM, DirectLiNGAM and pairwise-LiNGAM pick a direction by comparing an
+independence measure or a likelihood-ratio score; Ruiz, Madrid Padilla and Zhou
+(arXiv:2202.01748) prove population-level identifiability of the topological
+ordering from likelihood-ratio scores on residuals, with no finite-sample error
+statement; Prakash, Xia and Erosheva (arXiv:2406.07787) add an explicit
+*inconclusive* outcome to a bivariate direction test, with asymptotic
+guarantees.
+
+The certificate below occupies the gap: **error-controlled orientation beyond
+the Markov equivalence class**, and time-uniform rather than fixed-sample.
 
 Under a linear non-Gaussian acyclic model the two orientations of a pair induce
 different joint densities and exactly one is correct (Shimizu et al., 2006; via
@@ -155,56 +172,67 @@ CERT-CD cannot tell you an edge is absent, and does not pretend to.
 
 ---
 
-## What is new here, and what is not
+## Related work, and what survives as new
 
-Being precise about this matters, because most of the primitives are standard.
+Five of the closest papers were read in full. **One earlier claim did not
+survive:** I had written that nothing in the constraint-based literature
+certifies an orientation. PC-p does.
 
-**Not new.**
+| paper | what it does | guarantee | beyond MEC? |
+|---|---|---|---|
+| Strobl, Spirtes & Visweswaran, *Estimating and Controlling the False Discovery Rate of the PC Algorithm Using Edge-Specific P-Values* (arXiv:1607.03975v2) | edge p-value = **max p over CI tests**; hypothesis tests for skeleton, unshielded colliders **and Meek-rule orientations** | fixed-sample FDR (Benjamini–Yekutieli); needs a **zero-Type-II-error assumption** unless *all* possible CI tests are run | no |
+| Uehara, *Iterative Causal Discovery: Per-Edge Impossibility Certificates…* (arXiv:2605.27477v1) | per-edge `resolved_*` / `impossible_*` codes; tiers abstain when a precondition test rejects; expert-query protocol | **provenance**, not error: records *which theorem* licensed a direction. FDR on the skeleton only; Theorem 1 bounds expert interactions under an ideal oracle | via functional tiers |
+| Prakash, Xia & Erosheva, *A Diagnostic Tool for Functional Causal Discovery* (arXiv:2406.07787v2) | test-based bivariate direction with four outcomes incl. **inconclusive**; CDDR diagnostic vs sample size | asymptotic consistency / normality | yes (LiNGAM) |
+| Ruiz, Madrid Padilla & Zhou, *Sequentially learning the topological ordering…* (arXiv:2202.01748v2) | greedy ordering by **likelihood-ratio scores on residuals** — "sequential" in the sorting sense | **population-level identifiability only**; needs all noises from one scale-location family | yes |
+| Ding & Zhang, *GaussDetect-LiNGAM* (preprint, 4 Dec 2025) | proves forward-noise Gaussianity ⟺ reverse-regression residual independence; kernel tests replace Gaussianity tests | none on the direction decision | yes |
 
-* The minimum of e-values is an e-value for a union null — standard
-  (Vovk and Wang, 2021; Ramdas and Wang, 2025).
+The last of these is **support rather than competition**: it is the theorem
+explaining why the direction certificate must abstain under Gaussian noise.
+
+### Not new
+
+* Minimum of e-values as an e-value for a union null (Vovk & Wang).
 * Aggregating CI tests over conditioning sets into an edge-level statistic —
-  **PC-p** (Strobl, Spirtes and Visweswaran, 2019) upper-bounds an edge's
-  p-value by the **maximum** p-value over conditioning sets, of which
-  `min_S E^(S)` is the exact e-value analogue. PC-p uses it for fixed-sample
-  FDR control.
-* Adjacency as the object being tested — **DAT** (Amin and Wilson, 2024)
-  replaces the exponential set of tests with a differentiable relaxation
-  solved by neural networks.
-* Asymmetric edge-error control — **ε-CUT** (Shaska and Mitra, 2025) minimises
-  one edge-error type subject to a tolerance on the other, with finite-sample
-  false-positive guarantees.
-* Residual-independence as a direction criterion — DirectLiNGAM (Shimizu
-  et al., 2011).
-* Universal inference; safe testing; sequential CI tests (He and Sutherland,
-  ICML 2026, is the current SOTA single-hypothesis sequential CI test and is a
-  drop-in replacement for `E^(S)` in nonparametric settings).
+  PC-p's max-p is the exact p-value analogue of `min_S E^(S)`.
+* Adjacency as the object being tested (DAT, Amin & Wilson).
+* Asymmetric edge-error control (ε-CUT, Shaska & Mitra).
+* Residual independence as a direction criterion (DirectLiNGAM).
+* **Abstention and three-valued output** — Uehara's `impossible_*` codes,
+  Prakash et al.'s *inconclusive* outcome, and FCI's undirected edges all
+  decline to commit. This was overclaimed in an earlier draft.
+* Universal inference; safe testing; sequential CI tests.
 
-**New, as far as a targeted search of the 2024–2026 literature found.**
+### New
 
-1. **A certified orientation.** No constraint-based method controls orientation
-   error at all, and no functional-causal-discovery method gives a
-   time-uniform certificate for a direction. The direction e-process does, and
-   it abstains under Gaussianity rather than guessing.
-2. **The certificate-only design rule and the algorithm it forces** — a
-   monotone-growing graph in which every edge and every arrowhead is backed by
-   an e-process, undecided pairs are explicit, and the whole output is
-   anytime-valid under one budget.
-3. **Making the edge-level aggregate an e-process rather than a p-value**,
-   which converts PC-p's fixed-sample FDR statement into a time-uniform
-   guarantee, and the accompanying observation that the resulting validity
-   argument needs only the Markov condition, with multiplicity over pairs
-   rather than (pair, conditioning set) triples.
+1. **Error-controlled orientation beyond the Markov equivalence class.** The
+   table's last column is the point: every row with error control is confined
+   to the MEC, and every row that escapes the MEC has no error control on the
+   direction. The direction certificate has both — 96% of edges oriented
+   against a 33% CPDAG ceiling, with a time-uniform bound on wrong arrowheads.
+2. **Time-uniformity.** Every comparable guarantee above is fixed-sample,
+   asymptotic, population-level, or provenance-only. None survives optional
+   stopping or continuous monitoring.
+3. **Dropping PC-p's zero-Type-II-error assumption.** PC-p notes its max-p
+   bound is correct only if all possible CI tests are performed; otherwise it
+   assumes zero Type II error so that `N(A) ⊆ N̂(A)`. Minimising over the
+   complete fixed family `S_k` performs them all, so the assumption is not
+   needed and validity reduces to the Markov condition. Multiplicity also runs
+   over pairs rather than (pair, conditioning set) triples, and the criterion
+   is time-uniform FWER rather than FDR.
+4. **Never asserting absence.** PC, FCI, PC-p, and Uehara's Stage-1 skeleton
+   all assert non-adjacency. CERT-CD never does; an absent edge is undecided.
 
-If a referee locates an existing anytime-valid orientation certificate, claim 1
-collapses and the contribution reduces to 2 and 3. The related-work section
-should be written to survive that.
+### Residual risk
 
-**Citations above were identified by web search and have not been verified
-against publisher records.** Author lists, venues, years and numbering need
-checking before submission.
+Claim 1 is the load-bearing one. It would collapse if a method exists that
+orients outside the equivalence class *and* bounds the probability of a wrong
+arrowhead. Nothing among the five does. The papers still unread that could
+bear on it are Amin & Wilson (DAT) and Shaska & Mitra (ε-CUT), both of which
+concern *edges* rather than directions, and Csillag et al. (Prediction-Powered
+E-Values), which is fixed-sample.
 
----
+Bibliographic details in the table are verified against the PDFs. Citations
+elsewhere in this document came from web search and are **not** yet verified.
 
 ## Empirical summary
 

@@ -62,10 +62,18 @@ resulting algorithm grows rather than prunes.
 
 Direction certificate
 ---------------------
-Nothing in the constraint-based literature certifies an *orientation*: PC-p and
-its successors control edge errors, and orientation is deterministic
-post-processing carried out with no error control at all.  Yet the direction is
-usually the causal claim of interest.
+Orientation error *is* controllable within the constraint-based framework:
+PC-p (Strobl, Spirtes and Visweswaran, arXiv:1607.03975) formulates
+edge-specific hypothesis tests for unshielded colliders and for Meek-rule
+orientations, and controls their FDR with Benjamini-Yekutieli.  What no
+constraint-based orientation test can do is orient an edge lying in no
+v-structure: those tests are confined to the Markov equivalence class, and a
+chain is unorientable in principle.  Conversely the functional-model methods
+that do escape the equivalence class -- LiNGAM and its descendants -- decide
+directions by comparing scores, with no error control on the decision.
+
+The certificate below sits in the gap: error-controlled orientation *beyond*
+the Markov equivalence class, and time-uniform rather than fixed-sample.
 
 Under a linear non-Gaussian acyclic model the two orientations of a pair induce
 different joint densities, and exactly one of them is correct (Shimizu et al.,
