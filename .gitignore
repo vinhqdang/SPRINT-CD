@@ -221,3 +221,11 @@ __pycache__/
 
 # Smoke-test output; the reference results live in results/
 results/quick/
+
+# LaTeX build artefacts
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/build*.log
