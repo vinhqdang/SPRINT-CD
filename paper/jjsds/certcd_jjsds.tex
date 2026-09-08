@@ -72,10 +72,13 @@ monitored continuously and the run stopped by any data-dependent rule. The
 resulting algorithm, CERT-CD, grows from the empty graph, reports undecided
 pairs as undecided, and bounds by $\alpha$ the probability that any certified
 edge or arrowhead is \emph{ever} wrong, uniformly over time. On simulated
-instances that violate $\delta$-strong faithfulness, CERT-CD stays within its
-budget while methods that delete on non-rejection lose a true edge in most
-runs; on premise-satisfying instances it orients $96\%$ of certified edges,
-against a Markov-equivalence-class ceiling of $33\%$. On the observational
+instances that violate $\delta$-strong faithfulness, the adjacency
+certificates stay within budget while methods that delete on non-rejection
+lose a true edge in most runs; the orientation certificates, whose null
+additionally requires a correctly specified functional model, exceed theirs on
+those same instances, and we identify the mechanism. On premise-satisfying
+instances $96\%$ of certified edges are oriented, against a
+Markov-equivalence-class ceiling of $33\%$. On the observational
 protein-signalling data of Sachs and colleagues the two halves of the output
 diverge instructively: every certified edge lies in the published consensus
 skeleton, while every certified arrowhead is reversed relative to it---a
@@ -214,9 +217,21 @@ than eliding it.
   than pooling them; measures the assumptions of our own theorem instead of
   asserting them; reports the regimes in which the certificates are void
   (Section~\ref{sec:exp-violations}); and applies the method to the
-  observational protein-signalling data of \citet{sachs2005causal}, where the
-  adjacency and orientation halves of the output behave very differently.
+  observational protein-signalling data of \citet{sachs2005causal}.
 \end{enumerate}
+
+The study is not uniformly favourable to the method, and the two places where
+it is not are the more informative ones. On instances violating
+$\delta$-strong faithfulness the orientation certificates exceed their
+family-wise budget (Section~\ref{sec:exp-main}), because the conditioning
+block they freeze is built from already-certified neighbours and is therefore
+incomplete exactly when certification is slow. On the protein-signalling data
+every certified arrowhead is reversed relative to the published consensus
+(Section~\ref{sec:exp-sachs}), and DirectLiNGAM reverses the same arcs, which
+locates the failure in the shared functional model rather than in the
+inference. Both are instances of one gap---the direction null assumes a model,
+and a certificate is only as good as its null---and we have tried to give them
+the prominence a guarantee-bearing method owes them.
 
 We are explicit throughout about which components are standard.
 Section~\ref{sec:related} gives that accounting in detail, including three
@@ -1791,14 +1806,27 @@ should be with what they actually claim.
 We list these in what we take to be decreasing order of severity.
 
 \begin{enumerate}
-\item \emph{Misspecification of the direction certificate is not controlled.}
-  Proposition~\ref{prop:direction} requires the fitted supremum to dominate
-  the likelihood at the true null parameter, which is guaranteed only when the
-  noise lies in the fitted family. Section~\ref{sec:exp-sachs} shows this
-  failing on real data, systematically and without any signal in the output.
-  Bounding the gap---or replacing the generalised-Gaussian family with one
-  whose supremum can be bounded under a nonparametric neighbourhood---is the
-  most important open problem we leave.
+\item \emph{The direction certificate's family-wise bound is not delivered
+  when its own premise fails, and the premise is correlated with
+  faithfulness.} Section~\ref{sec:exp-main} measures a wrong-arrow rate of
+  $0.080$ $([0.052, 0.120])$ against a budget of $0.05$ on instances violating
+  $\delta$-strong faithfulness. Theorem~\ref{thm:main} is not contradicted---%
+  its direction clause assumes the linear non-Gaussian model holds for the
+  pair given its frozen block, and that assumption is what fails---but the
+  practical reading of the theorem has to be adjusted: only the adjacency
+  clause is robust to unfaithfulness. Freezing the conditioning block to all
+  other variables rather than to the certified neighbours would decouple the
+  two layers, at a cost in power we have not measured.
+
+\item \emph{Misspecification of the direction certificate is not controlled
+  more generally.} Proposition~\ref{prop:direction} requires the fitted
+  supremum to dominate the likelihood at the true null parameter, which is
+  guaranteed only when the noise lies in the fitted family.
+  Section~\ref{sec:exp-sachs} shows this failing on real data,
+  systematically and without any signal in the output. Bounding the gap---or
+  replacing the generalised-Gaussian family with one whose supremum can be
+  bounded under a nonparametric neighbourhood---is the most important open
+  problem we leave.
 
 \item \emph{Assumption~\ref{ass:sep} can fail, and fails silently.} It is more
   often satisfied than $\delta$-strong faithfulness

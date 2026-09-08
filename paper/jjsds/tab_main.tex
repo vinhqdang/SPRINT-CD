@@ -1,13 +1,30 @@
 \begin{table}[t]
 \centering
-\caption{PLACEHOLDER --- awaiting the high-replication rerun.}\label{tab:main}
+\caption{Probability of ever making an unsound assertion at any point in a
+monitored run, at $\alpha = 0.1$, $d = 5$, Laplace noise, $n \le 3000$, with
+Wilson $95\%$ intervals. Parenthesised counts are numbers of \emph{instances}
+in each stratum, not sample sizes. The budget is split evenly, so each of the
+two CERT-CD columns is bounded by $\alpha_A = \alpha_D = 0.05$, not by
+$0.1$. All four quantities are trajectory-worst; see
+Section~\ref{sec:exp-skeleton} for the comparators' fixed-sample behaviour.
+``SPRINT-CD'' and ``PC'' both decide absence by failing to reject, so their
+error mode is a lost edge; CERT-CD never deletes, so it has no such
+column.}\label{tab:main}
+\footnotesize
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 & \multicolumn{2}{c}{CERT-CD} & SPRINT-CD & PC \\
-\cmidrule(lr){2-3}
+\cmidrule(lr){2-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}
 stratum & false edge & wrong arrow & lost edge & lost edge \\
 \midrule
-placeholder & 0.000 & 0.000 & 0.000 & 0.000 \\
+$\delta$-strong faithfulness       & $0.000$          & $0.004$
+                                   & $0.000$          & $0.008$ \\
+holds (500 instances)              & \tiny{[.000,.008]} & \tiny{[.001,.015]}
+                                   & \tiny{[.000,.008]} & \tiny{[.003,.020]} \\[3pt]
+$\delta$-strong faithfulness       & $0.016$          & $\mathbf{0.080}$
+                                   & $0.560$          & $0.812$ \\
+fails (250 instances)              & \tiny{[.006,.040]} & \tiny{[.052,.120]}
+                                   & \tiny{[.498,.620]} & \tiny{[.759,.856]} \\
 \bottomrule
 \end{tabular}
 \end{table}

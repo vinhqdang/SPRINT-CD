@@ -97,14 +97,27 @@ should be with what they actually claim.
 We list these in what we take to be decreasing order of severity.
 
 \begin{enumerate}
-\item \emph{Misspecification of the direction certificate is not controlled.}
-  Proposition~\ref{prop:direction} requires the fitted supremum to dominate
-  the likelihood at the true null parameter, which is guaranteed only when the
-  noise lies in the fitted family. Section~\ref{sec:exp-sachs} shows this
-  failing on real data, systematically and without any signal in the output.
-  Bounding the gap---or replacing the generalised-Gaussian family with one
-  whose supremum can be bounded under a nonparametric neighbourhood---is the
-  most important open problem we leave.
+\item \emph{The direction certificate's family-wise bound is not delivered
+  when its own premise fails, and the premise is correlated with
+  faithfulness.} Section~\ref{sec:exp-main} measures a wrong-arrow rate of
+  $0.080$ $([0.052, 0.120])$ against a budget of $0.05$ on instances violating
+  $\delta$-strong faithfulness. Theorem~\ref{thm:main} is not contradicted---%
+  its direction clause assumes the linear non-Gaussian model holds for the
+  pair given its frozen block, and that assumption is what fails---but the
+  practical reading of the theorem has to be adjusted: only the adjacency
+  clause is robust to unfaithfulness. Freezing the conditioning block to all
+  other variables rather than to the certified neighbours would decouple the
+  two layers, at a cost in power we have not measured.
+
+\item \emph{Misspecification of the direction certificate is not controlled
+  more generally.} Proposition~\ref{prop:direction} requires the fitted
+  supremum to dominate the likelihood at the true null parameter, which is
+  guaranteed only when the noise lies in the fitted family.
+  Section~\ref{sec:exp-sachs} shows this failing on real data,
+  systematically and without any signal in the output. Bounding the gap---or
+  replacing the generalised-Gaussian family with one whose supremum can be
+  bounded under a nonparametric neighbourhood---is the most important open
+  problem we leave.
 
 \item \emph{Assumption~\ref{ass:sep} can fail, and fails silently.} It is more
   often satisfied than $\delta$-strong faithfulness
