@@ -1,0 +1,245 @@
+
+\begin{appendices}
+
+\section{The safe linear e-process}\label{app:safelinear}
+
+We derive~\eqref{eq:safelinear} and prove Proposition~\ref{prop:safelinear}.
+
+\subsection{Setup}
+
+Write $y \in \Real^n$ for the stacked observations of $X_i$, $x \in \Real^n$
+for those of $X_j$, and $W \in \Real^{n \times q}$ for the design matrix of
+the conditioning block $X_S$ together with an intercept, $q = |S| + 1$. The
+model is
+\begin{equation}\label{eq:appmodel}
+y \;=\; W\alpha \;+\; \beta x \;+\; \varepsilon,
+\qquad \varepsilon \sim N(0, \sigma^2 I_n),
+\end{equation}
+with $H_0 : \beta = 0$ and $H_1 : \beta \neq 0$, and nuisance parameters
+$(\alpha, \sigma) \in \Real^q \times (0,\infty)$ common to both.
+
+Let $M = I_n - W(W^\top W)^{-1} W^\top$ be the residual projector onto the
+orthogonal complement of the column space of $W$, and write
+$\tilde y = My$, $\tilde x = Mx$ for the residualised vectors. Set
+\begin{equation*}
+S_{yy} = \tilde x^\top \tilde x, \qquad
+S_{xy} = \tilde x^\top \tilde y, \qquad
+S_{xx} = \tilde y^\top \tilde y,
+\end{equation*}
+following the naming convention of the implementation, in which the first
+subscript refers to the \emph{response} of the regression being examined. The
+squared sample partial correlation is
+$\hat r^2 = S_{xy}^2 / (S_{xx} S_{yy})$, and the least-squares estimate of
+$\beta$ is $\hat\beta = S_{xy}/S_{yy}$.
+
+\subsection{Invariance and the right-Haar prior}
+
+The null model~\eqref{eq:appmodel} with $\beta = 0$ is invariant under the
+group $G$ of transformations
+\begin{equation*}
+g_{c,\lambda} : \quad y \mapsto \lambda y + Wc,
+\qquad c \in \Real^q, \ \lambda > 0,
+\end{equation*}
+acting on the parameters by $\alpha \mapsto \lambda\alpha + c$,
+$\sigma \mapsto \lambda\sigma$, and---under the alternative---$\beta \mapsto
+\lambda\beta$ once $x$ is transformed correspondingly. The right-Haar measure
+for this group is $\pi(\alpha,\sigma)\,d\alpha\,d\sigma \propto
+\sigma^{-1}\,d\alpha\,d\sigma$.
+
+The relevant fact \citep{berger1998bayes,hendriksen2021optional} is that when
+the same right-Haar prior is placed on a nuisance group shared by both
+hypotheses, the resulting Bayes factor equals the Bayes factor based on the
+maximal invariant, whose distribution under the null does not depend on the
+nuisance parameters. Consequently the Bayes factor is a \emph{test
+martingale}: its expectation under any null distribution, conditional on the
+past, is one, whatever the nuisance parameters happen to be. This is the
+property that fails for a generic Bayes factor and that makes optional
+stopping legitimate here.
+
+\subsection{Integrating the marginal likelihoods}
+
+Under $H_0$, integrating~\eqref{eq:appmodel} against $\pi(\alpha,\sigma)
+\propto \sigma^{-1}$ gives
+\begin{equation}\label{eq:m0}
+m_0(y) \;=\; \int_0^\infty \int_{\Real^q}
+  (2\pi\sigma^2)^{-n/2}
+  \exp\!\left\{-\frac{\|y - W\alpha\|^2}{2\sigma^2}\right\}
+  \frac{d\alpha \, d\sigma}{\sigma}
+\;=\; C_{n,q} \, \bigl(S_{xx}\bigr)^{-(n-q)/2},
+\end{equation}
+where $C_{n,q} = \tfrac12 \pi^{-(n-q)/2} \Gamma\!\bigl(\tfrac{n-q}{2}\bigr)
+|W^\top W|^{-1/2}$ collects the terms that do not depend on the data through
+the residuals. The $\alpha$-integral is Gaussian and contributes
+$|W^\top W|^{-1/2}$ together with the replacement of $\|y-W\alpha\|^2$ by
+$\|\tilde y\|^2 = S_{xx}$; the $\sigma$-integral is then a gamma integral.
+
+Under $H_1$ we add $\beta \mid \sigma \sim N(0, \sigma^2 g)$, independent of
+$\alpha$. Completing the square in $\beta$ against the residualised design
+gives a Gaussian integral with precision $\sigma^{-2}(S_{yy} + g^{-1})$ and
+mean $S_{xy}/(S_{yy} + g^{-1})$, so
+\begin{align}
+m_1(y)
+&= C_{n,q} \, \bigl(1 + gS_{yy}\bigr)^{-1/2}
+   \left( S_{xx} - \frac{S_{xy}^2}{S_{yy} + g^{-1}} \right)^{-(n-q)/2}
+   \notag \\[2pt]
+&= C_{n,q} \, (1+G)^{-1/2} \,
+   S_{xx}^{-(n-q)/2} \bigl(1 - \kappa \hat r^2\bigr)^{-(n-q)/2},
+   \label{eq:m1}
+\end{align}
+where $G = gS_{yy}$ and $\kappa = G/(1+G)$, using
+$\dfrac{S_{xy}^2}{S_{xx}(S_{yy}+g^{-1})}
+ = \dfrac{S_{xy}^2}{S_{xx}S_{yy}} \cdot \dfrac{S_{yy}}{S_{yy}+g^{-1}}
+ = \hat r^2 \kappa$.
+
+Dividing~\eqref{eq:m1} by~\eqref{eq:m0}, the constants and the
+$S_{xx}^{-(n-q)/2}$ factors cancel:
+\begin{equation}\label{eq:bf}
+E_n \;=\; \frac{m_1(y)}{m_0(y)}
+\;=\; (1+G)^{-1/2} \bigl(1 - \kappa \hat r_n^2\bigr)^{-(n-q)/2},
+\end{equation}
+which is~\eqref{eq:safelinear} with $p = q = |S|+1$. Proposition~%
+\ref{prop:safelinear} follows from the invariance argument above:
+$(E_n)$ is a ratio of marginal likelihoods under a shared right-Haar prior, so
+it is a test martingale under every null distribution, and by optional
+stopping an e-process.
+
+\subsection{Two implementation notes}
+
+\paragraph{Fixing $g$.} $G = gS_{yy}$ grows with $n$ because $S_{yy}$ does.
+The martingale property requires $g$ to be $\Fcal_0$-measurable; setting it
+from the running data---for instance to hold $G$ constant---breaks it. We
+choose $g$ from a warm-up prefix that is discarded, so it is a constant as far
+as every e-process is concerned.
+
+\paragraph{Streaming.} All of $S_{xx}, S_{xy}, S_{yy}$ are Schur complements
+of the running Gram matrix of the full observation vector. Maintaining that
+matrix costs $O(d^2)$ per observation and serves every $(i,j,S)$ triple, so
+adding hypotheses costs computation at query time but no additional state.
+
+\section{Inverting the e-process into a confidence sequence}\label{app:cs}
+
+Fix $\beta_0$ and consider the null $\beta = \beta_0$. Replacing $y$ by
+$y - \beta_0 x$ in~\eqref{eq:bf} gives the e-process for that null; the
+confidence sequence at level $1-\alpha$ is the set of $\beta_0$ not rejected,
+\begin{equation*}
+\Bigl\{ \beta_0 :
+  (1+G)^{-1/2}\bigl(1 - \kappa \hat r^2(\beta_0)\bigr)^{-(n-q)/2}
+  < 1/\alpha \Bigr\},
+\end{equation*}
+where $\hat r^2(\beta_0)$ is the squared partial correlation computed from
+$y - \beta_0 x$. Taking logarithms, the condition reads
+\begin{equation*}
+-\tfrac12 \log(1+G) - \tfrac{n-q}{2}\log\bigl(1 - \kappa\hat r^2(\beta_0)\bigr)
+  < -\log\alpha ,
+\end{equation*}
+that is $\hat r^2(\beta_0) < \tau$ with
+\begin{equation}\label{eq:tau}
+\tau \;=\; \frac{1}{\kappa}
+  \left[ 1 - \exp\!\left( \frac{2}{n-q}
+    \Bigl( \log\alpha - \tfrac12\log(1+G) \Bigr) \right) \right]
+\;=\; \frac{1}{\kappa}
+  \left[ 1 - \left(\frac{\alpha}{\sqrt{1+G}}\right)^{2/(n-q)} \right].
+\end{equation}
+Writing $S_{xy}(\beta_0) = S_{xy} - \beta_0 S_{yy}$ and
+$S_{xx}(\beta_0) = S_{xx} - 2\beta_0 S_{xy} + \beta_0^2 S_{yy}$, the condition
+$S_{xy}(\beta_0)^2 < \tau\, S_{xx}(\beta_0) S_{yy}$ is a quadratic inequality
+in $\beta_0$ with leading coefficient $(1-\tau)S_{yy}^2 > 0$ whenever
+$\tau < 1$, and solving it gives
+\begin{equation}\label{eq:csapp}
+\hat\beta \;\pm\; \frac{1}{S_{yy}}
+  \sqrt{\frac{\tau\bigl(S_{xx}S_{yy} - S_{xy}^2\bigr)}{1-\tau}},
+\qquad \hat\beta = S_{xy}/S_{yy},
+\end{equation}
+which is~\eqref{eq:cs}. When $\tau \le 0$---which happens at small $n$, since
+$(\alpha/\sqrt{1+G})^{2/(n-q)} \to 1$ from above as $n \downarrow q$---the
+inequality has no solution and the interval is the whole line.
+
+\begin{remark}[A sign that mattered]
+The bracketed term in~\eqref{eq:tau} carries $-\tfrac12\log(1+G)$, not
+$+\tfrac12\log(1+G)$. With the sign reversed, the formula still produces
+intervals of a plausible shape, still shrinks at the right rate, and still
+passes every Type-I error simulation of the underlying \emph{test}, because
+the test is unaffected. It produces intervals roughly half the correct width.
+We caught it only by comparing~\eqref{eq:csapp} against a brute-force
+numerical inversion of~\eqref{eq:bf} over a grid of $\beta_0$, which now runs
+as a unit test. Closed-form inversions of e-processes deserve this check as a
+matter of routine.
+\end{remark}
+
+\section{The frozen conditioning block}\label{app:conditioning}
+
+Proposition~\ref{prop:direction} is stated for a fixed null. In
+Algorithm~\ref{alg:certcd} the conditioning block $Z_{ij}$ is selected at the
+random time $T$ at which the pair's adjacency is certified, so the hypothesis
+being tested is itself chosen using data. We record why the guarantee survives.
+
+Let $T$ be the certification time of pair $(i,j)$; it is a stopping time with
+respect to $(\Fcal_t)$, since certification is triggered by the running
+maximum of $A_t(i,j)$, which is adapted. Let $Z_{ij}$ be $\Fcal_T$-measurable
+(it is: it is a function of the certified statuses at time $T$). The direction
+process is built only from observations $o_{T+1}, o_{T+2}, \dots$.
+
+Condition on $\Fcal_T$. Because the observations are i.i.d.\ and $T$ is a
+stopping time, the post-$T$ observations are, conditionally on $\Fcal_T$,
+i.i.d.\ from $P$; and $Z_{ij}$ is now a fixed set. The proof of
+Proposition~\ref{prop:direction} therefore applies verbatim to the
+conditional law, giving
+$\Exp_P[E_{T+\tau} \mid \Fcal_T] \le 1$ for every stopping time $\tau$ of the
+post-$T$ filtration, on the event $\{T < \infty\}$. Taking expectations,
+$\Exp_P[E_{T+\tau} \mathbf{1}\{T<\infty\}] \le \Prob(T<\infty) \le 1$, and
+Ville's inequality applies to the post-$T$ process. Defining $E_t = 1$ for
+$t \le T$ extends this to a process on the original time index without
+affecting the bound.
+
+Two remarks. First, this is why the implementation must discard all
+observations before $T$: reusing them would break the conditional
+independence, and the constant they contribute is exactly the failure mode of
+Remark~\ref{rem:samesupport}. Second, the argument is what licenses the
+graph-dependent execution order in Theorem~\ref{thm:main}: the algorithm may
+decide \emph{which} direction hypotheses to examine using the data, because
+the union bound runs over the full fixed family $\{(i,j)\}$ regardless, and
+each member of that family has a valid e-process whether or not the algorithm
+chooses to evaluate it.
+
+\section{Additional experimental detail}\label{app:extra}
+
+\begin{table}[h]
+\centering
+\caption{Realised crossing rates of the per-set primitive under six noise
+laws, $2000$ replications each, monitored to $n = 800$ after every tenth
+observation. Every entry is at or below its nominal level; the largest
+realised-to-nominal ratio anywhere in the table is $0.95$.}%
+\label{tab:primitive}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+noise law & $\alpha=0.20$ & $\alpha=0.10$ & $\alpha=0.05$ & $\alpha=0.01$ \\
+\midrule
+Gaussian            & $0.091$ & $0.046$ & $0.023$ & $0.003$ \\
+Laplace             & $0.092$ & $0.047$ & $0.024$ & $0.003$ \\
+uniform             & $0.107$ & $0.052$ & $0.031$ & $0.006$ \\
+Student-$t_5$       & $0.093$ & $0.044$ & $0.020$ & $0.004$ \\
+shifted exponential & $0.101$ & $0.051$ & $0.028$ & $0.010$ \\
+two-component mixture & $0.097$ & $0.049$ & $0.028$ & $0.006$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Hyperparameters.} Unless stated otherwise: warm-up $m = 50$
+observations (discarded), prior scale $g = 0.5$ after standardisation,
+$k = 2$, adjacency share $\alpha_A/\alpha = 0.5$, batch size $250$ in the
+graph experiments and $100$ in the skeleton experiments, and a minimum of $80$
+post-certification observations before a direction process is first evaluated.
+The equivalence-region width for SPRINT-CD is $\delta = 0.15$ on the
+standardised scale, matching the $\delta$ used to define the strata.
+
+\paragraph{Reproduction.} \texttt{python experiments/run\_all.py} reproduces
+every figure and table; individual scripts accept \texttt{--quick} for a
+low-replication smoke test, which writes to \texttt{results/quick/} so that it
+cannot overwrite the full-precision artefacts the paper cites. Seeds are fixed
+in each script.
+
+\end{appendices}
+
+\bibliography{refs}
+
+\end{document}

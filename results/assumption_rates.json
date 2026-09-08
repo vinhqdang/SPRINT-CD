@@ -1,0 +1,17 @@
+[
+  {
+    "setting": "$d=5$, $p_{\\rm edge}=0.35$",
+    "assumption_sep": 0.988,
+    "strong_faithful": 0.7475
+  },
+  {
+    "setting": "$d=6$, $p_{\\rm edge}=0.30$",
+    "assumption_sep": 0.9715,
+    "strong_faithful": 0.667
+  },
+  {
+    "setting": "$d=7$, $p_{\\rm edge}=0.35$",
+    "assumption_sep": 0.8145,
+    "strong_faithful": 0.331
+  }
+]

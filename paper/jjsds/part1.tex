@@ -1,0 +1,376 @@
+\documentclass[pdflatex,sn-apa]{sn-jnl}
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+\newtheorem{proposition}[theorem]{Proposition}%
+\newtheorem{lemma}[theorem]{Lemma}%
+\newtheorem{corollary}[theorem]{Corollary}%
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+\newtheorem{assumption}{Assumption}%
+
+\newcommand{\indep}{\perp\!\!\!\perp}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Gstar}{\mathcal{G}^{\star}}
+\newcommand{\pa}{\mathrm{pa}}
+\newcommand{\de}{\mathrm{de}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Exp}{\mathbb{E}}
+\newcommand{\Real}{\mathbb{R}}
+
+\raggedbottom
+
+\begin{document}
+
+\title[Certificate-Only Causal Discovery]{Certificate-Only Causal Discovery:
+Anytime-Valid Adjacency and Orientation}
+
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen},
+\country{Vietnam}}}
+
+\abstract{Constraint-based causal discovery removes an edge when a
+conditional-independence test \emph{fails to reject}, converting absence of
+evidence into evidence of absence. This is why finite-sample correctness for
+such methods requires faithfulness, and it is why their output cannot
+distinguish a feature the data support from one about which nothing was
+learned. We develop a discovery algorithm built on a single rule: assert a
+feature of the graph only by \emph{rejecting} a null that is true whenever
+that feature is absent, and never assert anything by failing to reject. Two
+certificates implement the rule. For adjacency, the statement ``some
+conditioning set separates the pair'' is a union null, and the minimum of the
+per-set e-processes is an e-process for it; crossing a threshold certifies an
+edge under the Markov condition alone, with no faithfulness assumption. For
+orientation, the two directions of a pair induce different joint densities
+under a linear non-Gaussian model, so a sequential universal-inference
+e-process against the reversed factorisation certifies an arrowhead, and
+abstains automatically under Gaussian noise, where the direction is not
+identified. Both certificates are anytime-valid, so the estimate may be
+monitored continuously and the run stopped by any data-dependent rule. The
+resulting algorithm, CERT-CD, grows from the empty graph, reports undecided
+pairs as undecided, and bounds by $\alpha$ the probability that any certified
+edge or arrowhead is \emph{ever} wrong, uniformly over time. On simulated
+instances that violate $\delta$-strong faithfulness, CERT-CD stays within its
+budget while methods that delete on non-rejection lose a true edge in most
+runs; on premise-satisfying instances it orients $96\%$ of certified edges,
+against a Markov-equivalence-class ceiling of $33\%$. On the observational
+protein-signalling data of Sachs and colleagues the two halves of the output
+diverge instructively: every certified edge lies in the published consensus
+skeleton, while every certified arrowhead is reversed relative to it---a
+disagreement we trace to the linear non-Gaussian model rather than to the
+inferential machinery, since DirectLiNGAM reverses the same arcs.}
+
+\keywords{causal discovery, e-values, anytime-valid inference, safe testing,
+family-wise error rate, LiNGAM}
+
+\pacs[MSC Classification]{62H22, 62L12, 62F03}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+
+A causal discovery algorithm returns a graph, and a practitioner reading that
+graph would like to know which of its features the data support. Methods in
+the constraint-based tradition---PC, FCI and their descendants
+\citep{spirtes2000causation,colombo2012learning}---answer this question
+poorly, and the reason is structural rather than incidental. They begin from
+the complete graph and delete an edge whenever a conditional-independence test
+fails to reject. Failure to reject is not evidence of independence. It is
+compatible with independence, with a dependence too weak for the test to see
+at the current sample size, and with a test that had little power against the
+alternative in question. The deletion happens regardless, and the resulting
+absence of an edge is reported with the same authority as the presence of one.
+
+Two consequences follow, and both are well known in their separate
+literatures. First, finite-sample guarantees for these methods require
+faithfulness or a quantitative strengthening of it, because only such an
+assumption converts ``the test did not reject'' into ``the variables are
+independent''. \citet{robins2003uniform} showed that no uniformly consistent
+estimator of causal structure exists without such a strengthening, and
+\citet{uhler2013geometry} showed that the set of parameter values violating
+$\lambda$-strong faithfulness has substantial measure even in modest graphs.
+The assumption is doing work the data cannot do. Second, the output of these
+methods is two-valued where the evidence is three-valued: a missing edge means
+either ``the data indicate no edge'' or ``nothing was established about this
+pair'', and the graph does not say which.
+
+This paper takes the opposite discipline. We adopt a single rule and follow it
+to its consequences:
+
+\begin{quote}
+\emph{Assert a feature of the graph only by rejecting a null hypothesis that
+is true whenever that feature is absent. Never assert anything by failing to
+reject.}
+\end{quote}
+
+We call this the \emph{certificate-only} rule, and an assertion licensed by
+such a rejection a \emph{certificate}. The rule is restrictive, and its
+consequences are not cosmetic. An algorithm obeying it cannot begin from the
+complete graph, because it has no licence to delete; it must begin from the
+empty graph and add. It cannot report an edge as absent, only as undecided.
+And the quantity it controls is the probability of asserting something false,
+not the probability of missing something true. Power becomes a descriptive
+property of a run rather than part of the guarantee.
+
+Making the rule operational requires two certificates, and their statistical
+situations are quite different.
+
+\paragraph{Adjacency.} For a pair $(i,j)$, the null that is true whenever the
+edge is absent is composite: \emph{some} conditioning set separates them. This
+is a union over conditioning sets, and the minimum of the per-set e-processes
+is an e-process for a union null (Section~\ref{sec:adjacency}). Two
+consequences matter more than the construction itself. Validity uses no
+faithfulness assumption---if $i$ and $j$ are non-adjacent in the true graph
+then $\pa(i)$ or $\pa(j)$ separates them, so the null holds and Ville's
+inequality applies---and the multiplicity correction runs over pairs rather
+than over (pair, conditioning set) triples, because one hypothesis is tested
+per pair.
+
+\paragraph{Orientation.} Orientation error is not uncontrolled in the
+literature. PC-p \citep{strobl2019estimating} attaches edge-specific p-values
+to unshielded colliders and Meek-rule orientations and controls their false
+discovery rate; \citet{shimizu2008use} test the direction of causation between
+two variables using non-normality; \citet{strieder2023confidence} construct
+confidence statements for causal effects under structure uncertainty. What has
+not been available is orientation error control that is simultaneously
+finite-sample, time-uniform, family-wise over a whole graph, and not confined
+to the Markov equivalence class. Constraint-based orientation tests are
+confined to that class by construction, so an edge lying in no v-structure is
+unorientable in principle by any of them. The functional-model methods that
+escape the class---LiNGAM and its descendants
+\citep{shimizu2006linear,shimizu2011directlingam,hyvarinen2013pairwise}---choose
+a direction by comparing scores, and the comparison itself carries no error
+statement. Under a linear non-Gaussian model the two orientations of a pair
+induce different joint densities and exactly one is correct, so ``the
+direction is $j \to i$'' is a genuine null hypothesis; a sequential
+universal-inference e-process against it certifies the arrowhead $i \to j$
+(Section~\ref{sec:direction}). Under Gaussian noise the two factorisations are
+observationally indistinguishable, the process does not grow, and no
+certificate is issued---the procedure abstains exactly where the direction is
+unidentified, without being told to.
+
+\paragraph{Why anytime-valid.} Both certificates are built as e-processes
+rather than as fixed-sample tests, and the choice is not decorative. A
+discovery run on streaming or accumulating data invites the analyst to look at
+the current graph, and looking is a form of optional stopping. A fixed-sample
+guarantee is void the moment the analyst stops on the basis of what they saw.
+Section~\ref{sec:exp-calibration} quantifies the gap: at nominal
+$\alpha = 0.05$, a Fisher-$z$ test inspected after every observation rejects a
+true null in $34.6\%$ of runs, against $5.6\%$ when it is evaluated once. An
+e-process pays for time-uniformity in power, and we report that price rather
+than eliding it.
+
+\paragraph{Contributions.} The paper makes four.
+
+\begin{enumerate}
+\item An e-process for the composite \emph{separability} null, obtained as a
+  minimum over conditioning sets, giving time-uniform certification of
+  adjacency under the Markov condition and a bound on separator size, with no
+  faithfulness assumption (Section~\ref{sec:adjacency}). We give the exact
+  per-set primitive for the linear-Gaussian case in closed form, together with
+  the confidence sequence obtained by inverting it.
+
+\item A sequential certificate for causal \emph{orientation}
+  (Section~\ref{sec:direction}) that is valid at any stopping time, is not
+  confined to the Markov equivalence class, and abstains automatically under
+  Gaussianity. We identify a requirement the construction imposes on the
+  fitting procedure---the null-model fit must genuinely attain its
+  supremum---which is easy to violate and which silently inflates the
+  e-process when violated (Section~\ref{sec:supremum}).
+
+\item CERT-CD, an algorithm combining both certificates under one budget
+  (Section~\ref{sec:algorithm}). Its output is a three-valued graph in which
+  every asserted edge and arrowhead carries a certificate and undecided pairs
+  are explicit, with a whole-graph guarantee that is proved rather than
+  assumed.
+
+\item An empirical study (Section~\ref{sec:experiments}) that stratifies
+  instances by whether the premise of the competing guarantee holds, rather
+  than pooling them; measures the assumptions of our own theorem instead of
+  asserting them; reports the regimes in which the certificates are void
+  (Section~\ref{sec:exp-violations}); and applies the method to the
+  observational protein-signalling data of \citet{sachs2005causal}, where the
+  adjacency and orientation halves of the output behave very differently.
+\end{enumerate}
+
+We are explicit throughout about which components are standard.
+Section~\ref{sec:related} gives that accounting in detail, including three
+claims of novelty we made in earlier drafts and then withdrew after reading
+the prior art.
+
+\paragraph{Notation and outline.} Section~\ref{sec:background} fixes notation
+and reviews e-processes and the graphical setting. Section~\ref{sec:principle}
+states the certificate-only rule formally and derives its structural
+consequences. Sections~\ref{sec:adjacency} and~\ref{sec:direction} develop the
+two certificates. Section~\ref{sec:algorithm} assembles CERT-CD and proves the
+whole-graph guarantee; Section~\ref{sec:latent} extends it to latent
+confounders. Section~\ref{sec:related} positions the work.
+Section~\ref{sec:experiments} reports experiments and
+Section~\ref{sec:discussion} discusses limitations. Proofs and derivations
+omitted from the main text are in the appendices.
+
+\section{Background}\label{sec:background}
+
+\subsection{E-variables, e-processes and Ville's inequality}
+\label{sec:eproc}
+
+Let $(\Omega, \Fcal, (\Fcal_t)_{t \ge 0}, \Prob)$ be a filtered probability
+space and let $H_0$ be a set of distributions on it.
+
+\begin{definition}[E-variable]\label{def:evar}
+A non-negative random variable $E$ is an \emph{e-variable} for $H_0$ if
+$\Exp_P[E] \le 1$ for every $P \in H_0$.
+\end{definition}
+
+\begin{definition}[E-process]\label{def:eproc}
+A non-negative, adapted process $(E_t)_{t \ge 0}$ is an \emph{e-process} for
+$H_0$ if $\Exp_P[E_\tau] \le 1$ for every $P \in H_0$ and every stopping time
+$\tau$ (finite or not, with $E_\infty := \liminf_t E_t$).
+\end{definition}
+
+Every non-negative supermartingale starting at one is an e-process, by
+optional stopping; the converse fails, and the distinction matters for
+composite nulls, where an e-process need not be a supermartingale under any
+single null distribution \citep{ramdas2023gametheoretic}. Both of our
+constructions are e-processes that are dominated pointwise by a
+$P$-supermartingale for each $P \in H_0$, with the dominating process
+depending on $P$. That is the standard route to an e-process for a composite
+null, and it is the route both proofs below take.
+
+The operational content of Definition~\ref{def:eproc} is Ville's inequality
+\citep{ville1939etude}: for an e-process $(E_t)$ and any $\alpha \in (0,1)$,
+\begin{equation}\label{eq:ville}
+\Prob\bigl( \exists\, t \ge 0 : E_t \ge 1/\alpha \bigr) \;\le\; \alpha
+\qquad \text{for every } P \in H_0 .
+\end{equation}
+The quantifier is inside the probability. This is what licenses continuous
+monitoring: an analyst may inspect the evidence after every observation and
+stop whenever they wish, and the probability that the process \emph{ever}
+crosses the threshold under the null is still at most $\alpha$. A p-value
+offers no analogue. A fixed-sample p-value controls the rejection probability
+at one pre-specified sample size, and the guarantee is destroyed by looking;
+the phenomenon is familiar from sequential clinical trials and from online
+experimentation \citep{johari2022always}.
+
+E-values also compose in ways p-values do not, and we use two such
+composition rules. If $E^{(1)}, \dots, E^{(m)}$ are e-variables for
+$H_0^{(1)}, \dots, H_0^{(m)}$ then $\min_k E^{(k)}$ is an e-variable for
+$\bigcup_k H_0^{(k)}$, and any convex combination $\sum_k w_k E^{(k)}$ with
+$w_k \ge 0$, $\sum_k w_k = 1$ is an e-variable for $\bigcap_k H_0^{(k)}$,
+under \emph{arbitrary} dependence between the components
+\citep{vovk2021evalues}. The first rule is what makes the adjacency
+certificate possible; the second is what makes the multiplicity discussion of
+Section~\ref{sec:multiplicity} non-trivial.
+
+Recent work has developed e-processes for a wide range of settings---bounded
+means \citep{waudbysmith2024estimating}, linear models
+\citep{lindon2024anytime}, stratified counts \citep{turner2023safe}---and has
+characterised admissible constructions \citep{ramdas2023gametheoretic}. Two
+general recipes recur below. The first is the \emph{method of mixtures}: under
+a group-invariant null, integrating the likelihood ratio against the right-Haar
+measure on the nuisance group yields an exact test martingale
+\citep{berger1998bayes,hendriksen2021optional,grunwald2024safe}.
+Section~\ref{sec:primitive} instantiates it for partial correlation. The second
+is \emph{universal inference} \citep{wasserman2020universal}: for a null model
+$\{D_\theta : \theta \in \Theta_0\}$ and any alternative fitted on past data,
+the ratio of a sequentially-fitted alternative likelihood to the maximised null
+likelihood is an e-process, with no regularity conditions on $\Theta_0$ beyond
+the existence of the supremum. Section~\ref{sec:direction} instantiates it for
+causal direction. Universal inference is known to be conservative
+\citep{tse2022note}, and Section~\ref{sec:exp-orientation} measures how
+conservative it is here.
+
+\subsection{Causal discovery setting}\label{sec:setting}
+
+Let $\Gstar$ be a directed acyclic graph (DAG) with vertex set
+$V = \{1,\dots,d\}$ identified with random variables $X_1,\dots,X_d$, and let
+$P$ be the joint law of $X = (X_1,\dots,X_d)$. We write $\pa(i)$ for the
+parents of $i$ in $\Gstar$ and $\de(i)$ for its descendants. Throughout,
+observations $o_1, o_2, \dots$ are drawn i.i.d.\ from $P$ and arrive in
+batches; $\Fcal_t$ is the $\sigma$-field generated by the first $t$
+observations.
+
+\begin{assumption}[Markov condition]\label{ass:markov}
+$P$ is Markov to $\Gstar$: whenever $S$ d-separates $i$ from $j$ in $\Gstar$,
+$X_i \indep X_j \mid X_S$ under $P$.
+\end{assumption}
+
+Assumption~\ref{ass:markov} is the direction of the correspondence that
+follows from the causal structure itself: it says that the graph's separations
+are reflected in the distribution. Its converse---faithfulness, that every
+conditional independence in $P$ corresponds to a d-separation in
+$\Gstar$---does not follow from the causal structure, and is the assumption we
+do not make for validity.
+
+Write $\Scal_k(i,j) = \{ S \subseteq V \setminus \{i,j\} : |S| \le k \}$ for
+the family of admissible conditioning sets. This family is determined by $d$
+and $k$ and is fixed before any data are seen; nothing about it adapts to the
+sample. We say the pair $(i,j)$ is \emph{separable within $\Scal_k$} under $P$
+if $X_i \indep X_j \mid X_S$ for some $S \in \Scal_k(i,j)$.
+
+\begin{assumption}[Separator size]\label{ass:sep}
+Every non-adjacent pair of $\Gstar$ has a d-separating set of size at most
+$k$.
+\end{assumption}
+
+Assumption~\ref{ass:sep} is structural rather than distributional: it
+constrains $\Gstar$, not $P$, and it can be guaranteed by choosing $k$ large
+enough. It holds whenever $k$ is at least the maximum in-degree of $\Gstar$,
+since for non-adjacent $i,j$ either $j \notin \de(i)$, in which case $\pa(i)$
+d-separates them, or $i \notin \de(j)$, in which case $\pa(j)$ does. Taking
+$k = d-2$ makes it vacuous at the cost of an exponential family $\Scal_k$; the
+trade-off is computational, not inferential, and we return to it in
+Section~\ref{sec:complexity}. Section~\ref{sec:exp-premise} measures how often
+Assumption~\ref{ass:sep} holds at the $k$ we use, and compares it with how
+often $\delta$-strong faithfulness holds on the same instances.
+
+\subsection{Faithfulness and its quantitative strengthenings}
+\label{sec:faithfulness}
+
+Since the argument of this paper is about what faithfulness is doing, it is
+worth being precise about the versions in play.
+
+\emph{Faithfulness} holds if every conditional independence in $P$ is implied
+by d-separation in $\Gstar$. \emph{Adjacency-faithfulness}
+\citep{ramsey2006adjacency} is the weaker requirement that adjacent variables
+are dependent given every conditioning set. \emph{$\delta$-strong
+faithfulness} \citep{uhler2013geometry,kalisch2007estimating} is the
+quantitative strengthening that every partial correlation not forced to zero
+by d-separation has absolute value at least $\delta$; it is what turns
+consistency into a finite-sample statement, and it is the premise of the
+comparators in Section~\ref{sec:exp-main}.
+
+The asymmetry we exploit is this. Faithfulness in any of its forms is an
+assumption about which \emph{dependences} exist. A procedure that asserts an
+edge by rejecting an independence null needs it only for \emph{power}: without
+it, a genuinely adjacent pair whose dependence is cancelled will fail to be
+certified, and the pair stays undecided. A procedure that asserts a
+\emph{non}-edge by failing to reject needs it for \emph{validity}: without it,
+a cancelled dependence produces a confidently deleted edge. The same
+assumption sits on opposite sides of the guarantee depending on which
+direction of the inference the algorithm runs. \citet{zhang2008detection} and
+\citet{ramsey2006adjacency} respond to this by detecting or tolerating
+unfaithfulness within a delete-on-non-rejection architecture; we respond by
+changing the architecture.

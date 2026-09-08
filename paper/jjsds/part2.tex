@@ -1,0 +1,273 @@
+
+\section{The certificate-only principle}\label{sec:principle}
+
+We state the rule formally and record what it forces.
+
+\begin{definition}[Certificate]\label{def:cert}
+Let $\phi$ be a feature of $\Gstar$---a proposition such as ``$i$ and $j$ are
+adjacent'' or ``$\Gstar$ contains the arrowhead $i \to j$''. A
+\emph{certifying null} for $\phi$ is a hypothesis $H_\phi$ with the property
+that $P \in H_\phi$ whenever $\phi$ is false. A \emph{certificate for $\phi$
+at level $\alpha$} is the event that an e-process for $H_\phi$ exceeds
+$1/\alpha$.
+\end{definition}
+
+The implication in Definition~\ref{def:cert} runs one way only, and that is
+the whole point. $H_\phi$ must be true whenever $\phi$ is false; it may also
+be true in some cases where $\phi$ is true, and then the certificate simply
+never fires. This asymmetry is what buys validity without faithfulness, and
+what costs power.
+
+\begin{proposition}[Soundness of a single certificate]\label{prop:single}
+If $(E_t)$ is an e-process for a certifying null $H_\phi$, then
+$\Prob(\exists t: \text{$\phi$ is certified at level $\alpha$ and $\phi$ is
+false}) \le \alpha$.
+\end{proposition}
+
+\begin{proof}
+If $\phi$ is false then $P \in H_\phi$ by Definition~\ref{def:cert}, so
+$(E_t)$ is an e-process under $P$ and~\eqref{eq:ville} bounds the probability
+that it ever exceeds $1/\alpha$ by $\alpha$. If $\phi$ is true the event in
+question is empty.
+\end{proof}
+
+Proposition~\ref{prop:single} is elementary; we state it to make explicit that
+the burden of the design is entirely in constructing $H_\phi$, not in the
+inference. Three structural consequences follow, and they shape everything
+below.
+
+\paragraph{The algorithm cannot delete.} There is no certifying null for the
+proposition ``$i$ and $j$ are non-adjacent''. Such a null would have to be
+true whenever the pair \emph{is} adjacent, that is, it would have to be a
+dependence hypothesis rejected by evidence of independence; but evidence of
+independence is exactly what a hypothesis test does not provide. Equivalence
+testing supplies the nearest available substitute---one can reject ``the
+partial correlation exceeds $\delta$ in absolute value''---but the resulting
+statement is ``the association is smaller than $\delta$'', which is a claim
+about effect size, not about absence. We return to this in
+Section~\ref{sec:negligible}. In the absence of such a null, an algorithm
+obeying the rule must start from the empty graph.
+
+\paragraph{The output is three-valued.} Each pair is in exactly one of three
+states: \emph{certified adjacent} (with or without a certified orientation),
+\emph{undecided}, or---if the extension of Section~\ref{sec:negligible} is
+enabled---\emph{certified negligible at margin $\delta$}. The absence of an
+edge in the output graph is not an assertion.
+
+\paragraph{Power is descriptive, not guaranteed.} Nothing in
+Proposition~\ref{prop:single} promises that a true edge is ever certified.
+Whether it is depends on adjacency-faithfulness, on the sample size, and on
+the primitive's power. This is a real limitation and we treat it as one:
+Section~\ref{sec:experiments} reports certification rates alongside error
+rates throughout, and reports the fraction of pairs left undecided rather than
+suppressing it.
+
+\section{The adjacency certificate}\label{sec:adjacency}
+
+\subsection{The separability null}\label{sec:sepnull}
+
+Fix a pair $(i,j)$ and consider
+\begin{equation}\label{eq:sepnull}
+H^{\mathrm{sep}}_{ij} \;:\quad
+\exists\, S \in \Scal_k(i,j) \ \text{ such that } \ X_i \indep X_j \mid X_S .
+\end{equation}
+
+\begin{lemma}\label{lem:certifying}
+Under Assumptions~\ref{ass:markov} and~\ref{ass:sep},
+$H^{\mathrm{sep}}_{ij}$ is a certifying null for the adjacency of $i$ and $j$.
+\end{lemma}
+
+\begin{proof}
+Suppose $i$ and $j$ are non-adjacent in $\Gstar$. By
+Assumption~\ref{ass:sep} there is a set $S$ with $|S| \le k$ that d-separates
+them, and $S \subseteq V \setminus \{i,j\}$, so $S \in \Scal_k(i,j)$. By
+Assumption~\ref{ass:markov}, $X_i \indep X_j \mid X_S$ under $P$. Hence
+$P \in H^{\mathrm{sep}}_{ij}$.
+\end{proof}
+
+Note what the lemma does \emph{not} require. It says nothing about adjacent
+pairs. If $i$ and $j$ are adjacent, $P$ may or may not lie in
+$H^{\mathrm{sep}}_{ij}$: an adjacent pair whose dependence is exactly
+cancelled by a path through some $S$ satisfies the null too, and then the
+certificate cannot fire. That is the failure of adjacency-faithfulness, and it
+costs power, not validity.
+
+\subsection{The minimum construction}\label{sec:minconstruction}
+
+Let $(E^{(S)}_t)_{t \ge 0}$ be an e-process for the point null
+$X_i \indep X_j \mid X_S$, for each $S \in \Scal_k(i,j)$, all built from the
+same data stream. Define
+\begin{equation}\label{eq:adjacency}
+A_t(i,j) \;=\; \min_{S \in \Scal_k(i,j)} E^{(S)}_t(i,j) .
+\end{equation}
+
+\begin{proposition}\label{prop:adjacency}
+$(A_t)_{t \ge 0}$ is an e-process for $H^{\mathrm{sep}}_{ij}$.
+\end{proposition}
+
+\begin{proof}
+Let $P \in H^{\mathrm{sep}}_{ij}$. By~\eqref{eq:sepnull} there exists
+$S^\star \in \Scal_k(i,j)$ with $X_i \indep X_j \mid X_{S^\star}$ under $P$,
+so $P$ satisfies the point null for which $(E^{(S^\star)}_t)$ is an e-process.
+By~\eqref{eq:adjacency}, $A_t \le E^{(S^\star)}_t$ pointwise for every $t$,
+hence $A_\tau \le E^{(S^\star)}_\tau$ for every stopping time $\tau$, and
+non-negativity gives
+$\Exp_P[A_\tau] \le \Exp_P[E^{(S^\star)}_\tau] \le 1$.
+\end{proof}
+
+Combining Lemma~\ref{lem:certifying}, Proposition~\ref{prop:adjacency} and
+Proposition~\ref{prop:single} gives the adjacency guarantee: the probability
+that $A_t(i,j)$ ever exceeds $1/\alpha$ for a non-adjacent pair is at most
+$\alpha$.
+
+That a minimum of e-values is an e-value for a union null is standard
+\citep{vovk2021evalues}, and the proof above is the standard one. What is
+specific here is the identification of adjacency as the complement of such a
+union, and the two consequences that follow.
+
+\begin{remark}[No faithfulness]\label{rem:faithfulness}
+The proof uses only that~\eqref{eq:sepnull} is true for non-adjacent pairs,
+which follows from Assumptions~\ref{ass:markov} and~\ref{ass:sep}.
+Faithfulness enters only through power: adjacency-faithfulness
+\citep{ramsey2006adjacency} is what makes every $E^{(S)}$ grow for a genuinely
+adjacent pair, and hence what makes the minimum grow. An instance where it
+fails leaves pairs undecided rather than producing wrong edges. Stated
+exactly, validity requires three things: the Markov condition,
+Assumption~\ref{ass:sep}, and a valid per-set e-process. The third is not
+free. Our default primitive (Section~\ref{sec:primitive}) is a linear-Gaussian
+safe test, so that model is assumed \emph{there}; substituting a nonparametric
+sequential test \citep{he2026sequential} removes it at a cost in power.
+Proposition~\ref{prop:adjacency} is indifferent to which primitive is used,
+and Section~\ref{sec:exp-primitive} measures the primitive's calibration under
+six noise laws, including three outside its model.
+\end{remark}
+
+\begin{remark}[Multiplicity over pairs]\label{rem:multiplicity-pairs}
+The construction tests one hypothesis per pair, not one per (pair,
+conditioning set) triple. A union bound over the adjacency family therefore
+runs over $\binom{d}{2}$ hypotheses rather than
+$\binom{d}{2} \cdot |\Scal_k|$. At $d = 6$ and $k = 2$ we have
+$|\Scal_k| = \binom{4}{0} + \binom{4}{1} + \binom{4}{2} = 11$, so the
+per-hypothesis level is $11$ times larger than a triple-indexed budget would
+allow. The saving grows with $k$: at $d = 10$, $k = 3$ it is $93$. This is not
+a free lunch---the minimum in~\eqref{eq:adjacency} is itself conservative,
+since it discards all but the least favourable conditioning set---but the
+conservatism is of a different kind from a multiplicity correction, and it is
+the kind that vanishes as the least favourable set becomes uninformative.
+\end{remark}
+
+\subsection{The per-set primitive}\label{sec:primitive}
+
+Proposition~\ref{prop:adjacency} needs an e-process for each point null
+$X_i \indep X_j \mid X_S$. For linear-Gaussian data we use an exact one,
+obtained as a Bayes factor with right-Haar priors on the nuisance parameters.
+Write the hypothesis in regression form,
+\begin{equation}\label{eq:regform}
+X_i \;=\; X_S^\top \alpha \;+\; \beta X_j \;+\; \varepsilon,
+\qquad \varepsilon \sim N(0, \sigma^2),
+\end{equation}
+so that the null is $\beta = 0$ with nuisance parameters $(\alpha, \sigma)$
+shared between the hypotheses. Place the right-Haar prior
+$\pi(\alpha, \sigma) \propto \sigma^{-1}$ on the nuisance block under both
+hypotheses, and $\beta \mid \sigma \sim N(0, \sigma^2 g)$ on the tested
+coefficient under the alternative. Integrating both marginal likelihoods in
+closed form (Appendix~\ref{app:safelinear}) gives, after $n$ observations,
+\begin{equation}\label{eq:safelinear}
+E_n \;=\; (1+G)^{-1/2}\,\bigl(1 - \kappa\,\hat r_n^2\bigr)^{-(n-p)/2},
+\qquad
+G \;=\; g\,S_{yy}, \quad \kappa \;=\; \frac{G}{1+G},
+\end{equation}
+where $p = |S| + 1$; $S_{xx}$, $S_{xy}$, $S_{yy}$ are the cross-products of
+the $X_S$-residualised versions of $X_j$ and $X_i$; and
+$\hat r_n^2 = S_{xy}^2 / (S_{xx} S_{yy})$ is the squared sample partial
+correlation.
+
+\begin{proposition}\label{prop:safelinear}
+Under the linear-Gaussian model~\eqref{eq:regform} with $\beta = 0$, the
+process $(E_n)$ of~\eqref{eq:safelinear} is a test martingale with respect to
+the filtration generated by the observations, and hence an e-process.
+\end{proposition}
+
+The proof (Appendix~\ref{app:safelinear}) is the standard right-Haar argument
+\citep{berger1998bayes,hendriksen2021optional}: the null model is invariant
+under the group of location shifts in the $X_S$ directions and scale changes,
+the right-Haar prior is relatively invariant under that group, and the
+resulting Bayes factor is a ratio of marginal likelihoods of the maximal
+invariant, whose null distribution is free of the nuisance parameters. Bayes
+factors of this form are exactly the ones for which optional stopping is
+valid, which is why not every Bayes factor would do here.
+
+Two properties of~\eqref{eq:safelinear} drive the implementation.
+
+\paragraph{Sufficiency.} $E_n$ depends on the data only through Schur
+complements of the running Gram matrix
+$\sum_{s \le n} (o_s - \bar o)(o_s - \bar o)^\top$. A single $O(d^2)$
+sufficient statistic therefore serves the \emph{entire} hypothesis family
+$\{(i,j,S)\}$ simultaneously: no per-hypothesis state is stored, and the cost
+of an update is $O(d^2)$ regardless of how many hypotheses are live. This is
+what makes it feasible to keep every pair's minimum
+in~\eqref{eq:adjacency} current after every batch.
+
+\paragraph{The prior scale must be fixed in advance.} $g$ enters
+through $G = g S_{yy}$, and $S_{yy}$ grows with $n$. A prior scale chosen to
+adapt to the running sample size---for instance by rescaling $g$ so that $G$
+stays constant---destroys the martingale property, because the ``prior'' would
+then depend on the data it is being used to weigh. We fix $g$ from a warm-up
+prefix of the stream that is excluded from every e-process, using it only to
+set standardisation constants. The warm-up length appears in the experiments
+as a tuning parameter and nowhere in the guarantee.
+
+\begin{remark}[Calibration was verified, not assumed]\label{rem:calibration}
+Proposition~\ref{prop:safelinear} is a theorem, but the implementation of a
+theorem can be wrong, and a miscalibrated primitive would invalidate every
+downstream claim while leaving all the proofs intact. We therefore verified
+calibration by simulation: monitoring~\eqref{eq:safelinear} after every
+observation over $3000$ replications and $1500$ time points under a true null
+gave realised crossing rates of $0.149$, $0.076$, $0.041$ and $0.008$ against
+nominal $\alpha \in \{0.20, 0.10, 0.05, 0.01\}$.
+Section~\ref{sec:exp-primitive} repeats the exercise under six noise laws.
+\end{remark}
+
+\subsection{Confidence sequence by inversion}\label{sec:cs}
+
+Because~\eqref{eq:safelinear} is available in closed form for every value of
+the tested coefficient, it can be inverted to give a confidence sequence---a
+sequence of intervals covering $\beta$ simultaneously at all times with
+probability $1-\alpha$. Writing $\hat\beta = S_{xy}/S_{yy}$ for the
+least-squares estimate of the coefficient of $X_j$ in the residualised
+regression, the level-$(1-\alpha)$ confidence sequence is
+\begin{equation}\label{eq:cs}
+\hat\beta \;\pm\; \frac{1}{S_{yy}}
+  \sqrt{\frac{\tau\,\bigl(S_{xx} S_{yy} - S_{xy}^2\bigr)}{1-\tau}},
+\qquad
+\tau \;=\; \frac{1}{\kappa}
+  \left[ 1 - \left(\frac{\alpha}{\sqrt{1+G}}\right)^{2/(n-p)} \right] ,
+\end{equation}
+valid whenever $\tau > 0$, and the whole line otherwise. The derivation is in
+Appendix~\ref{app:cs}. We report it because it is the natural summary of
+evidence about an edge's strength, because it is what the equivalence-testing
+extension of Section~\ref{sec:negligible} uses, and because it provides an
+independent check on the implementation: \eqref{eq:cs} must agree with a
+brute-force inversion of~\eqref{eq:safelinear}, and an early version of our
+code did not. The discrepancy was a sign error in the $\log(1+G)$ term, which
+produced intervals roughly half the correct width---a defect invisible in any
+Type-I error simulation of the test itself, since the test was correct and
+only the reported interval was wrong. Agreement between the closed form and a
+numerical inversion is now a unit test.
+
+\subsection{Beyond the linear-Gaussian primitive}\label{sec:beyondlg}
+
+Conditional independence testing is hard in general: \citet{shah2020hardness}
+show that no test can have non-trivial power against all alternatives while
+controlling size over all null distributions with continuous conditional
+laws. Every usable primitive therefore buys power with a model. The two
+mainstream routes are the Model-X framework
+\citep{candes2018panning}, which assumes the conditional law of $X_i$ given
+$X_S$ is known, and parametric or kernel-based assumptions on the joint law.
+Sequential conditional-independence tests to date have largely taken the
+Model-X route; \citet{csillag2025prediction} note that the requirement is
+typically inaccessible in a discovery setting, where the conditional laws are
+precisely what is unknown. Construction~\eqref{eq:safelinear} avoids it by
+assuming linearity and Gaussianity instead, which is a strong assumption but a
+checkable one. Section~\ref{sec:exp-violations} reports what happens when it
+fails.
