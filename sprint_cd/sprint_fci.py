@@ -109,9 +109,14 @@ class SprintFCI(SprintCD):
 
     # ------------------------------------------------------------------
     def pag(self) -> MarkedGraph:
-        """Current estimate as a PAG."""
-        if self.use_pdsep:
-            self._pdsep_prune()
+        """Current estimate as a PAG.
+
+        A pure accessor: the Possible-D-SEP pass runs inside :meth:`update`, so
+        the estimate does not depend on how often it is inspected.  (Running it
+        here instead would make a mid-stream ``pag()`` call silently prune the
+        graph, so a monitored run and an unmonitored one would diverge -- the
+        opposite of what an anytime-valid method should offer.)
+        """
         return pag_from_skeleton(self.graph, self.sepsets, use_r4=self.use_r4)
 
     # The inherited ``cpdag`` is meaningless without causal sufficiency.
@@ -124,6 +129,8 @@ class SprintFCI(SprintCD):
         arr = np.atleast_2d(np.asarray(batch, dtype=float))
         self.suffstat.update(self._standardise(arr))
         self._sweep()
+        if self.use_pdsep:
+            self._pdsep_prune()
         self.history.record(self.suffstat.n, self.graph, self.resolved, keep_graph)
         return self.graph
 

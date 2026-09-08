@@ -193,33 +193,38 @@ def _is_collider_on_path(g: MarkedGraph, prev: int, mid: int, nxt: int) -> bool:
 
 
 def _discriminating_paths(g: MarkedGraph, b: int, c: int, max_len: int = 12):
-    """Yield discriminating paths for ``b`` ending at ``c``.
+    """Yield discriminating paths ``<t, ..., a, b, c>`` for ``b``.
 
-    A path ``<t, q_1, ..., q_k, a, b, c>`` discriminates ``b`` when it has at
-    least three edges, ``t`` is not adjacent to ``c``, and every vertex
-    strictly between ``t`` and ``b`` is a collider on the path *and* a parent
-    of ``c``.  Searching backwards from ``b`` keeps the enumeration bounded.
+    A path discriminates ``b`` when it spans at least three edges, ``t`` is not
+    adjacent to ``c``, and every vertex *strictly between* ``t`` and ``b`` is
+    both a collider on the path and a parent of ``c``.
+
+    The search runs backwards from ``b``.  Each extension step is what
+    validates the vertex it moves off: pushing ``t`` in front of ``head``
+    confirms ``head`` is a collider on ``<t, head, next>``, while ``head``'s
+    parenthood of ``c`` is established before it is ever placed on the path.
+    A path may therefore only be emitted once its leading vertex has been
+    checked -- emitting on the "``t`` not adjacent to ``c``" branch alone would
+    accept paths whose first interior vertex is neither a collider nor a parent
+    of ``c``, and R4 would then write orientations that are not entailed.
     """
     for a in g.neighbours(b):
-        if a == c or not g.has_arrow(a, b):
+        if a == c or a == b:
             continue
-        # Walk backwards from a, extending the chain of collider-parents of c.
+        if not g.is_directed(a, c):      # every interior vertex is a parent of c
+            continue
         stack = [([a, b, c], {a, b, c})]
         while stack:
             path, seen = stack.pop()
-            head = path[0]
+            head, nxt = path[0], path[1]
             for t in g.neighbours(head):
                 if t in seen:
                     continue
+                if not _is_collider_on_path(g, t, head, nxt):
+                    continue
                 if not g.adjacent(t, c):
-                    if len(path) + 1 >= 4:
-                        yield [t] + path
-                    continue
-                if len(path) >= max_len:
-                    continue
-                # head must be a collider on <t, head, next> and a parent of c
-                nxt = path[1]
-                if _is_collider_on_path(g, t, head, nxt) and g.is_directed(head, c):
+                    yield [t] + path     # t is the endpoint theta
+                elif len(path) < max_len and g.is_directed(t, c):
                     stack.append(([t] + path, seen | {t}))
 
 

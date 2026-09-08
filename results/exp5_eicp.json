@@ -1,14 +1,14 @@
 {
   "config": {
-    "reps": 60,
-    "nmax": 1000,
+    "reps": 300,
+    "nmax": 2000,
     "batch": 100,
     "alpha": 0.1,
     "max_size": 3,
     "seed": 20260908,
-    "quick": true
+    "quick": false
   },
-  "reps": 60,
+  "reps": 300,
   "grid": [
     100,
     200,
@@ -19,13 +19,23 @@
     700,
     800,
     900,
-    1000
+    1000,
+    1100,
+    1200,
+    1300,
+    1400,
+    1500,
+    1600,
+    1700,
+    1800,
+    1900,
+    2000
   ],
   "eicp_reject": 0,
-  "icp_reject": 4,
-  "icp_reject_fixed": 1,
+  "icp_reject": 24,
+  "icp_reject_fixed": 2,
   "bonf_level": 0.0125,
-  "eicp_subset_ok": 60,
+  "eicp_subset_ok": 300,
   "eicp_recovered": 2.0,
-  "icp_recovered": 1.9666666666666666
+  "icp_recovered": 1.9866666666666666
 }

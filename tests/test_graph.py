@@ -98,3 +98,57 @@ def test_shd_counts_each_edge_slot_once():
     b2 = a.copy()
     b2.set_edge(0, 1, TAIL, ARROW)
     assert structural_hamming_distance(a, b2) == 1
+
+
+def _r4_fragment(collider_at_a: bool):
+    """PAG fragment ``t *-> a <-> b o-* c`` with ``a -> c`` and ``t`` far from ``c``.
+
+    Vertices: 0 = t, 1 = a, 2 = b, 3 = c.  When ``collider_at_a`` is false the
+    arrowhead into ``a`` from ``t`` is replaced by a tail, so ``a`` is no longer
+    a collider on ``<t, a, b>`` and ``<t, a, b, c>`` no longer discriminates.
+    """
+    g = MarkedGraph(d=4)
+    g.set_edge(0, 1, CIRCLE, ARROW if collider_at_a else TAIL)   # t *-> a  /  t *-- a
+    g.set_edge(1, 2, ARROW, ARROW)                               # a <-> b
+    g.set_edge(1, 3, TAIL, ARROW)                                # a -> c
+    g.set_edge(2, 3, CIRCLE, CIRCLE)                             # b o-o c
+    return g
+
+
+def test_fci_r4_fires_on_a_genuine_discriminating_path():
+    """R4 with ``b`` in Sepset(t, c) orients ``b -> c``: a tail at ``b``'s end.
+
+    Isolated by comparison against ``use_r4=False``.  R2 independently places
+    the arrowhead at ``c``, so only the mark at ``b``'s end distinguishes R4.
+    """
+    g = _r4_fragment(collider_at_a=True)
+    with_r4 = fci_rules(g, sepsets={(0, 3): (2,)}, use_r4=True)
+    without = fci_rules(g, sepsets={(0, 3): (2,)}, use_r4=False)
+    assert without.mark_at(3, 2) == CIRCLE          # R4 is what resolves this end
+    assert with_r4.mark_at(3, 2) == TAIL
+    assert with_r4.mark_at(2, 3) == ARROW           # b -> c
+
+
+def test_fci_r4_orients_bidirected_when_b_is_outside_the_sepset():
+    g = _r4_fragment(collider_at_a=True)
+    out = fci_rules(g, sepsets={(0, 3): ()}, use_r4=True)
+    # <a, b, c> becomes a <-> b <-> c: arrowheads at both ends of both edges.
+    assert out.mark_at(1, 2) == ARROW and out.mark_at(2, 1) == ARROW
+    assert out.mark_at(2, 3) == ARROW and out.mark_at(3, 2) == ARROW
+
+
+def test_fci_r4_does_not_fire_without_a_collider_on_the_path():
+    """Regression test.
+
+    Emitting a path as soon as ``t`` is non-adjacent to ``c`` -- before checking
+    that the first interior vertex is a collider and a parent of ``c`` -- makes
+    R4 fire here and resolve ``b``'s endpoint, which is not entailed.
+
+    Only the mark at ``b``'s end is asserted: R2 legitimately places an
+    arrowhead at ``c`` in this fragment whether or not R4 runs, so that mark
+    says nothing about R4.
+    """
+    g = _r4_fragment(collider_at_a=False)
+    with_r4 = fci_rules(g, sepsets={(0, 3): (2,)}, use_r4=True)
+    without = fci_rules(g, sepsets={(0, 3): (2,)}, use_r4=False)
+    assert with_r4.mark_at(3, 2) == CIRCLE == without.mark_at(3, 2)

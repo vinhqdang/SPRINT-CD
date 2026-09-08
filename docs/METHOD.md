@@ -220,15 +220,29 @@ sides of that trade.
 ### `delta`-strong faithfulness is a real restriction
 
 This is the assumption most likely to fail in practice, and the experiments
-measure it rather than presume it. In random 7-variable graphs with one latent
-variable marginalised out, only about a quarter of instances satisfy it at
-`delta = 0.15`; the median smallest partial correlation over true adjacencies
-is around 0.03. Experiment 4 therefore stratifies: where the premise holds the
-false-deletion rate is 0 out of 20 against a budget of 0.1; where it fails the
-rate is 0.80. Deleting an edge whose partial correlation genuinely lies inside
-the equivalence region is correct behaviour by construction, not a failure of
-calibration -- but it does mean `delta` must be chosen with the application's
-smallest scientifically meaningful effect in mind.
+measure it rather than presume it. At `delta = 0.15` the condition holds in
+about 65% of random 6-variable DAGs, and in only 19% of 7-variable graphs once
+one latent variable is marginalised out -- there the median smallest partial
+correlation over true adjacencies is around 0.03.
+
+Deleting an edge whose partial correlation genuinely lies inside the
+equivalence region is correct behaviour by construction, not a calibration
+failure, so pooling both kinds of instance would measure how often random
+graphs are near-unfaithful rather than whether the procedure is calibrated.
+Experiments 2 and 4 therefore stratify. Because the margin is a population
+quantity it can be computed before any data are simulated, which makes it
+cheap to rejection-sample a well-powered sample of each stratum.
+
+| | premise holds | premise violated |
+|---|---|---|
+| Experiment 2 (causally sufficient) | 0.008 (n=120) | 0.750 (n=40) |
+| Experiment 4 (one latent) | 0.000 (n=80) | 0.725 (n=40) |
+
+against a budget of 0.1 in both cases. On the same premise-satisfying
+instances, PC re-run at each sample size loses a true edge with probability
+0.133. The practical implication is that `delta` must be chosen with the
+application's smallest scientifically meaningful effect in mind; it is not a
+free tuning knob.
 
 ---
 

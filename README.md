@@ -26,11 +26,12 @@ without invalidating anything.
 
 | procedure at `alpha = 0.05` | Type-I error under monitoring |
 |---|---|
-| Fisher-z, monitored | 0.337 |
-| Fisher-z, fixed `n` | 0.070 |
-| **SPRINT-CD e-process** | **0.030** |
+| Fisher-z, monitored | 0.363 |
+| Fisher-z, fixed `n` | 0.058 |
+| **SPRINT-CD e-process** | **0.025** |
 
-Power is not sacrificed: detection rate 0.987 against a moderate alternative.
+Power is not sacrificed: detection rate 1.000 against a moderate alternative
+(2000 replications, monitored to `n = 1000`).
 
 ---
 
@@ -131,10 +132,14 @@ been certified and the output is a dense superset of the truth; what is
 controlled uniformly in time is the *removal* of true edges, the error that is
 irreversible in streaming. Extra edges are the price.
 
-`delta`-strong faithfulness is a genuine restriction, not a formality. In
-random 7-variable graphs with one latent variable marginalised out, only about
-a quarter of instances satisfy it at `delta = 0.15`. The experiments measure
-this rather than assume it, and stratify results accordingly.
+`delta`-strong faithfulness is a genuine restriction, not a formality. At
+`delta = 0.15` it holds in about 65% of random 6-variable DAGs, and in only
+19% once a latent variable is marginalised out — the median smallest partial
+correlation over true adjacencies there is about 0.03. Removing an edge whose
+association genuinely lies inside the equivalence region is correct behaviour
+by construction, not a calibration failure, so Experiments 2 and 4 **stratify
+instances by whether the premise holds** and report both strata rather than
+pooling them into a misleading average.
 
 ---
 
@@ -155,17 +160,23 @@ python experiments/run_all.py --quick    # fast smoke run
 
 Headline findings, in addition to the calibration table above:
 
-* **Whole-graph control.** Over a monitored run, SPRINT-CD ever loses a true
-  edge with probability 0.04 against a budget of 0.1; PC re-run at each sample
-  size does so with probability 0.36. The cost is extra edges early, which
-  decay to zero as data accumulate.
-* **Adaptive stopping.** SPRINT-CD halts at a median `n` of about 2100, at an
-  accuracy fixed-sample PC does not reach until roughly twice that much data.
-* **Latent confounders.** Where `delta`-strong faithfulness holds, no true
-  adjacency was lost in 20 runs (budget 0.1); where it fails, 80% of runs lose
-  one — as the theory says they may.
+* **Whole-graph control.** Over a monitored run on instances satisfying the
+  premise, SPRINT-CD ever loses a true edge with probability 0.008 against a
+  budget of 0.1 (n = 120); PC re-run at each sample size does so with
+  probability 0.133 on the *same* instances. By `n = 4000` SPRINT-CD averages
+  0.01 missing and 0.01 extra edges, against PC's 0.00 missing and 0.57 extra.
+  Where the premise fails, SPRINT-CD loses an edge in 75% of runs — outside
+  what the theorem covers, and reported as such.
+* **Adaptive stopping.** SPRINT-CD halts at a median `n` of 1900 with mean SHD
+  0.83 (SE 0.22). Fixed-sample PC plateaus at 0.90 and does not reach that
+  accuracy anywhere up to `n = 20000`.
+* **Latent confounders.** Where the premise holds, no true adjacency was lost
+  in 80 runs (budget 0.1; 95% CI [0.000, 0.046]), and SHD to the oracle PAG
+  falls from 12.7 to 0.35 by `n = 4000`. The bi-directed edge marking the
+  latent was recovered in 7 of 7 cases.
 * **E-ICP.** Monitoring multiplies ICP's rejection rate for the true parent set
-  by about 4×; E-ICP's stays at zero while recovering every true parent.
+  by about 12× (0.007 → 0.080); E-ICP's stays at 0.000 across 300 runs while
+  recovering every true parent.
 
 ---
 
@@ -175,7 +186,7 @@ Headline findings, in addition to the calibration table above:
 python -m pytest
 ```
 
-71 tests. The substantive ones are calibration checks: all three e-process
+74 tests. The substantive ones are calibration checks: all three e-process
 constructions are verified against Ville's inequality by simulation rather
 than assumed valid, and the FCI orientation rules are checked against
 hand-derived PAGs.
