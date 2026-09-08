@@ -1,8 +1,8 @@
-# SPRINT-CD
+# CERT-CD — certificate-only causal discovery
 
-**S**equential **P**C/FCI with a**N**ytime-valid **T**ests — constraint-based
-causal discovery whose recovered graph carries time-uniform error control at
-**any** data-dependent stopping time.
+Causal discovery in which **every edge and every arrowhead is backed by a
+certificate**, valid at any data-dependent stopping time, and pairs the data
+cannot resolve are reported as undecided rather than guessed.
 
 Prepared for the *Japanese Journal of Statistics and Data Science* special
 issue on [Recent Advances in Causal Inference, Causal Discovery, and
@@ -10,55 +10,97 @@ Applications](https://link.springer.com/journal/42081/updates/27837542).
 
 ---
 
-## The problem
+## The rule
 
-A conditional-independence test is valid at the sample size it was computed
-for. In a streaming setting the analyst recomputes it as data arrive and stops
-when the answer looks settled — and that stopping rule voids the guarantee.
-On the very queries a discovery algorithm issues, monitoring a null
-partial-correlation test at nominal `alpha = 0.05` produces a Type-I error
-rate of about **34%**.
+> **Assert a feature of the graph only by REJECTING a null that is true
+> whenever that feature is absent. Never assert anything by failing to reject.**
 
-SPRINT-CD replaces every conditional-independence query with an **e-process**,
-so Ville's inequality bounds the error uniformly in time. The estimate may be
-inspected after every batch, and the run stopped whenever the analyst likes,
-without invalidating anything.
+Every constraint-based algorithm since PC breaks this rule at its first step:
+it *removes* an edge when a conditional-independence test fails to reject, so
+absence of evidence becomes evidence of absence. That is why their
+finite-sample guarantees need faithfulness. Our own measurements put
+`delta`-strong faithfulness at 65% of random 6-variable DAGs and 19% of
+7-variable graphs with one latent variable — and where it fails, the
+delete-on-non-rejection approach discards true edges in about three quarters of
+runs.
 
-| procedure at `alpha = 0.05` | Type-I error under monitoring |
-|---|---|
-| Fisher-z, monitored | 0.346 |
-| Fisher-z, fixed `n` | 0.056 |
-| **SPRINT-CD e-process** | **0.024** |
+Obeying the rule inverts the algorithm:
 
-2000 replications, monitored every 10 observations up to `n = 1000`.
-
-**This is not free.** Against a fixed-sample Fisher-z test at the same `n` —
-one that may be evaluated only once — the e-process detects less:
-
-| true `beta` | 0.04 | 0.06 | 0.08 | 0.10 | 0.15 |
-|---|---|---|---|---|---|
-| Fisher-z, fixed `n` | 0.21 | 0.47 | 0.72 | 0.91 | 1.00 |
-| SPRINT-CD e-process | 0.05 | 0.16 | 0.32 | 0.58 | 0.96 |
-
-The gap closes as the effect grows, and it is the price of a guarantee that
-survives monitoring and optional stopping. If the sample size can genuinely be
-fixed in advance and the analysis run once, a fixed-sample test is the more
-powerful choice and should be preferred.
+| | PC / SPRINT-CD | **CERT-CD** |
+|---|---|---|
+| starts from | complete graph | empty graph |
+| edges are | removed on weak evidence | added on strong evidence |
+| graph over time | shrinks | grows |
+| controlled error | missing edges | false edges **and wrong arrowheads** |
+| faithfulness | needed for validity | needed only for power |
+| orientation error | uncontrolled | **certified** |
+| undecided pairs | forced to a decision | reported as undecided |
 
 ---
 
-## What is here
+## Two certificates
 
-| module | contents |
-|---|---|
-| `sprint_cd/eprocess/safe_linear.py` | Exact right-Haar Bayes-factor e-process for linear-Gaussian partial correlation (scalar and block), plus the closed-form confidence sequence obtained by inverting it |
-| `sprint_cd/eprocess/universal.py` | Sequential universal-inference e-processes (Gaussian and categorical) — assumption-light alternatives |
-| `sprint_cd/multiplicity.py` | Fixed-family budgeting and e-BH (valid under arbitrary dependence) |
-| `sprint_cd/sprint_cd.py` | **SPRINT-CD**: streaming, anytime-valid PC returning a CPDAG |
-| `sprint_cd/sprint_fci.py` | **SPRINT-FCI**: the same under latent confounding, returning a PAG |
-| `sprint_cd/e_icp.py` | **E-ICP**: anytime-valid Invariant Causal Prediction |
-| `sprint_cd/dsep.py` | d-separation and oracle PAG construction, for evaluation |
-| `docs/METHOD.md` | Constructions, proofs, and an explicit account of the assumptions |
+**Adjacency.** For a pair, the null "there exists a conditioning set that
+separates them" is true whenever the pair is non-adjacent, so rejecting it
+certifies an edge. It is a *union* null, and the minimum of the per-set
+e-processes is an e-process for it:
+
+```
+A_t(i,j) = min over S of E^(S)_t(i,j)
+```
+
+because `A_t ≤ E^(S*)_t` for the true separator `S*`. **Validity needs only the
+Markov condition** — `pa(i)` always separates a non-adjacent pair.
+Faithfulness buys only power. Multiplicity runs over `C(d,2)` pairs, not over
+(pair, conditioning set) triples.
+
+**Direction.** Nothing in the constraint-based literature controls orientation
+error; orientation is deterministic post-processing. Under a linear
+non-Gaussian model the two orientations induce different joint densities and
+exactly one is correct, so "the direction is `j -> i`" is a genuine null.
+A sequential universal-inference e-process against it certifies `i -> j`:
+
+```
+log E_t = Σ log D^(i→j)_θ̂(past) (o_s)  −  sup_θ Σ log D^(j→i)_θ (o_s)
+```
+
+Under Gaussian noise the two factorisations are indistinguishable, the ratio
+does not grow, and **no certificate is issued** — the method abstains exactly
+where direction is unidentified.
+
+**Guarantee.** For any stopping time, with `alpha = alpha_A + alpha_D`:
+
+```
+P( ∃ tau :  a certified edge is absent from G*,
+            or a certified arrowhead is wrong )   ≤   alpha
+```
+
+No faithfulness, no strong faithfulness, no equivalence region.
+
+**What it does not say.** An absent edge means *undecided*, not "certified
+absent". CERT-CD cannot tell you an edge is missing, and does not pretend to.
+
+---
+
+## Results
+
+`d = 5`, Laplace noise, `alpha = 0.1`, estimate monitored throughout the run:
+
+| stratum | CERT-CD false edge | CERT-CD wrong arrow | SPRINT-CD lost edge | PC lost edge |
+|---|---|---|---|---|
+| `delta`-strong faithfulness **holds** (n=40) | 0.000 | 0.000 | 0.000 | 0.000 |
+| `delta`-strong faithfulness **fails** (n=20) | **0.050** | **0.000** | 0.600 | 0.800 |
+
+Where the premise fails — the regime that breaks delete-on-non-rejection —
+CERT-CD stays inside its budget of 0.1 (95% CI [0.009, 0.236]) while SPRINT-CD
+loses a true edge in 60% of runs and PC in 80%. Near-unfaithful instances cost
+CERT-CD *power* — the affected pairs stay undecided — rather than *validity*.
+
+On premise-satisfying instances every true edge is certified and **96% are also
+oriented, against a CPDAG orientation ceiling of 33%** (the fraction a Markov
+equivalence class can orient at all). A chain has no v-structure and is
+unorientable in principle by any constraint-based method; direction
+certificates are not bound by that ceiling.
 
 ---
 
@@ -70,88 +112,60 @@ pip install -e ".[experiments,dev]"
 
 ```python
 import numpy as np
-from sprint_cd import SprintCD, SprintCDConfig, random_dag
+from sprint_cd import CertCD, CertCDConfig, random_dag
 
 rng = np.random.default_rng(0)
-sem = random_dag(6, edge_prob=0.3, rng=rng)
-data = sem.sample(5000, rng)
+sem = random_dag(5, edge_prob=0.35, rng=rng)
+data = sem.sample(4000, rng, noise="laplace")     # non-Gaussian: direction identified
 
-algo = SprintCD(d=6, config=SprintCDConfig(alpha=0.05, rope=0.15))
-algo.warm_up(data[:50])                 # sets prior scales; excluded from every e-process
+algo = CertCD(d=5, config=CertCDConfig(alpha=0.05))
+algo.warm_up(data[:50])
+for start in range(50, len(data), 250):
+    algo.update(data[start:start + 250])           # inspect after every batch: free
 
-for start in range(50, len(data), 100):
-    algo.update(data[start:start + 100])
-    if algo.resolved:                   # a data-dependent stopping rule — and that is fine
-        break
-
-print(algo.cpdag())
-print(f"stopped at n = {algo.n}")
-```
-
-Latent confounders and streaming environments:
-
-```python
-from sprint_cd import run_sprint_fci, EICP, EICPConfig
-
-pag, algo = run_sprint_fci(observed_data)      # PAG; bi-directed edges flag latents
-
-model = EICP(d=3, n_env=3, config=EICPConfig(alpha=0.05))
-model.warm_up(X[:40], y[:40], env[:40])
-model.update(X[40:], y[40:], env[40:])
-model.estimate()                                # subset of the true parents, at any time
+print(algo.graph())                 # only certified edges; circles = direction undecided
+print("certified edges :", algo.certified_edges())
+print("certified arrows:", algo.certified_arrows())
+print("undecided pairs :", algo.undecided_pairs())   # NOT 'certified absent'
 ```
 
 ---
 
-## How it works
+## What is here
 
-Three ideas, developed in `docs/METHOD.md`.
-
-**1. An e-value that is a function of the Gram matrix.** For a linear-Gaussian
-stream, the right-Haar Bayes factor for `X_i indep X_j | X_S` depends on the
-data only through Schur complements of the running cross-product matrix. A
-single `O(d^2)` sufficient statistic therefore serves the whole hypothesis
-family; nothing is stored per hypothesis.
-
-**2. A confidence sequence to *accept* independence.** E-processes accumulate
-evidence *against* a null, so they cannot remove an edge on their own.
-Inverting the e-value gives a closed-form anytime-valid interval for the
-coefficient, and an edge is removed once that interval fits inside a region of
-practical equivalence. The region is specified on the partial-correlation
-scale — a raw coefficient-scale region is not scale-free across conditioning
-sets, and using one makes a *stronger* SEM coefficient slow deletion down.
-
-**3. A budget fixed before the data arrive.** Which hypothesis the algorithm
-examines next depends on the graph so far, hence on the data. Budgeting over
-the whole *potential* family `{(i,j,S) : |S| <= k}` makes the union bound
-independent of what was actually examined, so adaptive enumeration of
-conditioning sets costs nothing.
+| module | contents |
+|---|---|
+| `sprint_cd/certificates.py` | The two certificate primitives: the adjacency e-process `min_S E^(S)`, and the direction e-process via sequential universal inference |
+| `sprint_cd/certcd.py` | **CERT-CD** — the certificate-only algorithm |
+| `sprint_cd/eprocess/safe_linear.py` | Exact right-Haar Bayes-factor e-process for linear-Gaussian partial correlation, plus its inverted confidence sequence |
+| `sprint_cd/eprocess/universal.py` | Sequential universal-inference e-processes (Gaussian, categorical) |
+| `sprint_cd/sprint_cd.py` | **SPRINT-CD** — anytime-valid PC (delete-on-certificate). The baseline CERT-CD is measured against |
+| `sprint_cd/sprint_fci.py` | SPRINT-FCI — the same under latent confounding, returning a PAG |
+| `sprint_cd/e_icp.py` | E-ICP — anytime-valid Invariant Causal Prediction |
+| `docs/CERTCD.md` | **CERT-CD method notes, including an explicit account of what is and is not new** |
+| `docs/METHOD.md` | SPRINT-CD method notes |
 
 ---
 
-## Guarantee, and what it excludes
+## Honest positioning
 
-For **any** stopping time `tau`, under a linear-Gaussian SEM and
-`delta`-strong faithfulness:
+Most primitives here are standard, and `docs/CERTCD.md` says so in detail:
+min-of-e-values for union nulls (Vovk and Wang), aggregating CI tests over
+conditioning sets into an edge statistic (**PC-p** uses the max *p*-value, of
+which `min_S E^(S)` is the e-value analogue), adjacency as a test target (DAT),
+asymmetric edge-error control (ε-CUT), residual independence for direction
+(DirectLiNGAM), universal inference, safe testing.
 
-```
-P( exists tau :  a true edge is absent from G_tau
-                 or a true independence is certified dependent )  <=  alpha
-```
+What appears to be new is: **(1)** a certified, anytime-valid *orientation* —
+no constraint-based method controls orientation error and no functional method
+gives a time-uniform direction certificate; **(2)** the certificate-only rule
+and the growing, abstaining algorithm it forces; **(3)** turning the
+edge-level aggregate into an e-process, which makes PC-p's fixed-sample FDR
+statement time-uniform and reduces its validity requirement to the Markov
+condition alone.
 
-The guarantee is **one-sided on the skeleton**. Early in a run nothing has
-been certified and the output is a dense superset of the truth; what is
-controlled uniformly in time is the *removal* of true edges, the error that is
-irreversible in streaming. Extra edges are the price.
-
-`delta`-strong faithfulness is a genuine restriction, not a formality. At
-`delta = 0.15` it holds in about 65% of random 6-variable DAGs, and in only
-19% once a latent variable is marginalised out — the median smallest partial
-correlation over true adjacencies there is about 0.03. Removing an edge whose
-association genuinely lies inside the equivalence region is correct behaviour
-by construction, not a calibration failure, so Experiments 2 and 4 **stratify
-instances by whether the premise holds** and report both strata rather than
-pooling them into a misleading average.
+Citations were identified by web search and **have not been verified against
+publisher records**.
 
 ---
 
@@ -159,38 +173,22 @@ pooling them into a misleading average.
 
 ```bash
 python experiments/run_all.py            # full run
-python experiments/run_all.py --quick    # fast smoke run, writes to results/quick/
+python experiments/run_all.py --quick    # smoke run, writes to results/quick/
 ```
 
 | experiment | question |
 |---|---|
-| 1 — Type-I calibration | What does monitoring cost a fixed-sample test, and does the e-process repair it without losing power? |
-| 2 — whole-graph error | Is the *graph* protected across a monitored run, and what are the extra edges that buys? |
-| 3 — adaptive stopping | Does stopping on a data-dependent rule save data, and what does `delta` control? |
-| 4 — latent confounders | Does the guarantee survive Possible-D-SEP and PAG orientation, and how often does its premise hold? |
-| 5 — E-ICP | Does the ICP subset guarantee survive optional continuation? |
+| 1 | What does monitoring cost a fixed-sample CI test, and does an e-process repair it? |
+| 2 | Is the whole *graph* protected across a monitored run? |
+| 3 | Does adaptive stopping save data, and what does `delta` control? |
+| 4 | Does the guarantee survive latent confounders, and how often does its premise hold? |
+| 5 | Does the ICP subset guarantee survive optional continuation? |
+| 6 | **CERT-CD vs delete-on-non-rejection: validity when faithfulness fails, and certified orientation** |
 
-Headline findings, in addition to the calibration table above:
-
-* **Whole-graph control.** Over a monitored run on instances satisfying the
-  premise, SPRINT-CD ever loses a true edge with probability 0.008 against a
-  budget of 0.1 (n = 120); PC re-run at each sample size does so with
-  probability 0.133 on the *same* instances. By `n = 4000` SPRINT-CD averages
-  0.01 missing and 0.01 extra edges, against PC's 0.00 missing and 0.57 extra.
-  Where the premise fails, SPRINT-CD loses an edge in 75% of runs — outside
-  what the theorem covers, and reported as such.
-* **Adaptive stopping.** SPRINT-CD halts at a median `n` of 1900 with mean SHD
-  0.83 (SE 0.22). Fixed-sample PC plateaus at 0.90 and does not reach that
-  accuracy anywhere up to `n = 20000`.
-* **Latent confounders.** Where the premise holds, no true adjacency was lost
-  in 80 runs (budget 0.1; 95% CI [0.000, 0.046]), and SHD to the oracle PAG
-  falls from 12.7 to 0.35 by `n = 4000`. The bi-directed edge marking the
-  latent was recovered in 7 of 7 cases.
-* **E-ICP.** Monitoring multiplies ICP's rejection rate for the true parent set
-  by about 12× (0.007 → 0.080); E-ICP's stays at 0.000 across 300 runs while
-  recovering every true parent.
-
----
+Findings for 1–5 (the SPRINT-CD line of work) are in `docs/METHOD.md`; the
+headline there is that naive monitoring inflates Type-I error 7× (0.346 vs a
+nominal 0.05) while the e-process holds at 0.024 — with a real power cost that
+is documented rather than hidden.
 
 ## Tests
 
@@ -198,17 +196,16 @@ Headline findings, in addition to the calibration table above:
 python -m pytest
 ```
 
-74 tests. The substantive ones are calibration checks: all three e-process
-constructions are verified against Ville's inequality by simulation rather
-than assumed valid, and the FCI orientation rules are checked against
-hand-derived PAGs.
-
----
+99 tests. The load-bearing ones are calibration checks: every e-process is
+verified against Ville's inequality by simulation, the adjacency certificate is
+checked in a distribution where two directed paths cancel exactly (faithfulness
+violated outright), and the direction certificate is checked to abstain under
+Gaussian noise.
 
 ## Citation
 
-Dang, Q.-V. *Anytime-valid constraint-based causal discovery.* Working paper,
-British University Vietnam, 2026.
+Dang, Q.-V. *Certificate-only causal discovery.* Working paper, British
+University Vietnam, 2026.
 
 ## Licence
 

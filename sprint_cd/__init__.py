@@ -1,22 +1,30 @@
-"""SPRINT-CD: Sequential PC/FCI with aNytime-valid Tests.
+"""Anytime-valid causal discovery.
 
-Anytime-valid constraint-based causal discovery.  Conditional-independence
-queries are answered by e-processes, edges are removed only against
-confidence-sequence certificates, and both kinds of decision are charged
-against a budget fixed over the whole potential hypothesis family -- so the
-recovered graph carries time-uniform error control at *any* data-dependent
-stopping time.
+The package contains two algorithms built on a shared e-process core, which
+differ in how they decide that an edge is *absent*.
 
-Main entry points
------------------
-``SprintCD`` / ``run_sprint_cd``
-    Streaming, anytime-valid PC returning a CPDAG (assumes causal sufficiency).
-``SprintFCI`` / ``run_sprint_fci``
-    The same under latent confounding, returning a PAG.
+``CertCD`` -- certificate-only discovery (the main contribution)
+    Obeys one rule: assert a feature only by REJECTING a null that is true
+    whenever the feature is absent; never assert anything by failing to reject.
+    Adjacency is certified by ``min_S E^{(S)}``, an e-process for the composite
+    null "the pair is separable", which needs only the Markov condition;
+    orientation is certified by a sequential universal-inference e-process
+    against the reversed linear non-Gaussian factorisation.  The graph starts
+    empty and grows, undecided pairs are reported as undecided, and no
+    faithfulness assumption enters the validity argument.
+
+``SprintCD`` / ``SprintFCI`` -- anytime-valid PC and FCI
+    The conventional shape: start complete, delete edges against
+    confidence-sequence certificates.  Retained as the baseline the
+    certificate-only algorithm is measured against, since deleting on an
+    accepted null is what forces the ``delta``-strong-faithfulness premise.
+
 ``EICP``
     Anytime-valid Invariant Causal Prediction across streaming environments.
 """
 
+from .certcd import CertCD, CertCDConfig, run_cert_cd
+from .certificates import DirectionEProcess, adjacency_log_e, admissible_sets
 from .e_icp import EICP, EICPConfig, icp_fixed_sample
 from .eprocess import (
     DiscreteUniversalCI,
@@ -43,6 +51,8 @@ from .stats import GaussianSuffStat
 __version__ = "0.1.0"
 
 __all__ = [
+    "CertCD", "CertCDConfig", "run_cert_cd",
+    "adjacency_log_e", "admissible_sets", "DirectionEProcess",
     "SprintCD", "SprintCDConfig", "run_sprint_cd",
     "SprintFCI", "run_sprint_fci", "pag_from_skeleton",
     "EICP", "EICPConfig", "icp_fixed_sample",

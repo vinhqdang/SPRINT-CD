@@ -20,6 +20,7 @@ SCRIPTS = [
     ("exp3_sample_efficiency.py", "Adaptive stopping and the equivalence region"),
     ("exp4_latent_confounders.py", "Recovery under latent confounding"),
     ("exp5_eicp.py", "Invariant prediction under optional continuation"),
+    ("exp6_certcd.py", "Certificate-only discovery vs delete-on-non-rejection"),
 ]
 
 

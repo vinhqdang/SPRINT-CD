@@ -41,11 +41,18 @@ class LinearGaussianSEM:
     def adjacency(self) -> np.ndarray:
         return (np.abs(self.B) > 0).astype(int)
 
-    def sample(self, n: int, rng: np.random.Generator) -> np.ndarray:
-        """Draw ``n`` i.i.d. observations by forward simulation in causal order."""
+    def sample(self, n: int, rng: np.random.Generator,
+               noise: str = "gaussian") -> np.ndarray:
+        """Draw ``n`` i.i.d. observations by forward simulation in causal order.
+
+        ``noise`` selects the (standardised) innovation law.  Non-Gaussian
+        options matter for direction identifiability: under Gaussian noise the
+        two orientations of an edge are observationally indistinguishable, so a
+        method that certifies directions must abstain there.
+        """
         d = self.d
         X = np.zeros((n, d))
-        eps = rng.normal(size=(n, d)) * self.noise_sd
+        eps = _draw_noise(rng, n, d, noise) * self.noise_sd
         for j in self.order:
             parents = np.nonzero(self.B[:, j])[0]
             X[:, j] = eps[:, j]
@@ -58,6 +65,25 @@ class LinearGaussianSEM:
 
     def true_cpdag(self) -> MarkedGraph:
         return dag_to_cpdag(self.adjacency)
+
+
+def _draw_noise(rng: np.random.Generator, n: int, d: int, kind: str) -> np.ndarray:
+    """Unit-variance innovations from a named family."""
+    if kind == "gaussian":
+        return rng.normal(size=(n, d))
+    if kind == "laplace":
+        return rng.laplace(size=(n, d)) / np.sqrt(2.0)
+    if kind == "uniform":
+        return rng.uniform(-np.sqrt(3.0), np.sqrt(3.0), size=(n, d))
+    if kind == "exponential":
+        return rng.exponential(size=(n, d)) - 1.0
+    if kind == "t5":
+        return rng.standard_t(5, size=(n, d)) / np.sqrt(5.0 / 3.0)
+    if kind == "mixture":                       # bimodal, outside the fitted family
+        comp = rng.integers(0, 2, size=(n, d))
+        x = rng.normal(size=(n, d)) * 0.5 + np.where(comp == 0, -1.0, 1.0)
+        return x / np.sqrt(1.25)
+    raise ValueError(f"unknown noise family: {kind}")
 
 
 def random_dag(
