@@ -227,3 +227,50 @@ def test_direction_process_counts_observations_not_batches():
         proc.update(xj[s:s + batch], xi[s:s + batch], Z[s:s + batch])
     assert proc._scored > 0
     assert np.isfinite(proc.log_max)
+
+
+# ----------------------------------------------------------------------
+# direction certificate under noise outside the fitted family
+# ----------------------------------------------------------------------
+def _out_of_family_noise(rng, kind, n):
+    """Noises the generalised Gaussian family cannot represent.
+
+    The family is unimodal, symmetric, with exponential tails.  These three
+    break each of those properties in turn.
+    """
+    if kind == "heavy_tails":
+        return rng.standard_t(3, size=n) / 1.7          # polynomial tails
+    if kind == "skewed":
+        return rng.exponential(size=n) - 1.0            # asymmetric
+    if kind == "bimodal":
+        comp = rng.integers(0, 2, size=n)
+        return (rng.normal(size=n) * 0.5
+                + np.where(comp == 0, -1.0, 1.0)) / np.sqrt(1.25)
+    raise ValueError(kind)
+
+
+@pytest.mark.parametrize("kind", ["heavy_tails", "skewed", "bimodal"])
+def test_direction_certificate_survives_noise_outside_the_fitted_family(kind):
+    """Validity of the direction certificate rests on a parametric assumption.
+
+    Universal inference needs the denominator's supremum to dominate the
+    likelihood at the true null parameter; if the true noise lies outside the
+    fitted family that is not guaranteed, so misspecification is the certificate's
+    main theoretical risk and is checked rather than assumed.  Truth is
+    ``j -> i``; certifying ``i -> j`` is the error.
+    """
+    rng = np.random.default_rng(20)
+    reps, n, batch, alpha = 12, 1200, 250, 0.05
+    wrong = correct = 0
+    for _ in range(reps):
+        xj = _out_of_family_noise(rng, kind, n)
+        xi = 0.9 * xj + _out_of_family_noise(rng, kind, n)
+        Z = np.ones((n, 1))
+        bad, good = DirectionEProcess(n_cond=1), DirectionEProcess(n_cond=1)
+        for s in range(0, n, batch):
+            bad.update(xi[s:s + batch], xj[s:s + batch], Z[s:s + batch])
+            good.update(xj[s:s + batch], xi[s:s + batch], Z[s:s + batch])
+        wrong += bad.certifies(alpha)
+        correct += good.certifies(alpha)
+    assert wrong == 0, f"{kind}: certified the reversed direction {wrong}/{reps} times"
+    assert correct >= reps - 1, f"{kind}: lost power, {correct}/{reps}"

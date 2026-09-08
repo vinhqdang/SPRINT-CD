@@ -103,10 +103,18 @@ issued -- the procedure abstains precisely where the direction is not
 identified, rather than guessing.
 
 **Assumption.**  Validity of this certificate requires the noise to lie in the
-fitted family (a generalised Gaussian, whose shape parameter spans light- to
-heavy-tailed and includes the Gaussian).  That is a genuine parametric
-assumption and is stated as such; it is checked empirically against noise
-inside and outside the family in ``tests/test_certificates.py``.
+fitted family (a generalised Gaussian: unimodal, symmetric, exponential
+tails).  Universal inference needs the denominator's supremum to dominate the
+likelihood at the true null parameter, and outside the family that is not
+guaranteed -- so this is the certificate's main theoretical risk, and unlike
+the adjacency certificate's assumptions it is genuinely parametric.
+
+Empirically it is more robust than that suggests.  Against noise breaking each
+family property in turn -- Student-t (polynomial rather than exponential
+tails), shifted exponential (asymmetric), and a two-component mixture
+(bimodal) -- the reversed direction was certified in 0 of 12 runs each, with
+full power retained, at ``alpha = 0.05``.  These are locked in as tests in
+``tests/test_certificates.py`` rather than left as an informal claim.
 """
 
 from __future__ import annotations

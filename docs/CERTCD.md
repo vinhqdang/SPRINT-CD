@@ -137,9 +137,14 @@ were features:
   that kept changing would change the hypothesis under test, and Ville's
   inequality bounds a fixed one.
 
-**Assumption.** Validity here requires the noise to lie in the fitted family.
-That is a real parametric assumption, unlike the adjacency certificate's, and
-is checked empirically against noise inside and outside the family.
+**Assumption.** Validity here requires the noise to lie in the fitted family
+(unimodal, symmetric, exponential tails). Universal inference needs the
+denominator's supremum to dominate the likelihood at the true null parameter,
+which is not guaranteed under misspecification — this is the certificate's main
+theoretical risk. Empirically it survives noise breaking each family property
+in turn: Student-*t* tails, shifted-exponential skew, and a bimodal mixture
+each gave 0 false certifications in 12 runs with full power retained, and all
+three are tests rather than informal claims.
 
 ---
 
