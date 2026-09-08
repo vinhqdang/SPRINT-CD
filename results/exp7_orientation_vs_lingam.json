@@ -1,0 +1,42 @@
+{
+  "config": {
+    "reps": 200,
+    "d": 5,
+    "edge_prob": 0.35,
+    "n": 3000,
+    "batch": 250,
+    "alpha": 0.1,
+    "seed": 20260908,
+    "quick": false
+  },
+  "results": {
+    "laplace": {
+      "cert": {
+        "oriented": 609,
+        "wrong": 3,
+        "runs_with_wrong": 3
+      },
+      "lingam": {
+        "oriented": 689,
+        "wrong": 0,
+        "runs_with_wrong": 0
+      },
+      "edges": 689,
+      "reps": 200
+    },
+    "gaussian": {
+      "cert": {
+        "oriented": 0,
+        "wrong": 0,
+        "runs_with_wrong": 0
+      },
+      "lingam": {
+        "oriented": 692,
+        "wrong": 356,
+        "runs_with_wrong": 167
+      },
+      "edges": 692,
+      "reps": 200
+    }
+  }
+}
