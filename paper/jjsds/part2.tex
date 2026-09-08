@@ -170,7 +170,10 @@ so that the null is $\beta = 0$ with nuisance parameters $(\alpha, \sigma)$
 shared between the hypotheses. Place the right-Haar prior
 $\pi(\alpha, \sigma) \propto \sigma^{-1}$ on the nuisance block under both
 hypotheses, and $\beta \mid \sigma \sim N(0, \sigma^2 g)$ on the tested
-coefficient under the alternative. Integrating both marginal likelihoods in
+coefficient under the alternative, in the manner of Zellner's $g$-prior
+\citep{zellner1986assessing}. The right-Haar choice on the nuisance block is
+the invariance-based prior of \citet{jeffreys1946invariant} specialised to
+this group. Integrating both marginal likelihoods in
 closed form (Appendix~\ref{app:safelinear}) gives, after $n$ observations,
 \begin{equation}\label{eq:safelinear}
 E_n \;=\; (1+G)^{-1/2}\,\bigl(1 - \kappa\,\hat r_n^2\bigr)^{-(n-p)/2},
@@ -233,7 +236,7 @@ Section~\ref{sec:exp-primitive} repeats the exercise under six noise laws.
 Because~\eqref{eq:safelinear} is available in closed form for every value of
 the tested coefficient, it can be inverted to give a confidence sequence---a
 sequence of intervals covering $\beta$ simultaneously at all times with
-probability $1-\alpha$. Writing $\hat\beta = S_{xy}/S_{yy}$ for the
+probability $1-\alpha$ \citep{howard2021timeuniform}. Writing $\hat\beta = S_{xy}/S_{yy}$ for the
 least-squares estimate of the coefficient of $X_j$ in the residualised
 regression, the level-$(1-\alpha)$ confidence sequence is
 \begin{equation}\label{eq:cs}

@@ -139,7 +139,9 @@ cannot be one without a faithfulness-type assumption. It also does not cover
 the analyst's use of the output for anything else: an intervention chosen on
 the basis of a certified arrowhead inherits the $\alpha$, but a downstream
 effect estimate computed from the certified graph does not automatically
-inherit anything, and would need its own analysis.
+inherit anything, and would need its own analysis; the estimand there is the intervention-effect
+problem of \citet{maathuis2009estimating}, and combining a certified graph
+with a valid effect interval is a genuinely open question.
 \end{remark}
 
 \subsection{Complexity}\label{sec:complexity}
@@ -205,7 +207,8 @@ give thresholds $1/(\alpha w_h)$ and the same bound, so prior knowledge about
 which pairs are likely adjacent can be spent as unequal weights, decided
 before the data arrive. Second, if the analyst wants false-discovery-rate
 rather than family-wise control, the e-BH procedure of
-\citet{wang2022false} applies to e-values under arbitrary dependence and would
+\citet{wang2022false} applies to e-values under arbitrary dependence, as do
+the martingale-based merging rules of \citet{vovk2024merging}, and would
 replace the union bound directly---but only at a fixed stopping time, since it
 again takes e-values rather than running maxima as inputs.
 
@@ -255,8 +258,8 @@ observed set---which is compatible with a direct effect, a latent common
 cause, or both.
 
 We therefore implement CERT-FCI: run the adjacency certificates to obtain a
-certified skeleton, apply the FCI orientation rules R1--R4 \citep[in the
-formulation of][]{zhang2008completeness} to the certified edges only, and
+certified skeleton, apply the FCI orientation rules R1--R4 \citep[originally
+][in the formulation of \citealp{zhang2008completeness}]{spirtes1995causal} to the certified edges only, and
 report the resulting partial ancestral graph. Orientations produced by the FCI
 rules inherit the adjacency certificates' guarantee only in the weak sense
 that they are sound given a correct skeleton and correct sepsets; we do not

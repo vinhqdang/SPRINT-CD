@@ -92,9 +92,12 @@ family-wise error rate, LiNGAM}
 \section{Introduction}\label{sec:intro}
 
 A causal discovery algorithm returns a graph, and a practitioner reading that
-graph would like to know which of its features the data support. Methods in
+graph would like to know which of its features the data support. Causal
+graphical models have become a standard language for that question
+\citep{pearl2009causality,peters2017elements}, and the algorithms that
+estimate them from observational data are correspondingly consequential. Methods in
 the constraint-based tradition---PC, FCI and their descendants
-\citep{spirtes2000causation,colombo2012learning}---answer this question
+\citep{spirtes2000causation,spirtes1995causal,colombo2012learning}---answer this question
 poorly, and the reason is structural rather than incidental. They begin from
 the complete graph and delete an edge whenever a conditional-independence test
 fails to reject. Failure to reject is not evidence of independence. It is
@@ -251,7 +254,7 @@ $\tau$ (finite or not, with $E_\infty := \liminf_t E_t$).
 \end{definition}
 
 Every non-negative supermartingale starting at one is an e-process, by
-optional stopping; the converse fails, and the distinction matters for
+optional stopping \citep{shafer2019game}; the converse fails, and the distinction matters for
 composite nulls, where an e-process need not be a supermartingale under any
 single null distribution \citep{ramdas2023gametheoretic}. Both of our
 constructions are e-processes that are dominated pointwise by a
@@ -286,7 +289,7 @@ Section~\ref{sec:multiplicity} non-trivial.
 
 Recent work has developed e-processes for a wide range of settings---bounded
 means \citep{waudbysmith2024estimating}, linear models
-\citep{lindon2024anytime}, stratified counts \citep{turner2023safe}---and has
+\citep{lindon2026anytime}, stratified counts \citep{turner2023safe}---and has
 characterised admissible constructions \citep{ramdas2023gametheoretic}. Two
 general recipes recur below. The first is the \emph{method of mixtures}: under
 a group-invariant null, integrating the likelihood ratio against the right-Haar
@@ -353,7 +356,10 @@ Since the argument of this paper is about what faithfulness is doing, it is
 worth being precise about the versions in play.
 
 \emph{Faithfulness} holds if every conditional independence in $P$ is implied
-by d-separation in $\Gstar$. \emph{Adjacency-faithfulness}
+by d-separation in $\Gstar$; \citet{meek1995strong} showed that it fails only
+on a Lebesgue-null set of parameters for a fixed graph, which is the result
+usually cited in its defence and which \citet{uhler2013geometry} showed to be
+misleading in finite samples. \emph{Adjacency-faithfulness}
 \citep{ramsey2006adjacency} is the weaker requirement that adjacent variables
 are dependent given every conditioning set. \emph{$\delta$-strong
 faithfulness} \citep{uhler2013geometry,kalisch2007estimating} is the
@@ -546,7 +552,10 @@ so that the null is $\beta = 0$ with nuisance parameters $(\alpha, \sigma)$
 shared between the hypotheses. Place the right-Haar prior
 $\pi(\alpha, \sigma) \propto \sigma^{-1}$ on the nuisance block under both
 hypotheses, and $\beta \mid \sigma \sim N(0, \sigma^2 g)$ on the tested
-coefficient under the alternative. Integrating both marginal likelihoods in
+coefficient under the alternative, in the manner of Zellner's $g$-prior
+\citep{zellner1986assessing}. The right-Haar choice on the nuisance block is
+the invariance-based prior of \citet{jeffreys1946invariant} specialised to
+this group. Integrating both marginal likelihoods in
 closed form (Appendix~\ref{app:safelinear}) gives, after $n$ observations,
 \begin{equation}\label{eq:safelinear}
 E_n \;=\; (1+G)^{-1/2}\,\bigl(1 - \kappa\,\hat r_n^2\bigr)^{-(n-p)/2},
@@ -609,7 +618,7 @@ Section~\ref{sec:exp-primitive} repeats the exercise under six noise laws.
 Because~\eqref{eq:safelinear} is available in closed form for every value of
 the tested coefficient, it can be inverted to give a confidence sequence---a
 sequence of intervals covering $\beta$ simultaneously at all times with
-probability $1-\alpha$. Writing $\hat\beta = S_{xy}/S_{yy}$ for the
+probability $1-\alpha$ \citep{howard2021timeuniform}. Writing $\hat\beta = S_{xy}/S_{yy}$ for the
 least-squares estimate of the coefficient of $X_j$ in the residualised
 regression, the level-$(1-\alpha)$ confidence sequence is
 \begin{equation}\label{eq:cs}
@@ -1034,7 +1043,9 @@ cannot be one without a faithfulness-type assumption. It also does not cover
 the analyst's use of the output for anything else: an intervention chosen on
 the basis of a certified arrowhead inherits the $\alpha$, but a downstream
 effect estimate computed from the certified graph does not automatically
-inherit anything, and would need its own analysis.
+inherit anything, and would need its own analysis; the estimand there is the intervention-effect
+problem of \citet{maathuis2009estimating}, and combining a certified graph
+with a valid effect interval is a genuinely open question.
 \end{remark}
 
 \subsection{Complexity}\label{sec:complexity}
@@ -1100,7 +1111,8 @@ give thresholds $1/(\alpha w_h)$ and the same bound, so prior knowledge about
 which pairs are likely adjacent can be spent as unequal weights, decided
 before the data arrive. Second, if the analyst wants false-discovery-rate
 rather than family-wise control, the e-BH procedure of
-\citet{wang2022false} applies to e-values under arbitrary dependence and would
+\citet{wang2022false} applies to e-values under arbitrary dependence, as do
+the martingale-based merging rules of \citet{vovk2024merging}, and would
 replace the union bound directly---but only at a fixed stopping time, since it
 again takes e-values rather than running maxima as inputs.
 
@@ -1150,8 +1162,8 @@ observed set---which is compatible with a direct effect, a latent common
 cause, or both.
 
 We therefore implement CERT-FCI: run the adjacency certificates to obtain a
-certified skeleton, apply the FCI orientation rules R1--R4 \citep[in the
-formulation of][]{zhang2008completeness} to the certified edges only, and
+certified skeleton, apply the FCI orientation rules R1--R4 \citep[originally
+][in the formulation of \citealp{zhang2008completeness}]{spirtes1995causal} to the certified edges only, and
 report the resulting partial ancestral graph. Orientations produced by the FCI
 rules inherit the adjacency certificates' guarantee only in the weak sense
 that they are sound given a correct skeleton and correct sepsets; we do not
@@ -1212,7 +1224,8 @@ entropy-based approximations underlying the pairwise measures go back to
 \citet{hyvarinen1998new}.
 
 \paragraph{Orientation error control per se.} \citet{strobl2019estimating}
-control the FDR of orientations; \citet{shimizu2008use} test direction of
+control the FDR of orientations, using the rule set of
+\citet{meek1995causal}; \citet{shimizu2008use} test direction of
 causation using non-normality; \citet{komatsu2010assessing} attach bootstrap
 reliability to LiNGAM outputs; \citet{strieder2023confidence} give confidence
 statements under structure uncertainty for equal-variance models. None of
