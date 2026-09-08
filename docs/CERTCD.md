@@ -25,7 +25,7 @@ shape of algorithm:
 | graph over time | shrinks | grows |
 | controlled error | missing edges | false edges **and** wrong arrowheads |
 | faithfulness | needed for validity | needed only for power |
-| orientation error | uncontrolled | certified |
+| orientation error | uncontrolled | certified, where the direction null holds |
 | undecided pairs | forced to a decision | reported as undecided |
 
 ---
@@ -226,8 +226,11 @@ inaccessible in the context of causal discovery."
 1. **Error-controlled orientation beyond the Markov equivalence class.** The
    table's last column is the point: every row with error control is confined
    to the MEC, and every row that escapes the MEC has no error control on the
-   direction. The direction certificate has both — 96% of edges oriented
-   against a 33% CPDAG ceiling, with a time-uniform bound on wrong arrowheads.
+   direction. The direction certificate has both — 96% of certified edges
+   oriented against a 33% CPDAG ceiling, with a time-uniform bound on wrong
+   arrowheads. The bound is delivered only where the direction null itself
+   holds; see the empirical summary for two measured regimes where it does
+   not.
 2. **A proved, not assumed, whole-graph guarantee.** Anytime-validity per CI
    test is *not* new: Csillag et al. calibrate batched Fisher-z p-values into
    sequential e-values inside PC. What they do not do is establish validity for
@@ -320,17 +323,62 @@ monitored throughout the run:
 
 | stratum | CERT-CD false edge | CERT-CD wrong arrow | SPRINT-CD lost edge | PC lost edge |
 |---|---|---|---|---|
-| `delta`-strong faithfulness holds (n=40) | 0.000 | 0.000 | 0.000 | 0.000 |
-| `delta`-strong faithfulness fails (n=20) | 0.050 | 0.000 | 0.600 | 0.800 |
+| `delta`-strong faithfulness holds (500 instances) | 0.000 | 0.004 | 0.000 | 0.008 |
+| `delta`-strong faithfulness fails (250 instances) | 0.016 | **0.080** | 0.560 | 0.812 |
 
-The second row is the whole argument. Where the premise fails, CERT-CD stays
-inside its budget of 0.1 (95% CI [0.009, 0.236]) because it never accepts a
-null; SPRINT-CD loses a true edge in 60% of runs and PC in 80%, because both
-decide absence by failing to reject. The premise itself held in 77% of the 87
-DAGs generated here.
+The budget splits evenly, so each CERT-CD column is bounded by 0.05.
 
-On premise-satisfying instances at `n = 3000`: all true edges certified, 96% of
-them also oriented — against a **CPDAG orientation ceiling of 33%**, the
-fraction a Markov equivalence class can orient at all on these graphs. That gap
-is the point of the direction certificate: a chain has no v-structure and is
-unorientable in principle by any constraint-based method.
+The second row carries the argument and its limit. On **adjacency**, where the
+premise fails CERT-CD stays inside budget at 0.016 (95% CI [0.006, 0.040])
+because it never accepts a null, while SPRINT-CD loses a true edge in 56% of
+runs and PC in 81%, because both decide absence by failing to reject. The
+premise itself held in 74% of the 948 DAGs generated here.
+
+On **orientation** it does not. 0.080 with CI [0.052, 0.120] excludes the 0.05
+budget. The conditioning block is frozen to a pair's already-certified
+neighbours, so on a near-unfaithful instance it more often omits a parent of
+one endpoint, and the pair then has an uncontrolled common cause exactly where
+the direction model assumes none. Theorem 1 is not contradicted — that is the
+assumption its direction clause makes — but only the adjacency clause is
+robust to unfaithfulness. An earlier run at 40/20 instances reported 0/20 in
+this cell and supported the opposite reading; the effect needs a few hundred
+instances per stratum to see.
+
+On premise-satisfying instances at `n = 3000`: 97% of true edges certified,
+93% also oriented (96% of certified edges) — against a **CPDAG orientation
+ceiling of 33%**, the fraction a Markov equivalence class can orient at all on
+these graphs. That gap is the point of the direction certificate: a chain has
+no v-structure and is unorientable in principle by any constraint-based
+method. 72% of all pairs remain undecided.
+
+### Where the certificates are void
+
+From `experiments/exp9_assumption_violations.py`, 200 replications per regime,
+`alpha = 0.05`, `n = 3000`. Each regime breaks one premise:
+
+| regime | premise broken | false edge | false arrow |
+|---|---|---|---|
+| in-model control | none | 0.000 | 0.000 |
+| separator needs `\|S\|=3`, run at `k=2` | separator size | 1.000 | 0.130 |
+| latent common cause of the pair | causal sufficiency | 1.000 | 0.190 |
+| nonlinear mechanism | linearity | 1.000 | 0.710 |
+| Poisson counts, shared latent rate | linear-Gaussian model | 1.000 | 0.140 |
+
+The false-edge column is 1.000 in every broken regime. The bound does not
+degrade when its premises fail — it stops applying. PC with a Fisher-z test
+fails identically on the last three rows, so those are the primitive's fault
+rather than the construction's, and a nonparametric sequential primitive would
+repair them; the separator-size row can only be repaired by raising `k`.
+
+### Real data
+
+From `experiments/exp10_sachs.py`, the Sachs et al. (2005) observational
+sample (853 cells, 11 proteins, log-transformed), `alpha = 0.1`, `k = 2`. All
+6 certified edges lie in the 17-arc consensus skeleton and none outside it;
+49 of 55 pairs are left undecided. PC at the same level returns 7 edges and
+calls the other 48 pairs absent.
+
+All 4 certified arrowheads are **reversed** relative to the consensus.
+DirectLiNGAM, which shares the linear non-Gaussian model but none of the
+inferential machinery, reverses the same 4 arcs — so the disagreement is with
+the model, not with the certificate.
