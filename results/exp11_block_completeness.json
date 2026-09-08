@@ -1,0 +1,35 @@
+{
+  "config": {
+    "reps": 250,
+    "d": 5,
+    "edge_prob": 0.35,
+    "n": 3000,
+    "batch": 250,
+    "alpha": 0.1,
+    "rope": 0.15,
+    "warm": 50,
+    "seed": 777,
+    "quick": false
+  },
+  "tab": {
+    "ok|False": [
+      224,
+      3
+    ],
+    "ok|True": [
+      486,
+      2
+    ],
+    "bad|False": [
+      447,
+      22
+    ],
+    "bad|True": [
+      465,
+      3
+    ]
+  },
+  "n_ok": 250,
+  "n_bad": 250,
+  "generated": 1040
+}
