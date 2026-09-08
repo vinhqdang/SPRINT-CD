@@ -74,13 +74,20 @@ def d_separated(adj: np.ndarray, x: int, y: int, Z=()) -> bool:
 
 
 def oracle_skeleton_and_sepsets(
-    adj: np.ndarray, observed: list[int], max_order: int
+    adj: np.ndarray, observed: list[int], max_order: int | None = None
 ):
-    """Skeleton and separating sets over ``observed`` using d-separation as oracle.
+    """True MAG skeleton and separating sets over ``observed``, via d-separation.
+
+    The search is **exhaustive** over every subset of the observed variables up
+    to ``max_order`` (unbounded when ``None``), not restricted to current graph
+    neighbourhoods.  That distinction matters when this is used as ground
+    truth: a neighbourhood-restricted search leaves in place edges that some
+    valid separating set would remove, and an algorithm that legitimately finds
+    such a set -- as FCI's Possible-D-SEP pass is designed to -- would then be
+    scored as having deleted a true edge.
 
     Conditioning sets are drawn from the observed variables only, mirroring
-    what an algorithm can actually condition on when the remaining variables
-    are latent.
+    what an algorithm can condition on when the rest are latent.
     """
     from .graph import MarkedGraph
 
@@ -88,24 +95,18 @@ def oracle_skeleton_and_sepsets(
     d = len(obs)
     g = MarkedGraph.complete_undirected(d)
     sepsets: dict[tuple[int, int], tuple[int, ...]] = {}
-    max_order = min(max_order, max(d - 2, 0))
+    cap = d - 2 if max_order is None else min(max_order, max(d - 2, 0))
 
-    for order in range(max_order + 1):
-        neigh = {v: g.neighbours(v) for v in range(d)}
-        for a, b in itertools.combinations(range(d), 2):
-            if not g.adjacent(a, b):
-                continue
-            found = False
-            for base in (a, b):
-                pool = [v for v in neigh[base] if v not in (a, b)]
-                if len(pool) < order:
-                    continue
-                for S in itertools.combinations(sorted(pool), order):
-                    if d_separated(adj, obs[a], obs[b], [obs[v] for v in S]):
-                        g.remove_edge(a, b)
-                        sepsets[(a, b)] = S
-                        found = True
-                        break
-                if found:
+    for a, b in itertools.combinations(range(d), 2):
+        others = [v for v in range(d) if v not in (a, b)]
+        found = False
+        for order in range(cap + 1):
+            for S in itertools.combinations(others, order):
+                if d_separated(adj, obs[a], obs[b], [obs[v] for v in S]):
+                    g.remove_edge(a, b)
+                    sepsets[(a, b)] = S
+                    found = True
                     break
+            if found:
+                break
     return g, sepsets

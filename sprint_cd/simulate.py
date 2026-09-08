@@ -15,6 +15,9 @@ __all__ = [
     "dag_to_cpdag",
     "structural_hamming_distance",
     "skeleton_errors",
+    "population_correlation",
+    "partial_correlation",
+    "strong_faithfulness_margin",
 ]
 
 
@@ -144,3 +147,58 @@ def skeleton_errors(est: MarkedGraph, truth: MarkedGraph) -> dict[str, int]:
         elif e and not t:
             extra += 1
     return {"missing": missing, "extra": extra}
+
+
+def population_correlation(sem: "LinearGaussianSEM", observed=None) -> np.ndarray:
+    """Exact correlation matrix implied by the SEM, restricted to ``observed``."""
+    d = sem.d
+    A = np.linalg.inv(np.eye(d) - sem.B.T)
+    Sigma = A @ np.diag(sem.noise_sd**2) @ A.T
+    if observed is not None:
+        idx = np.array(list(observed), dtype=int)
+        Sigma = Sigma[np.ix_(idx, idx)]
+    scale = np.diag(1.0 / np.sqrt(np.diag(Sigma)))
+    return scale @ Sigma @ scale
+
+
+def partial_correlation(R: np.ndarray, i: int, j: int, cond=()) -> float:
+    """Population partial correlation ``rho_{ij.S}`` from a correlation matrix."""
+    cond = list(cond)
+    if not cond:
+        return float(R[i, j])
+    idx = np.array(cond, dtype=int)
+    Rzz = R[np.ix_(idx, idx)]
+    Rzx = R[np.ix_(idx, [i, j])]
+    S = R[np.ix_([i, j], [i, j])] - Rzx.T @ np.linalg.solve(Rzz, Rzx)
+    denom = np.sqrt(max(S[0, 0], 0.0) * max(S[1, 1], 0.0))
+    return 0.0 if denom <= 0 else float(S[0, 1] / denom)
+
+
+def strong_faithfulness_margin(
+    sem: "LinearGaussianSEM", observed=None, max_order: int = 2
+) -> float:
+    """Smallest ``|rho_{ij.S}|`` over true adjacencies and tested conditioning sets.
+
+    This is the empirical counterpart of the ``delta`` in ``delta``-strong
+    faithfulness: the SPRINT-CD guarantee applies to an instance only when this
+    margin is at least the equivalence half-width in force.  Random graphs
+    violate the condition far more often than is generally acknowledged --
+    especially once latent variables are marginalised out -- so experiments
+    that score the guarantee need to measure it rather than assume it.
+
+    Returns ``inf`` when the true skeleton over ``observed`` has no edges.
+    """
+    from .dsep import oracle_skeleton_and_sepsets
+
+    obs = list(range(sem.d)) if observed is None else list(observed)
+    R = population_correlation(sem, obs)
+    skel, _ = oracle_skeleton_and_sepsets(sem.adjacency, obs)
+
+    margin = np.inf
+    n_obs = len(obs)
+    for i, j in skel.edges():
+        others = [v for v in range(n_obs) if v not in (i, j)]
+        for order in range(min(max_order, len(others)) + 1):
+            for S in itertools.combinations(others, order):
+                margin = min(margin, abs(partial_correlation(R, i, j, S)))
+    return float(margin)

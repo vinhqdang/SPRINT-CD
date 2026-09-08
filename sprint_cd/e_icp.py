@@ -61,7 +61,7 @@ import numpy as np
 from .eprocess.safe_linear import safe_linear_block_log_e
 from .stats import GaussianSuffStat
 
-__all__ = ["EICPConfig", "EICP", "icp_fixed_sample"]
+__all__ = ["EICPConfig", "EICP", "icp_fixed_sample", "icp_invariance_pvalue"]
 
 
 @dataclass
@@ -234,51 +234,60 @@ class EICP:
         return float(self._logmax.get(tuple(sorted(S)), -np.inf))
 
 
-def icp_fixed_sample(
-    X: np.ndarray, y: np.ndarray, env: np.ndarray, alpha: float = 0.05, max_size: int = 3
-) -> set[int]:
-    """Fixed-sample ICP baseline: F-test for environment effects, Bonferroni-corrected.
+def icp_invariance_pvalue(
+    X: np.ndarray, y: np.ndarray, env: np.ndarray, S: tuple[int, ...]
+) -> float:
+    """F-test p-value for the invariance null of candidate set ``S``.
 
-    Provided for comparison; unlike :class:`EICP` its guarantee holds only at
-    the single, pre-specified sample size.
+    Tests whether environment dummies and their interactions with ``X_S`` add
+    anything to the regression of ``y`` on ``X_S`` -- the fixed-sample analogue
+    of the e-process used by :class:`EICP`.
     """
     from scipy import stats as _stats
 
     X = np.atleast_2d(np.asarray(X, dtype=float))
     y = np.asarray(y, dtype=float).ravel()
     env = np.asarray(env, dtype=int).ravel()
-    d = X.shape[1]
     n = X.shape[0]
     n_env = int(env.max()) + 1
 
-    cands = [S for m in range(min(max_size, d) + 1) for S in itertools.combinations(range(d), m)]
+    Z = np.column_stack([np.ones(n)] + [X[:, j] for j in S])
+    extra = []
+    for e in range(1, n_env):
+        mask = (env == e).astype(float)
+        extra.append(mask)
+        extra.extend(mask * X[:, j] for j in S)
+    W = np.column_stack(extra) if extra else np.zeros((n, 0))
+    full = np.column_stack([Z, W]) if W.shape[1] else Z
+
+    def _rss(A):
+        coef, *_ = np.linalg.lstsq(A, y, rcond=None)
+        r = y - A @ coef
+        return float(r @ r), int(np.linalg.matrix_rank(A))
+
+    rss0, p0 = _rss(Z)
+    rss1, p1 = _rss(full)
+    df1, df2 = max(p1 - p0, 1), n - p1
+    if rss1 <= 0 or df2 <= 0:
+        return 1.0
+    F = ((rss0 - rss1) / df1) / (rss1 / df2)
+    return float(_stats.f.sf(F, df1, df2))
+
+
+def icp_fixed_sample(
+    X: np.ndarray, y: np.ndarray, env: np.ndarray, alpha: float = 0.05, max_size: int = 3
+) -> set[int]:
+    """Fixed-sample ICP baseline: invariance F-test, Bonferroni-corrected.
+
+    Provided for comparison; unlike :class:`EICP` its guarantee holds only at
+    the single, pre-specified sample size.
+    """
+    X = np.atleast_2d(np.asarray(X, dtype=float))
+    d = X.shape[1]
+    cands = [S for m in range(min(max_size, d) + 1)
+             for S in itertools.combinations(range(d), m)]
     level = alpha / len(cands)
-    accepted = []
-    for S in cands:
-        cols = [np.ones(n)] + [X[:, j] for j in S]
-        Z = np.column_stack(cols)
-        extra = []
-        for e in range(1, n_env):
-            mask = (env == e).astype(float)
-            extra.append(mask)
-            extra.extend(mask * X[:, j] for j in S)
-        W = np.column_stack(extra) if extra else np.zeros((n, 0))
-        full = np.column_stack([Z, W]) if W.shape[1] else Z
-
-        def _rss(A):
-            coef, *_ = np.linalg.lstsq(A, y, rcond=None)
-            r = y - A @ coef
-            return float(r @ r), np.linalg.matrix_rank(A)
-
-        rss0, p0 = _rss(Z)
-        rss1, p1 = _rss(full)
-        df1, df2 = max(p1 - p0, 1), max(n - p1, 1)
-        if rss1 <= 0:
-            accepted.append(S)
-            continue
-        F = ((rss0 - rss1) / df1) / (rss1 / df2)
-        if float(_stats.f.sf(F, df1, df2)) > level:
-            accepted.append(S)
+    accepted = [S for S in cands if icp_invariance_pvalue(X, y, env, S) > level]
     if not accepted:
         return set()
     out = set(accepted[0])
