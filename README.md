@@ -91,19 +91,33 @@ absent". CERT-CD cannot tell you an edge is missing, and does not pretend to.
 
 | stratum | CERT-CD false edge | CERT-CD wrong arrow | SPRINT-CD lost edge | PC lost edge |
 |---|---|---|---|---|
-| `delta`-strong faithfulness **holds** (n=40) | 0.000 | 0.000 | 0.000 | 0.000 |
-| `delta`-strong faithfulness **fails** (n=20) | **0.050** | **0.000** | 0.600 | 0.800 |
+| `delta`-strong faithfulness **holds** (500 instances) | 0.000 | 0.004 | 0.000 | 0.008 |
+| `delta`-strong faithfulness **fails** (250 instances) | **0.016** | **0.080** | 0.560 | 0.812 |
 
-Where the premise fails — the regime that breaks delete-on-non-rejection —
-CERT-CD stays inside its budget of 0.1 (95% CI [0.009, 0.236]) while SPRINT-CD
-loses a true edge in 60% of runs and PC in 80%. Near-unfaithful instances cost
-CERT-CD *power* — the affected pairs stay undecided — rather than *validity*.
+The budget is split evenly, so each CERT-CD column is bounded by 0.05, not 0.1.
 
-On premise-satisfying instances every true edge is certified and **96% are also
-oriented, against a CPDAG orientation ceiling of 33%** (the fraction a Markov
-equivalence class can orient at all). A chain has no v-structure and is
-unorientable in principle by any constraint-based method; direction
-certificates are not bound by that ceiling.
+Where the premise fails — the regime that breaks delete-on-non-rejection — the
+**adjacency** certificates stay inside budget at 0.016 (95% CI [0.006, 0.040])
+while SPRINT-CD loses a true edge in 56% of runs and PC in 81%. For adjacency,
+near-unfaithful instances cost CERT-CD *power* — the affected pairs stay
+undecided — rather than *validity*.
+
+The **orientation** certificates do not. At 0.080 (95% CI [0.052, 0.120])
+against a budget of 0.05, the interval excludes the budget: on premise-failing
+instances the direction guarantee is not delivered. The conditioning block is
+frozen to a pair's *already-certified* neighbours, so on a near-unfaithful
+instance it more often omits a parent of one endpoint, and the pair then has
+an uncontrolled common cause exactly where the direction model assumes none.
+Theorem 1 is not contradicted — that is the assumption its direction clause
+makes — but only the adjacency clause is robust to unfaithfulness. An earlier
+run at 40/20 instances reported 0/20 here and supported the opposite reading.
+
+On premise-satisfying instances 97% of true edges are certified and 93% are
+also oriented — **96% of certified edges, against a CPDAG orientation ceiling
+of 33%** (the fraction a Markov equivalence class can orient at all). A chain
+has no v-structure and is unorientable in principle by any constraint-based
+method; direction certificates are not bound by that ceiling. 72% of all pairs
+remain undecided at n = 3000.
 
 ---
 
@@ -174,8 +188,12 @@ survives, stated narrowly:
    the equivalence class; functional methods (LiNGAM, DirectLiNGAM,
    pairwise-LiNGAM, the sequential-ordering score of Ruiz et al.) escape it but
    have no error control on the direction decision. The direction certificate
-   has both — 96% of edges oriented against a 33% CPDAG ceiling, with a
-   time-uniform bound on wrong arrowheads.
+   has both — 96% of certified edges oriented against a 33% CPDAG ceiling,
+   with a time-uniform bound on wrong arrowheads. **The bound is delivered
+   only where its own premise holds**: on premise-failing instances the
+   measured wrong-arrow rate is 0.080 against a budget of 0.05 (see Results),
+   and under a nonlinear mechanism it is 0.71 (Experiment 9). The adjacency
+   claim is the robust one.
 2. **A proved, not assumed, whole-graph guarantee.** Csillag et al. already
    put *sequential, anytime-valid* e-values inside PC — so anytime-validity per
    CI test is not new. But their graph-level validity is an explicit
@@ -196,9 +214,10 @@ Abstention itself is **not** new, and neither is faithfulness-free one-sided
 edge control — see `docs/CERTCD.md` for the full accounting, including a
 residual-risk note on what would still collapse claim 1.
 
-Bibliographic details for the nine papers read in full are verified; the
-remaining citations were identified by web search and **have not been checked
-against publisher records**.
+Bibliographic details for the nine papers read in full are verified. Every
+non-arXiv DOI in `paper/jjsds/refs.bib` has since been resolved against
+Crossref and checked to match its entry's title; two that did not (Komatsu et
+al., Lindon et al.) were corrected.
 
 ---
 
