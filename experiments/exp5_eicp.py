@@ -24,7 +24,7 @@ import sys, pathlib
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from common import PALETTE, RESULTS, save_json, setup_matplotlib, wilson_interval
+from common import PALETTE, figure_path, save_json, setup_matplotlib, wilson_interval
 
 from sprint_cd.e_icp import EICP, EICPConfig, icp_invariance_pvalue
 
@@ -138,7 +138,7 @@ def main():
     print("  Recovery is reported because the subset guarantee alone is "
           "satisfied trivially\n  by returning nothing.\n")
 
-    save_json("exp5_eicp", {"config": vars(args), **r})
+    save_json("exp5_eicp", quick=args.quick, payload={"config": vars(args), **r})
 
     plt = setup_matplotlib()
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.6))
@@ -163,7 +163,7 @@ def main():
     ax.set_title("Power is retained")
     ax.legend(fontsize=8)
     fig.tight_layout()
-    out = RESULTS / "exp5_eicp.png"
+    out = figure_path("exp5_eicp", quick=args.quick)
     fig.savefig(out, bbox_inches="tight")
     print(f"wrote {out}")
 

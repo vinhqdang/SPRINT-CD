@@ -36,10 +36,28 @@ def setup_matplotlib():
     return plt
 
 
-def save_json(name: str, payload: dict) -> pathlib.Path:
-    path = RESULTS / f"{name}.json"
+def output_dir(quick: bool = False) -> pathlib.Path:
+    """Where a run should write its artefacts.
+
+    Quick runs are diverted to ``results/quick/`` so a smoke test cannot
+    overwrite the full-precision figures and tables the write-up cites.  The
+    two are indistinguishable once written, and the low-replication versions
+    look perfectly plausible, so the separation is worth enforcing rather than
+    remembering.
+    """
+    d = RESULTS / "quick" if quick else RESULTS
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def save_json(name: str, payload: dict, quick: bool = False) -> pathlib.Path:
+    path = output_dir(quick) / f"{name}.json"
     path.write_text(json.dumps(payload, indent=2, default=_default))
     return path
+
+
+def figure_path(name: str, quick: bool = False) -> pathlib.Path:
+    return output_dir(quick) / f"{name}.png"
 
 
 def _default(o):

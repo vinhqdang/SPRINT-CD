@@ -159,7 +159,7 @@ pooling them into a misleading average.
 
 ```bash
 python experiments/run_all.py            # full run
-python experiments/run_all.py --quick    # fast smoke run
+python experiments/run_all.py --quick    # fast smoke run, writes to results/quick/
 ```
 
 | experiment | question |

@@ -30,7 +30,7 @@ import argparse
 import numpy as np
 from scipy import stats
 
-from common import (PALETTE, RESULTS, save_json, setup_matplotlib,
+from common import (PALETTE, figure_path, save_json, setup_matplotlib,
                     wilson_interval, residual_moments_at, running_cross_products)
 
 import sys, pathlib
@@ -173,7 +173,7 @@ def main():
     print("\nThe e-process gives up a little power relative to a fixed-sample test\n"
           "that cannot be monitored, and returns a stopping time in exchange.\n")
 
-    save_json("exp1_type1_calibration",
+    save_json("exp1_type1_calibration", quick=args.quick, payload=
               {"config": vars(args), "rows": rows,
                "power": {str(b): {"fixed": power[b]["fixed"],
                                   "eproc": power[b]["eproc"], "reps": n_pow,
@@ -215,7 +215,7 @@ def main():
     ax.legend(fontsize=7.5, loc="lower right")
 
     fig.tight_layout()
-    out_png = RESULTS / "exp1_type1_calibration.png"
+    out_png = figure_path("exp1_type1_calibration", quick=args.quick)
     fig.savefig(out_png, bbox_inches="tight")
     print(f"wrote {out_png}")
 

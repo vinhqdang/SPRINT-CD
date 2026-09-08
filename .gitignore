@@ -218,3 +218,6 @@ __marimo__/
 .streamlit/secrets.toml
 __pycache__/
 *.pyc
+
+# Smoke-test output; the reference results live in results/
+results/quick/

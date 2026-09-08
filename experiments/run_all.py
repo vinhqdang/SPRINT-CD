@@ -25,7 +25,8 @@ SCRIPTS = [
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--quick", action="store_true", help="fast, low-precision run")
+    ap.add_argument("--quick", action="store_true",
+                    help="fast, low-precision run; writes to results/quick/")
     ap.add_argument("--only", type=str, default=None, help="substring filter on script name")
     args = ap.parse_args()
 
@@ -50,7 +51,8 @@ def main() -> int:
     if failures:
         print("FAILED: " + ", ".join(failures))
         return 1
-    print("All experiments completed.  Figures and JSON are in results/.")
+    where = "results/quick/" if args.quick else "results/"
+    print(f"All experiments completed.  Figures and JSON are in {where}")
     return 0
 
 

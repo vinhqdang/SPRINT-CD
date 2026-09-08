@@ -22,7 +22,7 @@ import sys, pathlib
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from common import PALETTE, RESULTS, save_json, setup_matplotlib, wilson_interval
+from common import PALETTE, figure_path, save_json, setup_matplotlib, wilson_interval
 
 from sprint_cd.baselines import pc_fixed_sample
 from sprint_cd.simulate import (random_dag, skeleton_errors,
@@ -157,7 +157,7 @@ def main():
     print(f"  PC          missing {res['miss_pc'][-1]:.2f}   "
           f"extra {res['extra_pc'][-1]:.2f}\n")
 
-    save_json("exp2_graph_fwer", {"config": vars(args), **{
+    save_json("exp2_graph_fwer", quick=args.quick, payload={"config": vars(args), **{
         k: (v if not isinstance(v, np.ndarray) else v.tolist()) for k, v in res.items()}})
 
     plt = setup_matplotlib()
@@ -177,7 +177,7 @@ def main():
     for ax in axes:
         ax.set_xlabel("sample size $n$")
     fig.tight_layout()
-    out = RESULTS / "exp2_graph_fwer.png"
+    out = figure_path("exp2_graph_fwer", quick=args.quick)
     fig.savefig(out, bbox_inches="tight")
     print(f"wrote {out}")
 

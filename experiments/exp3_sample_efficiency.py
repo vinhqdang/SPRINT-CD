@@ -25,7 +25,7 @@ import sys, pathlib
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from common import PALETTE, RESULTS, save_json, setup_matplotlib
+from common import PALETTE, figure_path, save_json, setup_matplotlib
 
 from sprint_cd.baselines import pc_fixed_sample
 from sprint_cd.simulate import random_dag, skeleton_errors, structural_hamming_distance
@@ -156,7 +156,7 @@ def main():
           "edge whose partial correlation falls below it -- visible as rising "
           "missing-edge counts.\n")
 
-    save_json("exp3_sample_efficiency",
+    save_json("exp3_sample_efficiency", quick=args.quick, payload=
               {"config": vars(args), "efficiency": eff,
                "rope_sweep": {str(k): v for k, v in sweep.items()}})
 
@@ -184,7 +184,7 @@ def main():
     ax.set_title(rf"Effect of $\delta$ at $n={sweep_n}$")
     ax.legend(fontsize=8)
     fig.tight_layout()
-    out = RESULTS / "exp3_sample_efficiency.png"
+    out = figure_path("exp3_sample_efficiency", quick=args.quick)
     fig.savefig(out, bbox_inches="tight")
     print(f"wrote {out}")
 

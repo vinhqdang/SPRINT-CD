@@ -20,7 +20,7 @@ import sys, pathlib
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from common import PALETTE, RESULTS, save_json, setup_matplotlib, wilson_interval
+from common import PALETTE, figure_path, save_json, setup_matplotlib, wilson_interval
 
 from sprint_cd.dsep import oracle_skeleton_and_sepsets
 from sprint_cd.graph import ARROW
@@ -180,7 +180,7 @@ def main():
               f"({res['found_bidirected'] / res['truth_bidirected']:.2f}).")
     print()
 
-    save_json("exp4_latent_confounders", {"config": vars(args), **{
+    save_json("exp4_latent_confounders", quick=args.quick, payload={"config": vars(args), **{
         k: (v.tolist() if isinstance(v, np.ndarray) else v) for k, v in res.items()}})
 
     plt = setup_matplotlib()
@@ -206,7 +206,7 @@ def main():
     ax.set_title("Is the premise of the guarantee met?")
     ax.legend(fontsize=8)
     fig.tight_layout()
-    out = RESULTS / "exp4_latent_confounders.png"
+    out = figure_path("exp4_latent_confounders", quick=args.quick)
     fig.savefig(out, bbox_inches="tight")
     print(f"wrote {out}")
 
