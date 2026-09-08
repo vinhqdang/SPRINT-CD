@@ -3,7 +3,8 @@ import math
 import numpy as np
 import pytest
 
-from sprint_cd.multiplicity import HypothesisBudget, e_bh, e_bh_threshold_indices
+from sprint_cd.multiplicity import (HypothesisBudget, e_bh, e_bh_threshold_indices,
+                                    e_holm)
 
 
 def test_weights_over_the_whole_family_sum_to_one():
@@ -59,3 +60,66 @@ def test_e_bh_controls_fdr_under_the_global_null():
         e = rng.exponential(size=20)      # mean-one e-values
         false_discoveries += e_bh(e, 0.1).any()
     assert false_discoveries / reps <= 0.1 + 0.05
+
+
+# ----------------------------------------------------------------------
+# e-Holm
+# ----------------------------------------------------------------------
+def test_e_holm_matches_the_closure_definition_by_brute_force():
+    """Check the O(n) threshold against the defining closure rule."""
+    import itertools
+    rng = np.random.default_rng(0)
+    alpha = 0.1
+    for _ in range(200):
+        n = int(rng.integers(2, 7))
+        e = rng.exponential(scale=8.0, size=n)
+        mask = e_holm(e, alpha)
+        for i in range(n):
+            brute = all(
+                e[list(I)].sum() >= len(I) / alpha
+                for k in range(1, n + 1)
+                for I in itertools.combinations(range(n), k) if i in I
+            )
+            assert bool(mask[i]) == brute
+
+
+def test_e_holm_is_never_weaker_than_the_union_bound():
+    rng = np.random.default_rng(1)
+    alpha = 0.05
+    for _ in range(300):
+        n = int(rng.integers(2, 12))
+        e = rng.exponential(scale=20.0, size=n)
+        bonferroni = e >= n / alpha
+        assert np.all(e_holm(e, alpha) >= bonferroni)
+
+
+def test_e_holm_is_strictly_stronger_when_others_carry_evidence():
+    """Every e-value above 1/alpha leaves J*, lowering the threshold."""
+    alpha = 0.05
+    e = np.array([25.0, 1e6, 1e6, 1e6])       # 25 < 4/alpha = 80, so Bonferroni fails
+    assert not (e >= len(e) / alpha)[0]
+    assert e_holm(e, alpha)[0]
+
+
+def test_e_holm_controls_fwer_under_the_global_null_with_dependent_e_values():
+    rng = np.random.default_rng(2)
+    alpha, reps = 0.1, 2000
+    false_rejections = 0
+    for _ in range(reps):
+        # Strongly dependent mean-one e-values sharing a common factor.
+        common = rng.exponential()
+        e = common * rng.exponential(size=8)
+        e = e / np.mean(e) * np.mean(rng.exponential(size=8))
+        false_rejections += e_holm(e, alpha).any()
+    assert false_rejections / reps <= alpha + 0.05
+
+
+def test_e_holm_rejects_nothing_when_all_e_values_are_small():
+    assert not e_holm(np.full(10, 0.5), 0.05).any()
+
+
+def test_e_holm_validates_inputs():
+    with pytest.raises(ValueError):
+        e_holm(np.ones((2, 2)), 0.05)
+    with pytest.raises(ValueError):
+        e_holm(np.ones(3), 1.5)

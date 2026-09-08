@@ -174,7 +174,7 @@ CERT-CD cannot tell you an edge is absent, and does not pretend to.
 
 ## Related work, and what survives as new
 
-Eight of the closest papers were read in full. **Two earlier claims did not
+Nine of the closest papers were read in full. **Two earlier claims did not
 survive.** I had written that nothing in the constraint-based literature
 certifies an orientation: PC-p does. I had also described Csillag et al. as
 fixed-sample: their per-test e-values are sequential and anytime-valid.
@@ -189,6 +189,7 @@ fixed-sample: their per-test e-values are sequential and anytime-valid.
 | Amin & Wilson, *Scalable and Flexible Causal Discovery with an Efficient Test for Adjacency* (DAT; ICML 2024, PMLR 235) | adjacency as the tested object; replaces the exponential set of CI tests with a "provably equivalent" relaxed problem solved by two neural networks | **none** — the equivalence is between the exponential test and its relaxation, not an error bound; relies on faithfulness | n/a (skeleton) |
 | Shaska & Mitra, *Causal Link Discovery with Unequal Edge Error Tolerance* (ε-CUT; arXiv:2507.21570v1) | Neyman–Pearson framing: minimise one edge-error type subject to a tolerance on the other; per-edge regression test with a finite-sample threshold | **finite-sample false-positive rate.** Thm 2: for every fixed *n*, P(false edge) ≤ ε, under an LSEM and with **no faithfulness needed**. Pointwise in *n*, not uniform over *n* | n/a (skeleton) |
 | Csillag, Struchiner & Goedert, *Prediction-Powered E-Values* (ICML 2025; arXiv:2502.04294v2) | runs **standard PC** with costly/missing covariates; each CI test's p-value is batched and p-to-e calibrated, giving **sequential, anytime-valid per-test e-values** | per-test anytime-validity. Whole-graph validity is *assumed*, not proved (Assumption 2.5), with the multiple-comparison concern noted but unresolved | no |
+| Hartog & Lei, *Family-wise Error Rate Control with E-values* (arXiv:2501.09015v4) | e-value closed testing; weighted e-Bonferroni local tests strictly beat weighted p-Bonferroni on inverse e-values; O(n) e-Holm rule (Thm 4.2) | strong FWER, including "always-valid" control in the sequential setting — **but see below on running maxima** | multiplicity tool |
 
 Two rows are **support rather than competition**. Ding & Zhang supply the
 theorem explaining why the direction certificate must abstain under Gaussian
@@ -276,8 +277,33 @@ that existing sequential CI tests "work under the Model-X framework, which
 requires knowledge of conditionals that are typically inaccessible in the
 context of causal discovery."
 
-Still unread: the multiplicity literature on e-value FWER (Hartog & Lei, 2025),
-which could sharpen the union bound.
+### On the multiplicity layer
+
+Hartog and Lei show that the plain union bound is the *least* powerful
+admissible way to combine e-values: their weighted e-Bonferroni local test is
+a weighted **average** of e-values, which strictly dominates the weighted
+p-Bonferroni test on inverse e-values, and e-Holm follows from closing it.
+That looked like a free power upgrade for `HypothesisBudget`. It is not, for a
+reason worth recording.
+
+The certificates here reject on the **running maximum** of an e-process. A
+running maximum is a *pseudo* e-value: Ville gives
+`P(sup_t E_t ≥ 1/α) ≤ α`, but `E[sup_t E_t] > 1`, so it is not an e-value and
+closed testing does not apply to it. Hartog and Lei say so explicitly — "we
+cannot plug these pseudo e-values into our e-closed testing framework and get
+FWER control for free" — and their Theorem 3.1 recovers only
+`α + O(α² log(1/α))`, and only for **independent** e-processes. Every
+per-hypothesis e-process in CERT-CD is a function of the same running Gram
+matrix, so independence fails about as badly as it can.
+
+The union bound is therefore the correct instrument here rather than a lazy
+one, and this is a case where reading the sharper method established that the
+blunt one was required. `sprint_cd.multiplicity.e_holm` implements the O(n)
+rule of their Theorem 4.2 for use where it *is* sound: applied to the e-values
+at the current time, with rejections accumulated across time, each local
+average is itself an e-process, so Ville plus closure goes through under
+arbitrary dependence — at the cost of forgetting earlier peaks. The docstring
+carries the warning.
 
 Bibliographic details in the table are verified against the PDFs. Citations
 elsewhere in this document came from web search and are **not** yet verified.

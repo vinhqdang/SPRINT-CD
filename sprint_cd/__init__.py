@@ -36,7 +36,7 @@ from .eprocess import (
     safe_linear_log_e,
 )
 from .graph import ARROW, CIRCLE, NONE, TAIL, MarkedGraph, fci_rules, meek_rules
-from .multiplicity import HypothesisBudget, e_bh
+from .multiplicity import HypothesisBudget, e_bh, e_holm
 from .simulate import (
     LinearGaussianSEM,
     dag_to_cpdag,
@@ -59,7 +59,7 @@ __all__ = [
     "SafeLinearCI", "safe_linear_log_e", "safe_linear_block_log_e",
     "coefficient_confidence_sequence", "EProcessState",
     "GaussianUniversalCI", "DiscreteUniversalCI",
-    "HypothesisBudget", "e_bh",
+    "HypothesisBudget", "e_bh", "e_holm",
     "MarkedGraph", "meek_rules", "fci_rules", "NONE", "TAIL", "ARROW", "CIRCLE",
     "GaussianSuffStat",
     "LinearGaussianSEM", "random_dag", "dag_to_cpdag",

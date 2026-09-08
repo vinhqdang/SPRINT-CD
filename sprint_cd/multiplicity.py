@@ -50,7 +50,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-__all__ = ["HypothesisBudget", "e_bh", "e_bh_threshold_indices"]
+__all__ = ["HypothesisBudget", "e_bh", "e_bh_threshold_indices", "e_holm"]
 
 
 @dataclass
@@ -168,3 +168,65 @@ def e_bh_threshold_indices(log_evalues: np.ndarray, alpha: float) -> np.ndarray:
     if k_star > 0:
         mask[order[:k_star]] = True
     return mask
+
+
+def e_holm(evalues: np.ndarray, alpha: float) -> np.ndarray:
+    r"""e-Holm: closed testing with unweighted e-Bonferroni local tests.
+
+    Uniformly at least as powerful as the plain union bound, valid under
+    **arbitrary dependence**, and computable in ``O(n)``.  By the closure
+    principle e-Holm rejects :math:`H_i` iff
+    :math:`\sum_{j \in I} e_j \ge |I| / \alpha` for every :math:`I \ni i`,
+    which collapses to a threshold rule (Hartog and Lei, arXiv:2501.09015,
+    Theorem 4.2): with :math:`J^\star = \{j : e_j < 1/\alpha\}` the
+    insignificant e-values,
+
+    .. math::
+
+        \text{reject } H_i \iff e_i \;\ge\; \frac{1}{\alpha}
+            + \sum_{j \in J^\star} \Bigl( \frac{1}{\alpha} - e_j \Bigr).
+
+    The threshold never exceeds the Bonferroni threshold :math:`n/\alpha`, and
+    falls well below it whenever other hypotheses carry real evidence -- every
+    e-value above :math:`1/\alpha` drops out of :math:`J^\star` entirely.
+    Validity under arbitrary dependence comes from the local test being a
+    weighted *average* of e-values, whose expectation is at most one however
+    the e-values are related.
+
+    .. warning::
+
+       **Do not pass running maxima of e-processes.**  ``sup_t E_t`` is a
+       *pseudo* e-value: Ville makes ``P(sup_t E_t >= 1/alpha) <= alpha``, but
+       ``E[sup_t E_t] > 1`` in general, so it is not an e-value and closed
+       testing does not apply to it.  Hartog and Lei are explicit that e-closed
+       testing on pseudo e-values cannot be shown valid at level ``alpha``;
+       their Theorem 3.1 recovers a bound of ``alpha + O(alpha^2 log(1/alpha))``
+       only for **independent** e-processes.
+
+       This is exactly why :class:`HypothesisBudget` -- a plain weighted union
+       bound applied to running maxima -- is what SPRINT-CD and CERT-CD use.
+       Their per-hypothesis e-processes are computed from one shared Gram
+       matrix and are about as dependent as e-processes can be, so Theorem 3.1
+       does not apply, and Ville plus a union bound is the correct instrument
+       rather than a lazy one.
+
+       To use ``e_holm`` soundly in a sequential setting, apply it to the
+       e-values **at the current time** and accumulate rejections across time.
+       Each local average is then itself an e-process, so Ville bounds the
+       probability that it ever crosses, and the closure argument goes through
+       under arbitrary dependence -- at the cost of forgetting earlier peaks.
+
+    Returns a boolean rejection mask aligned with the input.
+    """
+    e = np.asarray(evalues, dtype=float)
+    if e.ndim != 1:
+        raise ValueError("evalues must be one-dimensional")
+    if not 0.0 < alpha < 1.0:
+        raise ValueError("alpha must lie in (0, 1)")
+    if e.size == 0:
+        return np.zeros(0, dtype=bool)
+
+    cut = 1.0 / alpha
+    insignificant = e < cut
+    threshold = cut + float(np.sum(cut - e[insignificant]))
+    return e >= threshold

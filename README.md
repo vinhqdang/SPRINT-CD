@@ -162,7 +162,7 @@ inference, safe testing — plus two that cost me claims outright:
 ε-CUT's Theorem 2, and **sequential, anytime-valid e-values inside PC** is
 already done by **Csillag et al.**
 
-Eight of the closest papers have now been read in full, and two of my earlier
+Nine of the closest papers have now been read in full, and two of my earlier
 claims did not survive: **PC-p already controls orientation error**, via
 FDR-controlled hypothesis tests for colliders and Meek-rule orientations. What
 survives, stated narrowly:
@@ -194,7 +194,7 @@ Abstention itself is **not** new, and neither is faithfulness-free one-sided
 edge control — see `docs/CERTCD.md` for the full accounting, including a
 residual-risk note on what would still collapse claim 1.
 
-Bibliographic details for the eight papers read in full are verified; the
+Bibliographic details for the nine papers read in full are verified; the
 remaining citations were identified by web search and **have not been checked
 against publisher records**.
 
