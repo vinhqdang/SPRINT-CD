@@ -146,7 +146,9 @@ print("undecided pairs :", algo.undecided_pairs())   # NOT 'certified absent'
 | `sprint_cd/sprint_fci.py` | SPRINT-FCI — the same under latent confounding, returning a PAG |
 | `sprint_cd/e_icp.py` | E-ICP — anytime-valid Invariant Causal Prediction |
 | `docs/CERTCD.md` | **CERT-CD method notes, including an explicit account of what is and is not new** |
+| `sprint_cd/lingam.py` | DirectLiNGAM (pairwise likelihood ratios, causal ordering) — the orientation baseline |
 | `docs/METHOD.md` | SPRINT-CD method notes |
+| `paper/jjsds/` | The manuscript, in Springer's `sn-jnl` class |
 
 ---
 
@@ -215,6 +217,10 @@ python experiments/run_all.py --quick    # smoke run, writes to results/quick/
 | 4 | Does the guarantee survive latent confounders, and how often does its premise hold? |
 | 5 | Does the ICP subset guarantee survive optional continuation? |
 | 6 | **CERT-CD vs delete-on-non-rejection: validity when faithfulness fails, and certified orientation** |
+| 7 | Certified orientation against DirectLiNGAM, under Laplace and under Gaussian noise |
+| 8 | Is the per-set primitive calibrated under noise laws outside its model? |
+| 9 | What do the certificates do when their assumptions fail? |
+| 10 | **Real data: the Sachs et al. (2005) protein-signalling sample** |
 
 Findings for 1–5 (the SPRINT-CD line of work) are in `docs/METHOD.md`; the
 headline there is that naive monitoring inflates Type-I error 7× (0.346 vs a
@@ -227,16 +233,27 @@ is documented rather than hidden.
 python -m pytest
 ```
 
-99 tests. The load-bearing ones are calibration checks: every e-process is
+109 tests. The load-bearing ones are calibration checks: every e-process is
 verified against Ville's inequality by simulation, the adjacency certificate is
 checked in a distribution where two directed paths cancel exactly (faithfulness
 violated outright), and the direction certificate is checked to abstain under
 Gaussian noise.
 
+## The paper
+
+The manuscript is in `paper/jjsds/` (Springer `sn-jnl` class, 45 pp.):
+
+```bash
+cd paper/jjsds
+pdflatex certcd_jjsds && bibtex certcd_jjsds && pdflatex certcd_jjsds && pdflatex certcd_jjsds
+```
+
+`paper/certcd.tex` is the earlier short version and is superseded.
+
 ## Citation
 
-Dang, Q.-V. *Certificate-only causal discovery.* Working paper, British
-University Vietnam, 2026.
+Dang, Q.-V. *Certificate-only causal discovery: anytime-valid adjacency and
+orientation.* Working paper, British University Vietnam, 2026.
 
 ## Licence
 

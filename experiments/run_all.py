@@ -21,6 +21,10 @@ SCRIPTS = [
     ("exp4_latent_confounders.py", "Recovery under latent confounding"),
     ("exp5_eicp.py", "Invariant prediction under optional continuation"),
     ("exp6_certcd.py", "Certificate-only discovery vs delete-on-non-rejection"),
+    ("exp7_orientation_vs_lingam.py", "Certified orientation against DirectLiNGAM"),
+    ("exp8_primitive_calibration.py", "The per-set primitive under six noise laws"),
+    ("exp9_assumption_violations.py", "Where the certificates are void"),
+    ("exp10_sachs.py", "Real data: Sachs et al. (2005) protein signalling"),
 ]
 
 
