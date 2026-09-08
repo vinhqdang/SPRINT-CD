@@ -41,12 +41,19 @@ every stopping time :math:`\tau`, :math:`\mathbb{E}[A_\tau] \le
 
 Two things follow that matter more than the construction itself.
 
-* **Validity needs only the Markov condition.**  If ``i`` and ``j`` are
+* **No faithfulness assumption enters validity.**  If ``i`` and ``j`` are
   non-adjacent in the true DAG then ``pa(i)`` or ``pa(j)`` d-separates them, so
   the null is true and the bound applies.  Faithfulness is needed only for
   *power* -- specifically adjacency-faithfulness (Ramsey, Spirtes and Zhang,
   2006), which is what makes every ``E^{(S)}`` grow for a genuinely adjacent
   pair.  No strong faithfulness and no equivalence region appear anywhere.
+
+  Stated exactly, validity needs three things: the Markov condition, a
+  separating set inside ``S_k``, and a *valid per-set e-process* ``E^{(S)}``.
+  The third is not free: the default primitive is the linear-Gaussian safe
+  test, so that model is assumed there.  Substituting a nonparametric
+  sequential CI test (SKCI, He and Sutherland, ICML 2026) removes it, and the
+  argument above is indifferent to which primitive is used.
 * **Multiplicity is over pairs, not over (pair, conditioning set) triples.**
   One hypothesis is tested per pair, so the union bound runs over
   ``C(d, 2)`` hypotheses rather than ``C(d,2) * |S_k|``.

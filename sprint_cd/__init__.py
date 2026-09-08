@@ -7,7 +7,7 @@ differ in how they decide that an edge is *absent*.
     Obeys one rule: assert a feature only by REJECTING a null that is true
     whenever the feature is absent; never assert anything by failing to reject.
     Adjacency is certified by ``min_S E^{(S)}``, an e-process for the composite
-    null "the pair is separable", which needs only the Markov condition;
+    null "the pair is separable", which uses no faithfulness assumption;
     orientation is certified by a sequential universal-inference e-process
     against the reversed linear non-Gaussian factorisation.  The graph starts
     empty and grows, undecided pairs are reported as undecided, and no

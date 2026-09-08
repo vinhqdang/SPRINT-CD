@@ -33,7 +33,9 @@ Two certificates (:mod:`sprint_cd.certificates`) do the work.
 
 * **Adjacency.**  ``A_t(i,j) = min_S E^{(S)}_t`` is an e-process for the
   composite null "the pair is separable by some conditioning set".  Crossing
-  certifies an edge.  Valid under the Markov condition alone.
+  certifies an edge.  No faithfulness assumption is used -- only the Markov
+  condition, a separating set inside the family, and a valid per-set
+  e-process (linear-Gaussian for the default primitive).
 * **Direction.**  A sequential universal-inference e-process against the null
   "the direction is ``j -> i``" under a linear non-Gaussian model.  Crossing
   certifies the arrowhead ``i -> j``.  Valid under that model; it abstains

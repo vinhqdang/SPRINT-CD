@@ -54,7 +54,7 @@ pointwise. `E^(S*)` is an e-process, so for every stopping time `tau`,
 
 Two consequences matter more than the construction:
 
-**Validity needs only the Markov condition.** If `i` and `j` are non-adjacent
+**No faithfulness assumption enters validity.** If `i` and `j` are non-adjacent
 in the true DAG then `pa(i)` or `pa(j)` d-separates them, so the null is true
 and Ville applies. Faithfulness never enters. What faithfulness buys is
 *power*: specifically adjacency-faithfulness (Ramsey, Spirtes and Zhang, 2006),
@@ -185,6 +185,8 @@ certifies an orientation. PC-p does.
 | Prakash, Xia & Erosheva, *A Diagnostic Tool for Functional Causal Discovery* (arXiv:2406.07787v2) | test-based bivariate direction with four outcomes incl. **inconclusive**; CDDR diagnostic vs sample size | asymptotic consistency / normality | yes (LiNGAM) |
 | Ruiz, Madrid Padilla & Zhou, *Sequentially learning the topological ordering…* (arXiv:2202.01748v2) | greedy ordering by **likelihood-ratio scores on residuals** — "sequential" in the sorting sense | **population-level identifiability only**; needs all noises from one scale-location family | yes |
 | Ding & Zhang, *GaussDetect-LiNGAM* (preprint, 4 Dec 2025) | proves forward-noise Gaussianity ⟺ reverse-regression residual independence; kernel tests replace Gaussianity tests | none on the direction decision | yes |
+| Amin & Wilson, *Scalable and Flexible Causal Discovery with an Efficient Test for Adjacency* (DAT; ICML 2024, PMLR 235) | adjacency as the tested object; replaces the exponential set of CI tests with a "provably equivalent" relaxed problem solved by two neural networks | **none** — the equivalence is between the exponential test and its relaxation, not an error bound; relies on faithfulness | n/a (skeleton) |
+| Shaska & Mitra, *Causal Link Discovery with Unequal Edge Error Tolerance* (ε-CUT; arXiv:2507.21570v1) | Neyman–Pearson framing: minimise one edge-error type subject to a tolerance on the other; per-edge regression test with a finite-sample threshold | **finite-sample false-positive rate.** Thm 2: for every fixed *n*, P(false edge) ≤ ε, under an LSEM and with **no faithfulness needed**. Pointwise in *n*, not uniform over *n* | n/a (skeleton) |
 
 The last of these is **support rather than competition**: it is the theorem
 explaining why the direction certificate must abstain under Gaussian noise.
@@ -195,7 +197,10 @@ explaining why the direction certificate must abstain under Gaussian noise.
 * Aggregating CI tests over conditioning sets into an edge-level statistic —
   PC-p's max-p is the exact p-value analogue of `min_S E^(S)`.
 * Adjacency as the object being tested (DAT, Amin & Wilson).
-* Asymmetric edge-error control (ε-CUT, Shaska & Mitra).
+* **One-sided, faithfulness-free, finite-sample control of false edges** —
+  this is exactly ε-CUT's Theorem 2, and it was reached by the same route I
+  use: a false-positive guarantee does not need faithfulness, only a correct
+  null. Its guarantee is pointwise in *n*.
 * Residual independence as a direction criterion (DirectLiNGAM).
 * **Abstention and three-valued output** — Uehara's `impossible_*` codes,
   Prakash et al.'s *inconclusive* outcome, and FCI's undirected edges all
@@ -212,13 +217,16 @@ explaining why the direction certificate must abstain under Gaussian noise.
 2. **Time-uniformity.** Every comparable guarantee above is fixed-sample,
    asymptotic, population-level, or provenance-only. None survives optional
    stopping or continuous monitoring.
-3. **Dropping PC-p's zero-Type-II-error assumption.** PC-p notes its max-p
-   bound is correct only if all possible CI tests are performed; otherwise it
-   assumes zero Type II error so that `N(A) ⊆ N̂(A)`. Minimising over the
-   complete fixed family `S_k` performs them all, so the assumption is not
-   needed and validity reduces to the Markov condition. Multiplicity also runs
-   over pairs rather than (pair, conditioning set) triples, and the criterion
-   is time-uniform FWER rather than FDR.
+3. **Time-uniform edge control.** ε-CUT already gives one-sided,
+   faithfulness-free, finite-sample false-edge control — *at each fixed n*.
+   That is not the same as bounding `P(∃n : a false edge is ever certified)`,
+   which is what a monitored or adaptively stopped run needs; Experiment 1
+   measures precisely this gap for a fixed-sample CI test (0.056 at a fixed
+   sample size, 0.346 under monitoring). The adjacency certificate is uniform
+   over stopping times. Secondarily, minimising over the complete fixed family
+   `S_k` performs all the CI tests PC-p's max-p bound requires, so PC-p's
+   zero-Type-II-error assumption (needed for `N(A) ⊆ N̂(A)`) is not; and
+   multiplicity runs over pairs rather than (pair, conditioning set) triples.
 4. **Never asserting absence.** PC, FCI, PC-p, and Uehara's Stage-1 skeleton
    all assert non-adjacency. CERT-CD never does; an absent edge is undecided.
 
@@ -226,10 +234,20 @@ explaining why the direction certificate must abstain under Gaussian noise.
 
 Claim 1 is the load-bearing one. It would collapse if a method exists that
 orients outside the equivalence class *and* bounds the probability of a wrong
-arrowhead. Nothing among the five does. The papers still unread that could
-bear on it are Amin & Wilson (DAT) and Shaska & Mitra (ε-CUT), both of which
-concern *edges* rather than directions, and Csillag et al. (Prediction-Powered
-E-Values), which is fixed-sample.
+arrowhead. Nothing among the seven papers read does: the two that control edge
+errors rigorously (PC-p, ε-CUT) say nothing about arrowheads outside the
+equivalence class, and the ones that orient outside it (LiNGAM family, Ruiz
+et al., Prakash et al., Uehara) bound no error.
+
+Claim 3 is now the *narrowest* of the four, since ε-CUT holds the same
+one-sided, faithfulness-free ground at fixed sample sizes. Everything it adds
+rests on the fixed-*n* versus uniform-over-*n* distinction, which is real but
+should be argued explicitly rather than assumed obvious.
+
+Still unread and potentially relevant: Csillag et al. (Prediction-Powered
+E-Values, ICML 2025), which puts e-values inside PC but is fixed-sample; and
+the multiplicity literature on e-value FWER (Hartog & Lei, 2025), which could
+sharpen the union bound.
 
 Bibliographic details in the table are verified against the PDFs. Citations
 elsewhere in this document came from web search and are **not** yet verified.
