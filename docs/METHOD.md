@@ -319,8 +319,13 @@ The components exist separately; the assembly is what is new here.
   Benjamini-Yekutieli) is fixed-`n` and uses classical corrections; it offers
   no stopping-time guarantee.
 * **E-values inside PC** have been used for causal discovery under costly or
-  missing data on a *fixed* dataset -- a different objective from streaming,
-  time-uniform whole-graph control.
+  missing covariates (Csillag, Struchiner and Goedert, ICML 2025). Their
+  per-test e-values *are* sequential and anytime-valid -- built by calibrating
+  a batched Fisher-z p-value through a p-to-e calibrator -- so the difference
+  is not fixed-sample versus sequential. It is that their whole-graph validity
+  is an explicit *assumption* (their Assumption 2.5: the downstream algorithm
+  is valid whenever its input e-values are), and they note the multiple-
+  comparison concern without resolving it.
 * **ICP error control** is an active topic, but the invariance test has not
   been given an e-process form.
 

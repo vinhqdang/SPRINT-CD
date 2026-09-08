@@ -174,9 +174,10 @@ CERT-CD cannot tell you an edge is absent, and does not pretend to.
 
 ## Related work, and what survives as new
 
-Five of the closest papers were read in full. **One earlier claim did not
-survive:** I had written that nothing in the constraint-based literature
-certifies an orientation. PC-p does.
+Eight of the closest papers were read in full. **Two earlier claims did not
+survive.** I had written that nothing in the constraint-based literature
+certifies an orientation: PC-p does. I had also described Csillag et al. as
+fixed-sample: their per-test e-values are sequential and anytime-valid.
 
 | paper | what it does | guarantee | beyond MEC? |
 |---|---|---|---|
@@ -187,9 +188,14 @@ certifies an orientation. PC-p does.
 | Ding & Zhang, *GaussDetect-LiNGAM* (preprint, 4 Dec 2025) | proves forward-noise Gaussianity ⟺ reverse-regression residual independence; kernel tests replace Gaussianity tests | none on the direction decision | yes |
 | Amin & Wilson, *Scalable and Flexible Causal Discovery with an Efficient Test for Adjacency* (DAT; ICML 2024, PMLR 235) | adjacency as the tested object; replaces the exponential set of CI tests with a "provably equivalent" relaxed problem solved by two neural networks | **none** — the equivalence is between the exponential test and its relaxation, not an error bound; relies on faithfulness | n/a (skeleton) |
 | Shaska & Mitra, *Causal Link Discovery with Unequal Edge Error Tolerance* (ε-CUT; arXiv:2507.21570v1) | Neyman–Pearson framing: minimise one edge-error type subject to a tolerance on the other; per-edge regression test with a finite-sample threshold | **finite-sample false-positive rate.** Thm 2: for every fixed *n*, P(false edge) ≤ ε, under an LSEM and with **no faithfulness needed**. Pointwise in *n*, not uniform over *n* | n/a (skeleton) |
+| Csillag, Struchiner & Goedert, *Prediction-Powered E-Values* (ICML 2025; arXiv:2502.04294v2) | runs **standard PC** with costly/missing covariates; each CI test's p-value is batched and p-to-e calibrated, giving **sequential, anytime-valid per-test e-values** | per-test anytime-validity. Whole-graph validity is *assumed*, not proved (Assumption 2.5), with the multiple-comparison concern noted but unresolved | no |
 
-The last of these is **support rather than competition**: it is the theorem
-explaining why the direction certificate must abstain under Gaussian noise.
+Two rows are **support rather than competition**. Ding & Zhang supply the
+theorem explaining why the direction certificate must abstain under Gaussian
+noise. And Csillag et al. independently identify the very gap that motivates
+the safe-linear primitive: existing sequential CI tests "work under the
+Model-X framework, which requires knowledge of conditionals that are typically
+inaccessible in the context of causal discovery."
 
 ### Not new
 
@@ -206,6 +212,8 @@ explaining why the direction certificate must abstain under Gaussian noise.
   Prakash et al.'s *inconclusive* outcome, and FCI's undirected edges all
   decline to commit. This was overclaimed in an earlier draft.
 * Universal inference; safe testing; sequential CI tests.
+* **Sequential, anytime-valid e-values inside PC** — Csillag et al. already do
+  this, per conditional-independence test.
 
 ### New
 
@@ -214,9 +222,13 @@ explaining why the direction certificate must abstain under Gaussian noise.
    to the MEC, and every row that escapes the MEC has no error control on the
    direction. The direction certificate has both — 96% of edges oriented
    against a 33% CPDAG ceiling, with a time-uniform bound on wrong arrowheads.
-2. **Time-uniformity.** Every comparable guarantee above is fixed-sample,
-   asymptotic, population-level, or provenance-only. None survives optional
-   stopping or continuous monitoring.
+2. **A proved, not assumed, whole-graph guarantee.** Anytime-validity per CI
+   test is *not* new: Csillag et al. calibrate batched Fisher-z p-values into
+   sequential e-values inside PC. What they do not do is establish validity for
+   the resulting graph — Assumption 2.5 assumes the downstream algorithm is
+   valid whenever its inputs are, and the multiple-comparison concern is noted
+   rather than resolved. The fixed-family union bound here proves the
+   graph-level statement and extends it to orientations.
 3. **Time-uniform edge control.** ε-CUT already gives one-sided,
    faithfulness-free, finite-sample false-edge control — *at each fixed n*.
    That is not the same as bounding `P(∃n : a false edge is ever certified)`,
@@ -244,10 +256,28 @@ one-sided, faithfulness-free ground at fixed sample sizes. Everything it adds
 rests on the fixed-*n* versus uniform-over-*n* distinction, which is real but
 should be argued explicitly rather than assumed obvious.
 
-Still unread and potentially relevant: Csillag et al. (Prediction-Powered
-E-Values, ICML 2025), which puts e-values inside PC but is fixed-sample; and
-the multiplicity literature on e-value FWER (Hartog & Lei, 2025), which could
-sharpen the union bound.
+Csillag et al. is the closest prior art on the "e-processes inside PC" axis
+and an earlier draft mischaracterised it as fixed-sample; it is not. Three
+things still separate it. Its graph-level validity is an assumption
+(Assumption 2.5) rather than a theorem, and the paper flags the
+multiple-comparison concern without resolving it, whereas the fixed-family
+union bound above proves it. It runs standard PC, so edges are still deleted
+on failure to reject — per-test validity does not repair that, since a valid
+test that fails to reject still licenses nothing. And its per-test e-value is
+a p-to-e calibration of an asymptotic Fisher-z p-value, which the authors
+describe as "not of sequential nature, is asymptotic, and works atop rather
+heavy normality assumptions"; the safe-linear primitive here is an exact,
+non-asymptotic e-process for the same null, with Ville calibration verified by
+simulation.
+
+Worth noting as corroboration rather than competition: Csillag et al.
+independently identify the same gap that motivates the safe-linear primitive —
+that existing sequential CI tests "work under the Model-X framework, which
+requires knowledge of conditionals that are typically inaccessible in the
+context of causal discovery."
+
+Still unread: the multiplicity literature on e-value FWER (Hartog & Lei, 2025),
+which could sharpen the union bound.
 
 Bibliographic details in the table are verified against the PDFs. Citations
 elsewhere in this document came from web search and are **not** yet verified.

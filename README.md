@@ -157,10 +157,12 @@ min-of-e-values for union nulls (Vovk and Wang), aggregating CI tests over
 conditioning sets into an edge statistic (**PC-p** uses the max *p*-value, of
 which `min_S E^(S)` is the e-value analogue), adjacency as a test target
 (**DAT**), residual independence for direction (DirectLiNGAM), universal
-inference, safe testing — and, importantly, **one-sided faithfulness-free
-false-edge control at finite samples, which is exactly ε-CUT's Theorem 2**.
+inference, safe testing — plus two that cost me claims outright:
+**one-sided faithfulness-free false-edge control at finite samples** is exactly
+ε-CUT's Theorem 2, and **sequential, anytime-valid e-values inside PC** is
+already done by **Csillag et al.**
 
-Seven of the closest papers have now been read in full, and one of my earlier
+Eight of the closest papers have now been read in full, and two of my earlier
 claims did not survive: **PC-p already controls orientation error**, via
 FDR-controlled hypothesis tests for colliders and Meek-rule orientations. What
 survives, stated narrowly:
@@ -172,9 +174,12 @@ survives, stated narrowly:
    have no error control on the direction decision. The direction certificate
    has both — 96% of edges oriented against a 33% CPDAG ceiling, with a
    time-uniform bound on wrong arrowheads.
-2. **Time-uniformity.** Every comparable guarantee found is fixed-sample
-   (PC-p's FDR), asymptotic (Prakash et al.), population-level (Ruiz et al.),
-   or provenance-only (Uehara). None survives optional stopping.
+2. **A proved, not assumed, whole-graph guarantee.** Csillag et al. already
+   put *sequential, anytime-valid* e-values inside PC — so anytime-validity per
+   CI test is not new. But their graph-level validity is an explicit
+   assumption (their Assumption 2.5), with the multiple-comparison concern
+   noted and unresolved. The fixed-family union bound here proves it, and
+   covers orientation as well as edges.
 3. **Time-uniform edge control.** ε-CUT already gives one-sided,
    faithfulness-free false-edge control — *at each fixed n*. Bounding
    `P(∃n : a false edge is ever certified)` is a different statement, and the
@@ -189,7 +194,7 @@ Abstention itself is **not** new, and neither is faithfulness-free one-sided
 edge control — see `docs/CERTCD.md` for the full accounting, including a
 residual-risk note on what would still collapse claim 1.
 
-Bibliographic details for the seven papers read in full are verified; the
+Bibliographic details for the eight papers read in full are verified; the
 remaining citations were identified by web search and **have not been checked
 against publisher records**.
 
