@@ -64,3 +64,19 @@ def test_dsep_agrees_with_covariance_on_a_linear_gaussian_model():
             r = abs(ss.residual_moments(i, j, tuple(S)).partial_corr)
             if d_separated(adj, i, j, S):
                 assert r < 0.02
+
+
+def test_separator_assumption_detects_a_violation():
+    """A collider whose parents need a size-2 separator fails at max_order=1."""
+    from sprint_cd.simulate import separator_assumption_holds
+    # 0 -> 3 <- 1, 2 -> 3 : pairs among {0,1,2} are marginally separated (order 0),
+    # so the assumption holds even at order 0 for this graph.
+    adj = np.zeros((4, 4))
+    adj[0, 3] = adj[1, 3] = adj[2, 3] = 1
+    assert separator_assumption_holds(adj, max_order=0)
+
+    # Chain 0->1->2->3: (0,3) needs {1} or {2}; order 0 is not enough.
+    chain = np.zeros((4, 4))
+    chain[0, 1] = chain[1, 2] = chain[2, 3] = 1
+    assert not separator_assumption_holds(chain, max_order=0)
+    assert separator_assumption_holds(chain, max_order=1)

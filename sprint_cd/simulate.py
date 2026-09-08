@@ -18,6 +18,7 @@ __all__ = [
     "population_correlation",
     "partial_correlation",
     "strong_faithfulness_margin",
+    "separator_assumption_holds",
 ]
 
 
@@ -218,3 +219,35 @@ def strong_faithfulness_margin(
             for S in itertools.combinations(others, order):
                 margin = min(margin, abs(partial_correlation(R, i, j, S)))
     return float(margin)
+
+
+def separator_assumption_holds(adj: np.ndarray, max_order: int = 2) -> bool:
+    """Does every non-adjacent pair have a separating set of size at most ``max_order``?
+
+    This is the premise of the adjacency guarantee. It is exactly as
+    unverifiable in practice as the faithfulness conditions it replaces, and
+    its violation is equally silent: if it fails for a non-adjacent pair, the
+    separability null is false for that pair, the minimum of the per-set
+    e-processes is not an e-process for it, and a false edge can be certified
+    with no bound at all.
+
+    Reporting how often it holds is therefore the same courtesy the experiments
+    extend to the competing premise via
+    :func:`strong_faithfulness_margin`. ``max in-degree <= max_order`` is
+    sufficient but pessimistic -- a smaller separating set usually exists --
+    so this checks the condition directly by d-separation.
+    """
+    from .dsep import d_separated
+
+    adj = np.asarray(adj)
+    d = adj.shape[0]
+    for i, j in itertools.combinations(range(d), 2):
+        if adj[i, j] or adj[j, i]:
+            continue
+        others = [v for v in range(d) if v not in (i, j)]
+        cap = min(max_order, len(others))
+        if not any(d_separated(adj, i, j, S)
+                   for m in range(cap + 1)
+                   for S in itertools.combinations(others, m)):
+            return False
+    return True
