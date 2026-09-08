@@ -1,9 +1,6 @@
-import itertools
-
 import numpy as np
 import pytest
 
-from sprint_cd.graph import ARROW, TAIL
 from sprint_cd.simulate import (LinearGaussianSEM, random_dag, skeleton_errors,
                                 structural_hamming_distance)
 from sprint_cd.sprint_cd import SprintCD, SprintCDConfig, run_sprint_cd

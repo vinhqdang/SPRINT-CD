@@ -86,8 +86,17 @@ points gives, against nominal `alpha`:
 |---|---|---|---|---|
 | `P(sup_t E_t >= 1/alpha)` | 0.149 | 0.076 | 0.041 | 0.008 |
 
-Valid, and tight enough to retain power. The same check is run for both
-universal-inference constructions in `tests/test_eprocess.py`.
+Valid, and not so conservative as to be useless -- the realised rates sit at
+roughly half the nominal level rather than orders of magnitude below it. The
+same check is run for both universal-inference constructions in
+`tests/test_eprocess.py`.
+
+The residual conservatism is a real power cost. Against a fixed-sample
+Fisher-z test at the same `n`, evaluated once, the e-process detects a
+coefficient of 0.08 in 32% of runs against 72%, and one of 0.10 in 58% against
+91%; the gap closes by 0.15. Time-uniform validity is paid for in power, and
+when the sample size can honestly be fixed in advance there is no reason to
+buy it.
 
 ### Block form
 

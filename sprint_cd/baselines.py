@@ -13,7 +13,7 @@ import itertools
 import numpy as np
 from scipy import stats
 
-from .graph import ARROW, NONE, TAIL, MarkedGraph, meek_rules
+from .graph import ARROW, TAIL, MarkedGraph, meek_rules
 from .stats import GaussianSuffStat
 
 __all__ = ["fisher_z_pvalue", "pc_fixed_sample"]

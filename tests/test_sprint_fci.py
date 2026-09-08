@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from sprint_cd.dsep import oracle_skeleton_and_sepsets
-from sprint_cd.graph import ARROW, CIRCLE
+from sprint_cd.graph import ARROW
 from sprint_cd.simulate import LinearGaussianSEM, structural_hamming_distance
 from sprint_cd.sprint_cd import SprintCDConfig
 from sprint_cd.sprint_fci import SprintFCI, pag_from_skeleton, run_sprint_fci

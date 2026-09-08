@@ -26,12 +26,24 @@ without invalidating anything.
 
 | procedure at `alpha = 0.05` | Type-I error under monitoring |
 |---|---|
-| Fisher-z, monitored | 0.363 |
-| Fisher-z, fixed `n` | 0.058 |
-| **SPRINT-CD e-process** | **0.025** |
+| Fisher-z, monitored | 0.346 |
+| Fisher-z, fixed `n` | 0.056 |
+| **SPRINT-CD e-process** | **0.024** |
 
-Power is not sacrificed: detection rate 1.000 against a moderate alternative
-(2000 replications, monitored to `n = 1000`).
+2000 replications, monitored every 10 observations up to `n = 1000`.
+
+**This is not free.** Against a fixed-sample Fisher-z test at the same `n` —
+one that may be evaluated only once — the e-process detects less:
+
+| true `beta` | 0.04 | 0.06 | 0.08 | 0.10 | 0.15 |
+|---|---|---|---|---|---|
+| Fisher-z, fixed `n` | 0.21 | 0.47 | 0.72 | 0.91 | 1.00 |
+| SPRINT-CD e-process | 0.05 | 0.16 | 0.32 | 0.58 | 0.96 |
+
+The gap closes as the effect grows, and it is the price of a guarantee that
+survives monitoring and optional stopping. If the sample size can genuinely be
+fixed in advance and the analysis run once, a fixed-sample test is the more
+powerful choice and should be preferred.
 
 ---
 

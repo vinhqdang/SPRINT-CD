@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .graph import ARROW, CIRCLE, NONE, TAIL, MarkedGraph, meek_rules
+from .graph import ARROW, NONE, TAIL, MarkedGraph, meek_rules
 
 __all__ = [
     "LinearGaussianSEM",
@@ -58,16 +58,6 @@ class LinearGaussianSEM:
 
     def true_cpdag(self) -> MarkedGraph:
         return dag_to_cpdag(self.adjacency)
-
-    def marginalise(self, hidden: list[int]) -> tuple["LinearGaussianSEM", list[int]]:
-        """Return the SEM restricted to observed variables (for latent-variable tests).
-
-        The returned object retains the full ``B``; the second element lists the
-        observed indices.  Latent confounding is produced simply by sampling
-        the full model and dropping the hidden columns.
-        """
-        observed = [v for v in range(self.d) if v not in set(hidden)]
-        return self, observed
 
 
 def random_dag(

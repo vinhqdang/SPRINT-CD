@@ -1,7 +1,6 @@
 import numpy as np
-import pytest
 
-from sprint_cd.graph import (ARROW, CIRCLE, NONE, TAIL, MarkedGraph, fci_rules,
+from sprint_cd.graph import (ARROW, CIRCLE, TAIL, MarkedGraph, fci_rules,
                              meek_rules)
 from sprint_cd.simulate import dag_to_cpdag, structural_hamming_distance
 
