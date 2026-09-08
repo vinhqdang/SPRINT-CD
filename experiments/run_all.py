@@ -25,6 +25,8 @@ SCRIPTS = [
     ("exp8_primitive_calibration.py", "The per-set primitive under six noise laws"),
     ("exp9_assumption_violations.py", "Where the certificates are void"),
     ("exp10_sachs.py", "Real data: Sachs et al. (2005) protein signalling"),
+    ("exp11_block_completeness.py",
+     "Why the direction certificates exceed their budget"),
 ]
 
 

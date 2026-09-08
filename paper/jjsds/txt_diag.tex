@@ -1,1 +1,39 @@
-Placeholder diagnostic.
+We tested that explanation rather than asserting it. Over $250$ instances in
+each stratum we recorded, for every certified arrowhead, whether the frozen
+block $Z_{ij}$ contained every parent of $i$ and of $j$, and whether the
+arrowhead was wrong. Table~\ref{tab:diag} reports the result. Note that these
+are per-\emph{arrowhead} rates, whereas Table~\ref{tab:main} reports
+per-\emph{run} rates.
+
+\begin{table}[t]
+\centering
+\caption{Wrong-arrowhead rate by whether the frozen conditioning block
+contained every parent of both endpoints, $250$ instances per stratum, Wilson
+$95\%$ intervals. Rates are per certified arrowhead.}\label{tab:diag}
+\footnotesize
+\begin{tabular}{@{}llccc@{}}
+\toprule
+stratum & $Z_{ij}$ & arrowheads & wrong & rate \\
+\midrule
+premise holds & complete   & $486$ & $2$  & $0.004$ \tiny{[.001,.015]} \\
+premise holds & incomplete & $224$ & $3$  & $0.013$ \tiny{[.005,.039]} \\
+premise fails & complete   & $465$ & $3$  & $0.007$ \tiny{[.002,.019]} \\
+premise fails & incomplete & $447$ & $22$ & $0.049$ \tiny{[.033,.073]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both halves of the explanation hold. Incompleteness is more common where the
+premise fails---$49.0\%$ of certified arrowheads against $31.5\%$ where it
+holds (Fisher $p = 1.4\times10^{-12}$)---which is the certification-order
+effect. And incompleteness is where the errors are: on the failing stratum the
+wrong-arrowhead rate is $0.049$ with an incomplete block against $0.007$ with
+a complete one, a factor of $7.6$ (Fisher $p = 5.5\times10^{-5}$), and $22$ of
+the $25$ wrong arrowheads occur on pairs with an incomplete block. Where the
+block is complete, the rate is inside budget in both strata.
+
+The exceedance in Table~\ref{tab:main} is therefore not a failure of
+Proposition~\ref{prop:direction} or of its implementation. It is the
+misspecification gap of Remark~\ref{rem:misspec} being opened by a specific,
+identifiable mechanism, and it is reached through the algorithm's own
+scheduling rather than through anything intrinsic to the direction null.
