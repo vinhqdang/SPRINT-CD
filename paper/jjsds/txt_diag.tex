@@ -5,11 +5,24 @@ arrowhead was wrong. Table~\ref{tab:diag} reports the result. Note that these
 are per-\emph{arrowhead} rates, whereas Table~\ref{tab:main} reports
 per-\emph{run} rates.
 
+As Section~\ref{sec:freezing} states, a correctly specified frozen null needs
+$Z_{ij}$ to satisfy two conditions, and this diagnostic checks only one: it
+labels a block "complete" whenever every parent of both endpoints is present,
+but it cannot see whether $Z_{ij}$ also contains a descendant of either
+endpoint, which would misspecify the null independently of parent
+completeness. "Complete" below therefore means parent-complete, not
+correctly specified, and the low error rate in the complete cells is
+evidence about the parent-omission mechanism specifically, not a general
+certificate that the null is right whenever this diagnostic calls it
+complete.
+
 \begin{table}[t]
 \centering
-\caption{Wrong-arrowhead rate by whether the frozen conditioning block
-contained every parent of both endpoints, $250$ instances per stratum, Wilson
-$95\%$ intervals. Rates are per certified arrowhead.}\label{tab:diag}
+\caption{Wrong-arrowhead rate by whether the frozen conditioning block was
+parent-complete (contained every parent of both endpoints; descendant
+membership is not checked and could misspecify the null in the parent-complete
+cells too), $250$ instances per stratum, Wilson $95\%$
+intervals. Rates are per certified arrowhead.}\label{tab:diag}
 \footnotesize
 \begin{tabular}{@{}llccc@{}}
 \toprule

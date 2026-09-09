@@ -947,6 +947,23 @@ adjacency is certified: it is the set of that pair's already-certified
 neighbours at that moment. The direction process for the pair then begins
 accumulating, and $Z$ is never changed.
 
+For Eqs.~\eqref{eq:fwd}--\eqref{eq:bwd} to be the correct linear
+non-Gaussian model for the pair, $Z$ must satisfy two conditions, not one:
+it must contain every parent of both endpoints, \emph{and} it must exclude
+every descendant of either endpoint. The first is the condition the
+implementation targets and Section~\ref{sec:exp-main} measures; the second
+is not targeted at all. Conditioning on a descendant of $i$ or $j$---a
+collider on the path through that descendant, or a common effect of
+both---induces exactly the kind of dependence a linear non-Gaussian model
+does not have, for the same reason conditioning on a collider breaks
+faithfulness elsewhere in this literature. The certified-neighbour freeze
+does not rule this out: a variable certified adjacent to $i$ or $j$ before
+the pair itself is certified can be a child of one of them, not only a
+parent. Section~\ref{sec:exp-main}'s diagnostic therefore measures only
+half of what correctness of the frozen null requires, and its
+"complete"/"incomplete" label should be read as parent-completeness, not
+as a certificate that the direction null is correctly specified.
+
 Freezing is not a convenience. A conditioning block that kept changing would
 change the hypothesis under test, and Ville's inequality bounds the crossing
 probability for a \emph{fixed} null. There is a second, subtler issue:
@@ -983,16 +1000,27 @@ contain the truth and no such domination is guaranteed. This is the
 certificate's principal theoretical gap, and unlike Remark~\ref{rem:supremum}
 it cannot be closed by better optimisation.
 
-Empirically the certificate is more robust than that suggests. Against noise
-laws breaking each property of the family in turn---Student-$t_3$ (polynomial
-rather than exponential tails), shifted exponential (asymmetric) and a
-two-component mixture (bimodal)---the reversed direction was certified in $0$
-of $12$ runs in each case at $\alpha = 0.05$, with full power retained. But
-$0$ of $12$ is a weak bound, the study is bivariate, and
-Section~\ref{sec:exp-sachs} shows what happens on real data where the linear
-model itself is wrong: the certificate is confidently and systematically
-inverted. We regard bounding the misspecification gap analytically as the most
-important open problem the construction raises.
+Empirically the certificate is more robust than that suggests, and the
+original version of this check was too weak to say so: $0$ of $12$ runs at a
+single coefficient of $0.9$---an easy design, since a coefficient that large
+makes the correct direction's evidence overwhelming regardless of the noise
+law---has a Wilson upper limit of $0.247$, which cannot rule out a true
+error rate five times $\alpha$.
+\texttt{scripts/check\_misspecification\_robustness.py} reruns the same three
+noise laws breaking each property of the family in turn---Student-$t_3$
+(polynomial rather than exponential tails), shifted exponential (asymmetric)
+and a two-component mixture (bimodal)---at $150$ replications per cell and a
+coefficient sweep of $0.9$, $0.6$ and $0.3$, the last deliberately weakening
+the signal the earlier check left untested. The reversed direction was
+certified in $0$ of $150$ runs in every one of the nine (noise law,
+coefficient) cells, with a worst-case Wilson upper limit of $0.025$ against
+$\alpha/2 = 0.025$---an order of magnitude tighter than the original check,
+and still zero at the weaker signal. But zero-count bounds remain bounds, not
+proofs, the study is bivariate, and Section~\ref{sec:exp-sachs} shows what
+happens on real data where the linear model itself is wrong: the certificate
+is confidently and systematically inverted. We regard bounding the
+misspecification gap analytically as the most important open problem the
+construction raises.
 \end{remark}
 
 \section{CERT-CD}\label{sec:algorithm}
