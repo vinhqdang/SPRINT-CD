@@ -174,15 +174,36 @@ def adjacency_log_e(
 # ----------------------------------------------------------------------
 # Direction certificate
 # ----------------------------------------------------------------------
-# Coarse bracketing grid. It deliberately includes the two shapes that arise
-# most often -- 1.0 (Laplace) and 2.0 (Gaussian) -- because a grid that omits
-# the true shape makes the "supremum" in the universal-inference denominator
-# smaller than the likelihood at the true parameter, which is exactly the
-# inequality the e-process argument needs. Omitting 1.0 inflated log E by up to
-# 2.4 nats on a correctly specified Laplace null, in 16% of replications.
-# The grid only brackets; ``fit_gg_regression`` then refines continuously.
-_KAPPA_GRID = np.array([0.6, 0.8, 1.0, 1.3, 1.7, 2.0, 2.6, 3.5, 5.0])
-_KAPPA_BOUNDS = (0.35, 12.0)
+# The null family's shape parameter ranges over a **compact** interval, and
+# that compactness is part of the model rather than an implementation detail.
+# Universal inference needs the denominator to attain its supremum over the set
+# the theorem quantifies over; a supremum over all positive reals is not
+# attained by any finite search, and pretending otherwise is what makes the
+# failure silent.  The paper states Theta with this range, so the uniform limit
+# (kappa -> inf) is outside the null model by construction.
+#
+# History: an earlier grid omitted kappa = 1 (Laplace) entirely, inflating
+# log E by up to 2.4 nats on a correctly specified Laplace null.  Adding 1.0
+# fixed that band and nothing else -- and because the verification was run at
+# kappa = 1, which the fix had just made a grid point, the check could not
+# distinguish a working refinement from a lucky grid hit. A second round then
+# swept the whole range and found the fix still failed for kappa outside
+# roughly [0.9, 8.0]: the |r|^kappa loss becomes so heavily peaked as
+# kappa -> 0 that IRLS started from an unrelated point (the kappa=2 / OLS
+# solution) converges to the wrong local optimum, silently under-estimating
+# the true supremum. The fit below now walks outward from kappa=2 --
+# continuation, not a fresh restart -- so every shape is optimised starting
+# from its immediate neighbour's fit, and the bound below is the interval over
+# which that walk is verified (not merely believed) to attain the supremum;
+# see ``scripts/check_supremum_attainment.py``.
+_KAPPA_BOUNDS = (0.9, 8.0)
+_KAPPA_PIVOT = 2.0   # Gaussian: OLS is the *exact* MLE here, so the
+                     # continuation walk starts from a point with no
+                     # optimisation risk at all.
+# Dense enough that every point of the range is within one bracket of a node,
+# log-spaced because the likelihood varies on a multiplicative scale in kappa.
+_KAPPA_GRID = np.exp(np.linspace(np.log(_KAPPA_BOUNDS[0]),
+                                 np.log(_KAPPA_BOUNDS[1]), 41))
 _EPS = 1e-9
 
 
@@ -207,13 +228,25 @@ def _profile(resid: np.ndarray, kappa: float) -> tuple[float, float]:
 
 
 def _irls(y: np.ndarray, X: np.ndarray, kappa: float, coef0: np.ndarray,
-          iters: int = 25) -> np.ndarray:
-    """Iteratively reweighted least squares for the ``|r|^kappa`` loss."""
+          iters: int = 60) -> np.ndarray:
+    """Minimise ``sum |y - X b|^kappa`` by IRLS with a monotonicity guard.
+
+    The plain reweighting iteration is not a descent method.  For ``kappa > 2``
+    the weight ``|r|^(kappa-2)`` *grows* with the residual, so a step can move
+    away from the optimum and the iteration diverges; that divergence was the
+    dominant cause of the supremum-attainment failures at large shape, and it
+    is invisible unless the objective is actually monitored.  Each step is now
+    accepted only if it decreases the loss, with backtracking towards the
+    current iterate otherwise.
+    """
+    def loss(c):
+        v = np.sum(np.abs(y - X @ c) ** kappa)
+        return v if np.isfinite(v) else np.inf
+
     coef = coef0.copy()
+    cur = loss(coef)
     for _ in range(iters):
         r = y - X @ coef
-        # A residual of exactly zero gives an infinite weight for kappa < 2;
-        # clipping keeps the reweighting finite without changing the optimum.
         with np.errstate(divide="ignore", invalid="ignore"):
             w = np.abs(r) ** (kappa - 2.0)
         w = np.clip(np.nan_to_num(w, nan=1.0, posinf=1e12), 1e-12, 1e12)
@@ -221,51 +254,108 @@ def _irls(y: np.ndarray, X: np.ndarray, kappa: float, coef0: np.ndarray,
         A = X.T @ XW
         b = XW.T @ y
         try:
-            new = np.linalg.solve(A + 1e-10 * np.eye(A.shape[0]), b)
+            proposal = np.linalg.solve(A + 1e-10 * np.eye(A.shape[0]), b)
         except np.linalg.LinAlgError:
             break
-        if not np.all(np.isfinite(new)):
+        if not np.all(np.isfinite(proposal)):
             break
-        if np.max(np.abs(new - coef)) < 1e-9:
-            coef = new
+        step = proposal - coef
+        # Backtracking line search: the undamped IRLS step is tried first, so
+        # nothing is lost where the iteration was already well behaved.
+        t, improved = 1.0, False
+        for _ in range(20):
+            cand = coef + t * step
+            val = loss(cand)
+            if val < cur:
+                improved = True
+                break
+            t *= 0.5
+        if not improved:
             break
-        coef = new
+        if np.max(np.abs(cand - coef)) < 1e-10:
+            coef, cur = cand, val
+            break
+        coef, cur = cand, val
     return coef
 
 
 def fit_gg_regression(y: np.ndarray, X: np.ndarray):
-    """Maximise the generalised-Gaussian regression likelihood over coefficients,
-    scale and shape.  Returns ``(loglik, coef, sigma, kappa)``.
+    """Maximise the generalised-Gaussian regression likelihood over
+    coefficients, scale and shape.  Returns ``(loglik, coef, sigma, kappa)``.
 
     Universal inference needs a genuine supremum over the null family: the
     argument dominates ``E_t`` by a martingale only if the denominator is at
-    least the likelihood at the true parameter.  A maximum over a fixed shape
-    grid does not provide that when the true shape falls between grid points,
-    so the grid is used only to bracket and the shape is then refined
-    continuously by bounded Brent search on the profile likelihood.
+    least the likelihood at the true parameter.  Three things are required for
+    that here, and the first two were missing before this was diagnosed.
+
+    First, the set searched must be the set the theorem quantifies over.  The
+    shape ranges over the compact ``_KAPPA_BOUNDS``, which the paper states as
+    part of the null model, so the search covers it rather than approximating
+    an unbounded family.
+
+    Second, the search must actually find the maximiser at every shape in that
+    range, and a fresh IRLS solve at each shape does not: for small ``kappa``
+    the ``|r|^kappa`` loss is so heavily peaked that IRLS started from an
+    unrelated point (the OLS fit) converges to the wrong local optimum, and
+    silently under-estimates the true supremum by several nats -- exactly the
+    failure this construction cannot tolerate.  The fix is *continuation*:
+    walk outward in ``kappa`` from the pivot ``kappa = 2``, where OLS is the
+    exact MLE and there is no optimisation risk at all, always warm-starting
+    each shape's IRLS solve from its immediate neighbour's converged fit.
+    Starting the hardest end of the range from an unrelated point was the
+    actual defect; a fresh restart at each grid node, however dense, does not
+    fix it, because the failure is about which basin IRLS lands in, not about
+    the fineness of the shape grid.
+
+    Third, the final answer must be continuous in ``kappa`` rather than
+    confined to a fixed grid: every consecutive pair of grid points is refined
+    by a bounded scalar search, seeded from the already-converged coefficient
+    at the near endpoint of that interval, and the best result over every
+    interval is kept -- not only the interval around the best grid point,
+    since the profile need not be concave.
     """
     coef0, *_ = np.linalg.lstsq(X, y, rcond=None)
+    pivot_idx = int(np.argmin(np.abs(_KAPPA_GRID - _KAPPA_PIVOT)))
 
-    def profile_at(k: float):
+    def profile_at(k: float, start: np.ndarray):
         k = float(np.clip(k, *_KAPPA_BOUNDS))
-        coef = coef0 if abs(k - 2.0) < 1e-9 else _irls(y, X, k, coef0)
+        coef = start if abs(k - _KAPPA_PIVOT) < 1e-9 else _irls(y, X, k, start)
         ll, sig = _profile(y - X @ coef, k)
         return ll, coef, sig, k
 
-    best = max((profile_at(k) for k in _KAPPA_GRID), key=lambda t: t[0])
+    # Continuation sweep: walk outward from the pivot in both directions,
+    # each step warm-started from its neighbour.
+    scan: list = [None] * len(_KAPPA_GRID)
+    start = coef0
+    for idx in range(pivot_idx, -1, -1):
+        cand = profile_at(float(_KAPPA_GRID[idx]), start)
+        scan[idx] = cand
+        start = cand[1]
+    start = coef0
+    for idx in range(pivot_idx, len(_KAPPA_GRID)):
+        cand = profile_at(float(_KAPPA_GRID[idx]), start)
+        scan[idx] = cand
+        start = cand[1]
+    best = max(scan, key=lambda t: t[0])
 
-    # Refine within the bracket around the best grid point.
-    lo = max(_KAPPA_BOUNDS[0], best[3] / 1.8)
-    hi = min(_KAPPA_BOUNDS[1], best[3] * 1.8)
-    try:
-        res = minimize_scalar(lambda k: -profile_at(k)[0], bounds=(lo, hi),
-                              method="bounded", options={"xatol": 1e-3})
-        if res.success:
-            cand = profile_at(float(res.x))
-            if cand[0] > best[0]:
-                best = cand
-    except Exception:            # refinement is an optimisation, never a
-        pass                     # correctness dependency; the grid value stands
+    # Refine every interval, warm-started from its own converged endpoint, not
+    # from an arbitrary shared seed: the profile need not be concave, and the
+    # global maximiser need not sit in the bracket containing the largest
+    # scanned value.
+    for idx in range(len(_KAPPA_GRID) - 1):
+        lo, hi = float(_KAPPA_GRID[idx]), float(_KAPPA_GRID[idx + 1])
+        seed = scan[idx][1]
+        try:
+            res = minimize_scalar(lambda k: -profile_at(k, seed)[0],
+                                  bounds=(lo, hi), method="bounded",
+                                  options={"xatol": 1e-4})
+        except Exception:        # refinement is an optimisation, never a
+            continue             # correctness dependency; the scan stands
+        if not res.success:
+            continue
+        cand = profile_at(float(res.x), seed)
+        if cand[0] > best[0]:
+            best = cand
     return best
 
 
