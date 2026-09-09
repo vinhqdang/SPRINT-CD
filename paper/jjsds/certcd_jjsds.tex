@@ -1600,9 +1600,15 @@ and Laplace columns agree to within Monte Carlo error. Full numbers are in Appen
 Table~\ref{tab:primitive}, and Figure~\ref{fig:exp8} plots them.
 
 This does not prove validity outside the Gaussian model---it is six laws, not
-a theorem---but it does bound the practical risk, and it locates the model
-sensitivity where it belongs: in the direction certificate
-(Remark~\ref{rem:misspec}), not in the adjacency one.
+a theorem---but it does bound the practical risk from non-Gaussian noise
+specifically. It says nothing about a different way the primitive can be
+wrong: Eq.~\eqref{eq:regform} assumes the conditional mean is linear, and
+none of the six noise laws breaks that assumption, only the error
+distribution around it. Section~\ref{sec:exp-sachs} certifies edges on data
+we ourselves describe as demonstrably nonlinear, and we have not measured
+what nonlinearity of this kind does to the adjacency primitive's
+calibration; the six-noise-law result should not be read as ruling that risk
+out.
 
 \begin{figure}[t]
 \centering
@@ -1928,18 +1934,33 @@ false. Under misspecification the supremum in~\eqref{eq:direction} is taken
 over a model not containing the truth, and Proposition~\ref{prop:direction}
 gives nothing (Remark~\ref{rem:misspec}).
 
-We draw two conclusions and resist a third. First, the experiment is a clean
-illustration of the asymmetry the paper is about: the certificate whose null
-requires only the Markov condition behaves exactly as advertised on real data,
-while the certificate whose null requires a parametric functional model fails
-exactly where that model fails. Second, it shows that the failure is not
-detectable from the output---the reversed arrowheads carry the same
-$\alpha = 0.1$ label as any other, which is precisely why
-Remark~\ref{rem:misspec} names misspecification as the construction's main
-theoretical risk rather than a footnote. The conclusion we resist is that the
-consensus is wrong and the certificates are right; observational
-non-Gaussianity-based orientation disagreeing with interventional evidence is
-much more likely to be the model failing than the biology.
+We draw two conclusions and resist a third, and we are careful about what the
+first one licenses. The adjacency certificate does not need causal
+sufficiency (Section~\ref{sec:latent}), so the network's confounding does not
+by itself void its guarantee; but Remark~\ref{rem:faithfulness}'s third
+requirement---a correctly specified per-set primitive---is not obviously met
+either, since we describe this same network as demonstrably nonlinear a
+paragraph below, and our default primitive is the linear-Gaussian safe test
+of Section~\ref{sec:primitive}. We have not verified that primitive's
+assumption on Sachs, so we cannot say the adjacency guarantee was live and
+satisfied here; what we can say is that all six certified edges agree with
+the consensus skeleton, which is empirical agreement, not a demonstration
+that the theorem's premises held. First, then: the experiment illustrates the
+asymmetry the paper is about---the adjacency certificate's six-for-six
+agreement is consistent with the guarantee it carries under weaker premises
+than orientation needs, while the certificate whose null requires a
+parametric functional model fails exactly where that model demonstrably
+fails, and does so without us having to guess at an unverified primitive
+assumption to explain it, since Section~\ref{sec:direction} states plainly
+what the direction null requires and this network does not have it. Second,
+the direction failure shows that the failure is not detectable from the
+output---the reversed arrowheads carry the same $\alpha = 0.1$ label as any
+other, which is precisely why Remark~\ref{rem:misspec} names misspecification
+as the construction's main theoretical risk rather than a footnote. The
+conclusion we resist is that the consensus is wrong and the certificates are
+right; observational non-Gaussianity-based orientation disagreeing with
+interventional evidence is much more likely to be the model failing than the
+biology.
 Figure~\ref{fig:exp10} shows how slowly the certified set accumulates.
 
 \paragraph{Against a 2026 comparator on the same data.} \citet{uehara2026iterative}
@@ -2175,15 +2196,22 @@ curves of Section~\ref{sec:exp-calibration}, the undecided fractions of
 Section~\ref{sec:exp-main}, and the six-edges-out-of-fifty-five of
 Section~\ref{sec:exp-sachs}.
 
-The real-data experiments deliver the paper's own counterexamples. Where the
-certifying null rests on the Markov condition alone, the method behaves as
-advertised on real data. Where it rests on a parametric functional model, it
-does not: on Sachs it is confidently and systematically wrong, with nothing
-in its output to say so; on the Tübingen pairs it mostly declines to commit,
-correctly, but is no better than chance on the minority of pairs where it
-does. A certificate is only ever as good as the null it certifies against,
-and we think making that dependence visible---rather than absorbing it into an
-assumption stated once and not revisited---is the more useful contribution.
+The real-data experiments deliver the paper's own counterexamples, and we are
+careful about which side is which. On Sachs the six certified edges agree
+with the consensus skeleton, which is empirical agreement, not a
+demonstration that the adjacency certificate's guarantee was live: we did not
+verify the linear-Gaussian primitive on data we ourselves call demonstrably
+nonlinear, so we do not claim the theorem's premises held there, only that
+the output happened to be right. Where the certifying null instead rests on
+a parametric functional model, the failure is visible and unambiguous: on
+Sachs the direction certificate is confidently and systematically wrong,
+with nothing in its output to say so; on the Tübingen pairs it mostly
+declines to commit, correctly, but is no better than chance on the minority
+of pairs where it does. A certificate is only ever as good as the null it
+certifies against, and we think making that dependence visible---rather than
+absorbing it into an assumption stated once and not revisited, or into a
+success we cannot actually attribute to a live guarantee---is the more
+useful contribution.
 
 \backmatter
 

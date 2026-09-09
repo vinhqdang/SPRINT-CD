@@ -109,9 +109,15 @@ and Laplace columns agree to within Monte Carlo error. Full numbers are in Appen
 Table~\ref{tab:primitive}, and Figure~\ref{fig:exp8} plots them.
 
 This does not prove validity outside the Gaussian model---it is six laws, not
-a theorem---but it does bound the practical risk, and it locates the model
-sensitivity where it belongs: in the direction certificate
-(Remark~\ref{rem:misspec}), not in the adjacency one.
+a theorem---but it does bound the practical risk from non-Gaussian noise
+specifically. It says nothing about a different way the primitive can be
+wrong: Eq.~\eqref{eq:regform} assumes the conditional mean is linear, and
+none of the six noise laws breaks that assumption, only the error
+distribution around it. Section~\ref{sec:exp-sachs} certifies edges on data
+we ourselves describe as demonstrably nonlinear, and we have not measured
+what nonlinearity of this kind does to the adjacency primitive's
+calibration; the six-noise-law result should not be read as ruling that risk
+out.
 
 \begin{figure}[t]
 \centering
