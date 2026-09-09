@@ -28,21 +28,22 @@ intervals. Rates are per certified arrowhead.}\label{tab:diag}
 \toprule
 stratum & $Z_{ij}$ & arrowheads & wrong & rate \\
 \midrule
-premise holds & complete   & $486$ & $2$  & $0.004$ \tiny{[.001,.015]} \\
-premise holds & incomplete & $224$ & $3$  & $0.013$ \tiny{[.005,.039]} \\
-premise fails & complete   & $465$ & $3$  & $0.007$ \tiny{[.002,.019]} \\
-premise fails & incomplete & $447$ & $22$ & $0.049$ \tiny{[.033,.073]} \\
+premise holds & complete   & $458$ & $2$  & $0.004$ \tiny{[.001,.016]} \\
+premise holds & incomplete & $173$ & $2$  & $0.012$ \tiny{[.003,.041]} \\
+premise fails & complete   & $542$ & $2$  & $0.004$ \tiny{[.001,.013]} \\
+premise fails & incomplete & $408$ & $14$ & $0.034$ \tiny{[.021,.057]} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Both halves of the explanation hold. Incompleteness is more common where the
-premise fails---$49.0\%$ of certified arrowheads against $31.5\%$ where it
-holds (Fisher $p = 1.4\times10^{-12}$)---which is the certification-order
+premise fails---$42.9\%$ of certified arrowheads against $27.4\%$ where it
+holds (Fisher $p = 3.0\times10^{-10}$)---which is the certification-order
 effect. And incompleteness is where the errors are: on the failing stratum the
-wrong-arrowhead rate is $0.049$ with an incomplete block against $0.007$ with
-a complete one, a factor of $7.6$ (Fisher $p = 5.5\times10^{-5}$), and $22$ of
-the $25$ wrong arrowheads occur on pairs with an incomplete block. These are
+wrong-arrowhead rate is $0.034$ with an incomplete block against $0.004$ with
+a complete one, a factor of $9.3$ (Fisher $p = 4.0\times10^{-4}$), and $14$ of
+the $16$ wrong arrowheads on that stratum occur on pairs with an incomplete
+block. These are
 per-arrowhead rates, not the quantity $\alpha_D$ bounds: $\alpha_D$ is a
 whole-run, family-wise budget summed over all $d(d-1)$ direction nulls
 (Section~\ref{sec:algo-desc}), so the two are not on a common scale and the
