@@ -126,6 +126,16 @@ generating model, computable before any data are simulated, so the comparison
 is cheap. Over $2000$ random DAGs per setting, Table~\ref{tab:premises} reports
 how often each premise holds at $k = 2$ and $\delta = 0.15$.
 
+One definitional point matters here and an earlier version of this paper got it
+wrong. $\delta$-strong faithfulness constrains \emph{every} partial correlation
+not forced to zero by d-separation, over all pairs. A margin computed only over
+pairs that are \emph{adjacent} in the true skeleton is the weaker
+adjacency-faithfulness condition, and reporting it as $\delta$-strong
+faithfulness overstates how often the competing premise holds---in the
+direction that flatters the comparators. The column below is the full
+condition, truncated at $|S| \le k$ because that is the family the experiments
+test; the adjacency-only margin is reported beside it so the gap is visible.
+
 \begin{table}[t]
 \centering
 \caption{How often each method's premise holds, over $2000$ random DAGs per
@@ -270,7 +280,8 @@ DirectLiNGAM orients all $692$ edges anyway and directs $356$ of them---$51\%$,
 which is chance---against the truth, in $167$ of $200$ runs. The certificate
 orients none, as Proposition~\ref{prop:abstain} requires. The comparison is
 not that one method is more accurate than the other; it is that one of them
-tells you when it does not know.
+tells you when it does not know. Figure~\ref{fig:exp7} shows both noise
+regimes side by side.
 
 \begin{figure}[t]
 \centering
@@ -281,6 +292,14 @@ accuracy but is reported with no such signal.}\label{fig:exp7}
 \end{figure}
 
 \subsection{Latent confounders}\label{sec:exp-latent}
+
+A note on what was run. An earlier version of this experiment reported
+numbers produced by the delete-on-non-rejection comparator under the CERT-FCI
+label; the metrics gave it away, since ``lost adjacency'' is not a defined
+error mode for a procedure that never deletes. CERT-FCI is now implemented as
+Section~\ref{sec:latent} describes it---an add-only certified skeleton with the
+FCI rules applied on top---and the two procedures are reported separately, each
+against the error mode it actually has.
 
 CERT-FCI (Section~\ref{sec:latent}) was run on $7$-variable graphs with one
 variable marginalised out, $\alpha = 0.1$, monitored to $n = 4000$. On the
@@ -296,6 +315,7 @@ than it is: at $d = 7$ with a latent variable, $0.15$-strong faithfulness
 holds in only $19\%$ of instances (Table~\ref{tab:premises}), so the
 favourable stratum is the minority one, and a reader shown only it would form
 the wrong impression of what CERT-FCI does on a graph drawn at random.
+Figure~\ref{fig:exp4} shows the trajectory and the margin distribution.
 
 \begin{figure}[t]
 \centering
@@ -324,7 +344,8 @@ rejected in $2$. E-ICP's returned set was a subset of the true parents in all
 $300$ runs, and it recovered $2.0$ of $2$ true parents on average against
 ICP's $1.99$. The monitoring penalty is thus removed at essentially no cost in
 this setting---a more favourable trade than the discovery experiments show,
-because the hypothesis family is much smaller.
+because the hypothesis family is much smaller. Figure~\ref{fig:exp5} shows
+both quantities.
 
 \begin{figure}[t]
 \centering

@@ -46,12 +46,15 @@ certified-neighbour variant because it is what the rest of the experiments
 use, and changing it after seeing this result would be the wrong order of
 operations.
 
+Figure~\ref{fig:exp6} shows both panels: the validity comparison by stratum,
+and what accumulates as $n$ grows.
+
 \paragraph{What is certified.} On premise-satisfying instances at $n = 3000$,
 $97\%$ of true edges are certified and $93\%$ are also oriented---so $96\%$ of
 \emph{certified} edges carry a direction---against a Markov-equivalence-class
 orientation ceiling of $33\%$, the fraction a CPDAG can orient at all on these
 graphs. That gap is the practical content of the direction certificate: an
-edge lying in no v-structure is unorientable in principle by any
+edge left undirected in the CPDAG is unorientable in principle by any
 constraint-based method, and roughly two thirds of these edges are of that
 kind.
 

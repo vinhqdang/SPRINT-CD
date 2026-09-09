@@ -226,7 +226,10 @@ two-component mixture & $0.097$ & $0.049$ & $0.028$ & $0.006$ \\
 \end{table}
 
 \paragraph{Hyperparameters.} Unless stated otherwise: warm-up $m = 50$
-observations (discarded), prior scale $g = 0.5$ after standardisation,
+observations (discarded), prior standard deviation $0.5$ after
+standardisation---so $g = 0.25$ in the parameterisation of
+Eq.~\eqref{eq:safelinear}, and $g = 0.16$ in the primitive-calibration
+experiment, which uses $0.4$---
 $k = 2$, adjacency share $\alpha_A/\alpha = 0.5$, batch size $250$ in the
 graph experiments and $100$ in the skeleton experiments, and a minimum of $80$
 post-certification observations before a direction process is first evaluated.

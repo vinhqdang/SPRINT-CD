@@ -85,7 +85,7 @@ finite-sample, time-uniform, family-wise over a graph, and not confined to the
 Markov equivalence class.} Each of these four properties has precedent
 separately. \citet{strobl2019estimating} is finite-sample and family-wise (in
 the FDR sense) but confined to the equivalence class, so an edge in no
-v-structure is unorientable by it in principle. \citet{shimizu2008use} escapes
+CPDAG is unorientable by it in principle. \citet{shimizu2008use} escapes
 the class and is a genuine test, but is bivariate and fixed-sample.
 \citet{ruiz2022sequentially} is closest in statistic---likelihood-ratio scores
 on residuals---but proves only population-level identifiability, requires all
@@ -108,6 +108,9 @@ and extends it to orientations. The proof is not deep---it is a union bound
 over Ville events---but the statement is the one a practitioner needs and it
 was previously an assumption.
 
+Table~\ref{tab:related} sets the three claims against the closest prior work,
+one column per property.
+
 \paragraph{(iii) Time-uniformity on the adjacency side.} $\epsilon$-CUT
 \citep{shaska2025causal} holds the same one-sided, faithfulness-free ground
 \emph{at each fixed $n$}. Bounding the probability that a false edge is
@@ -120,7 +123,7 @@ zero-Type-II-error assumption is not needed here.
 \begin{table}[t]
 \centering
 \caption{Positioning against the closest prior work. ``Beyond MEC'' means the
-method can orient an edge lying in no v-structure. ``Time-uniform'' means the
+method can orient an edge that the CPDAG leaves undirected. ``Time-uniform'' means the
 error statement holds simultaneously at all sample sizes.
 ``Faithfulness-free'' refers to the \emph{validity} of the method's
 assertions, not to its power.}\label{tab:related}

@@ -17,6 +17,7 @@ __all__ = [
     "skeleton_errors",
     "population_correlation",
     "partial_correlation",
+    "adjacency_faithfulness_margin",
     "strong_faithfulness_margin",
     "separator_assumption_holds",
 ]
@@ -191,17 +192,26 @@ def partial_correlation(R: np.ndarray, i: int, j: int, cond=()) -> float:
     return 0.0 if denom <= 0 else float(S[0, 1] / denom)
 
 
-def strong_faithfulness_margin(
+def adjacency_faithfulness_margin(
     sem: "LinearGaussianSEM", observed=None, max_order: int = 2
 ) -> float:
-    """Smallest ``|rho_{ij.S}|`` over true adjacencies and tested conditioning sets.
+    """Smallest ``|rho_{ij.S}|`` over **true adjacencies** and tested sets.
 
-    This is the empirical counterpart of the ``delta`` in ``delta``-strong
-    faithfulness: the SPRINT-CD guarantee applies to an instance only when this
-    margin is at least the equivalence half-width in force.  Random graphs
-    violate the condition far more often than is generally acknowledged --
-    especially once latent variables are marginalised out -- so experiments
-    that score the guarantee need to measure it rather than assume it.
+    This is an order-truncated *adjacency*-faithfulness margin: it minimises
+    only over pairs that are adjacent in the true skeleton, and only over
+    conditioning sets of size at most ``max_order``.  It is a strictly
+    necessary condition for ``delta``-strong faithfulness, not that condition
+    itself -- adjacency-faithfulness constrains adjacent pairs only, whereas
+    ``delta``-strong faithfulness additionally constrains every non-adjacent
+    pair that is not d-separated by the set being conditioned on.
+
+    Earlier versions of this code exported this quantity under the name
+    ``strong_faithfulness_margin``, and the experiments reported it as
+    ``delta``-strong faithfulness.  That was wrong, and it was wrong in the
+    direction that flatters the comparators: it counts instances as satisfying
+    the competing premise that in fact violate it.  Use
+    :func:`strong_faithfulness_margin` for the condition the comparators'
+    guarantees actually require.
 
     Returns ``inf`` when the true skeleton over ``observed`` has no edges.
     """
@@ -217,6 +227,50 @@ def strong_faithfulness_margin(
         others = [v for v in range(n_obs) if v not in (i, j)]
         for order in range(min(max_order, len(others)) + 1):
             for S in itertools.combinations(others, order):
+                margin = min(margin, abs(partial_correlation(R, i, j, S)))
+    return float(margin)
+
+
+def strong_faithfulness_margin(
+    sem: "LinearGaussianSEM", observed=None, max_order: int = 2
+) -> float:
+    """``delta``-strong faithfulness margin, truncated at ``max_order``.
+
+    ``delta``-strong faithfulness requires *every* partial correlation that is
+    not forced to zero by d-separation to exceed ``delta`` in absolute value.
+    This returns the smallest such correlation over all pairs and all
+    conditioning sets of size at most ``max_order``, so an instance satisfies
+    ``delta``-strong faithfulness at that order exactly when the value is at
+    least ``delta``.
+
+    The quantifier runs over **all** pairs, not only adjacent ones.  A
+    non-adjacent pair that some tested set fails to d-separate still has a
+    non-zero partial correlation given that set, and a near-cancellation there
+    is exactly the configuration that makes a delete-on-non-rejection method
+    keep a false edge -- so excluding those pairs (as
+    :func:`adjacency_faithfulness_margin` does) measures a weaker condition
+    than the one the competing guarantees assume.
+
+    Restricting to ``|S| <= max_order`` truncates the true condition, which
+    quantifies over all subsets; the truncation is stated rather than hidden
+    because the experiments only ever test sets of that size.  Returns ``inf``
+    when no pair has a d-connected conditioning set within the order limit.
+    """
+    from .dsep import d_separated
+
+    obs = list(range(sem.d)) if observed is None else list(observed)
+    R = population_correlation(sem, obs)
+    adj = sem.adjacency
+    n_obs = len(obs)
+
+    margin = np.inf
+    for i, j in itertools.combinations(range(n_obs), 2):
+        others = [v for v in range(n_obs) if v not in (i, j)]
+        for order in range(min(max_order, len(others)) + 1):
+            for S in itertools.combinations(others, order):
+                # Only correlations *not* forced to zero by the graph count.
+                if d_separated(adj, obs[i], obs[j], tuple(obs[v] for v in S)):
+                    continue
                 margin = min(margin, abs(partial_correlation(R, i, j, S)))
     return float(margin)
 

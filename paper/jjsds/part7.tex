@@ -15,7 +15,9 @@ network, and we stress that this is a scientific consensus assembled from
 interventional experiments and prior literature, not ground truth; several of
 its arcs are contested.
 
-At $\alpha = 0.1$ and $k = 2$, streaming in batches of $50$, CERT-CD certifies
+At $\alpha = 0.1$ and $k = 2$, streaming in batches of $50$ after a
+$100$-observation warm-up that is discarded---so the e-processes see $753$
+of the $853$ cells---CERT-CD certifies
 $6$ edges out of $55$ pairs and leaves $49$ undecided. The two halves of the
 output behave very differently, and the contrast is the reason to report the
 experiment.
@@ -23,7 +25,8 @@ experiment.
 \paragraph{The adjacency half does what it claims.} All $6$ certified edges
 lie in the consensus skeleton, and none outside it: Raf--Mek, PIP2--PIP3,
 Erk--Akt, Akt--PKA, PKC--P38 and PKC--Jnk. Six of $17$ consensus edges is low
-recall, which is what one expects from $853$ observations, a family-wise
+recall, which is what one expects from the $753$ observations the
+certificates actually consume, a family-wise
 budget over $55$ pairs, and a certificate that must reject to assert. PC at
 the same level and order returns $7$ edges, all also in the consensus
 skeleton, and then \emph{calls the remaining $48$ pairs absent}---an assertion
@@ -63,12 +66,13 @@ theoretical risk rather than a footnote. The conclusion we resist is that the
 consensus is wrong and the certificates are right; observational
 non-Gaussianity-based orientation disagreeing with interventional evidence is
 much more likely to be the model failing than the biology.
+Figure~\ref{fig:exp10} shows how slowly the certified set accumulates.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.75\textwidth]{figs/exp10_sachs.png}
 \caption{CERT-CD on the Sachs observational sample. Certified edges accumulate
-slowly and the undecided set stays large: at $n = 853$, $49$ of $55$ pairs
+slowly and the undecided set stays large: at $n = 753$, $49$ of $55$ pairs
 remain undecided.}\label{fig:exp10}
 \end{figure}
 

@@ -27,6 +27,8 @@ from sprint_cd.graph import ARROW
 from sprint_cd.simulate import (random_dag, strong_faithfulness_margin,
                                 structural_hamming_distance)
 from sprint_cd.sprint_cd import SprintCDConfig
+from sprint_cd.cert_fci import CertFCI
+from sprint_cd.certcd import CertCDConfig
 from sprint_cd.sprint_fci import SprintFCI, pag_from_skeleton
 
 
@@ -51,6 +53,8 @@ def run(reps, d, n_hidden, edge_prob, nmax, batch, alpha, rope, seed):
     target_bad = max(reps // 2, 5)
 
     shd = []
+    cert_false_ok = cert_false_bad = 0
+    cert_recall, cert_undecided = [], []
     ever_missing_ok = ever_missing_bad = 0
     n_ok = n_bad = 0
     generated = 0
@@ -82,35 +86,64 @@ def run(reps, d, n_hidden, edge_prob, nmax, batch, alpha, rope, seed):
 
         skel, seps = oracle_skeleton_and_sepsets(sem.adjacency, observed)
         truth = pag_from_skeleton(skel, seps)
+        n_oracle_edges = len(skel.edges())
 
         X = sem.sample(nmax + warmup, rng)[:, observed]
-        algo = SprintFCI(len(observed),
-                         SprintCDConfig(alpha=alpha, max_order=2, rope=rope,
-                                        prior_scale=0.5, warmup=warmup))
-        algo.warm_up(X[:warmup])
+
+        # CERT-FCI: the paper's extension.  Add-only, so "lost adjacency" is
+        # undefined for it; the quantities that ARE defined are how many
+        # oracle adjacencies it certifies, whether it ever certifies one that
+        # is absent from the oracle skeleton, and how much stays undecided.
+        cert = CertFCI(len(observed),
+                       CertCDConfig(alpha=alpha, max_order=2,
+                                    prior_scale=0.5, warmup=warmup))
+        cert.warm_up(X[:warmup])
+        # SprintFCI: the delete-on-non-rejection comparator.  "Lost adjacency"
+        # is its characteristic error mode and is defined for it.
+        spr = SprintFCI(len(observed),
+                        SprintCDConfig(alpha=alpha, max_order=2, rope=rope,
+                                       prior_scale=0.5, warmup=warmup))
+        spr.warm_up(X[:warmup])
         stream = X[warmup:]
 
-        bad = False
-        row = []
+        oracle_adj = {frozenset(e) for e in skel.edges()}
+        bad = False               # SprintFCI ever lost an oracle adjacency
+        cert_false = False        # CERT-FCI ever certified a non-oracle edge
+        row, row_cert, row_und = [], [], []
         for n in grid:
-            algo.update(stream[n - batch:n])
-            row.append(structural_hamming_distance(algo.pag(), truth))
+            cert.update(stream[n - batch:n])
+            spr.update(stream[n - batch:n])
+            row.append(structural_hamming_distance(spr.pag(), truth))
+            ce = cert.certified_edges()
+            row_cert.append(len(ce) / max(n_oracle_edges, 1))
+            row_und.append(len(cert.undecided_pairs())
+                           / (len(observed) * (len(observed) - 1) / 2))
+            for i, j in ce:
+                if frozenset((i, j)) not in oracle_adj:
+                    cert_false = True
             for i, j in skel.edges():
-                if not algo.graph.adjacent(i, j):
+                if not spr.graph.adjacent(i, j):
                     bad = True
 
         if premise_holds:
             n_ok += 1
             ever_missing_ok += bad
+            cert_false_ok += cert_false
             shd.append(row)          # SHD curve reported on premise-holding runs
+            cert_recall.append(row_cert)
+            cert_undecided.append(row_und)
             if _has_bidirected(truth):
                 truth_bidirected += 1
-                found_bidirected += _has_bidirected(algo.pag())
+                found_bidirected += _has_bidirected(spr.pag())
         else:
             n_bad += 1
             ever_missing_bad += bad
+            cert_false_bad += cert_false
 
     shd = np.array(shd) if shd else np.zeros((1, len(grid)))
+    cert_recall = np.array(cert_recall) if cert_recall else np.zeros((1, len(grid)))
+    cert_undecided = (np.array(cert_undecided) if cert_undecided
+                      else np.zeros((1, len(grid))))
     return {
         "grid": grid,
         "shd_mean": shd.mean(axis=0),
@@ -123,6 +156,10 @@ def run(reps, d, n_hidden, edge_prob, nmax, batch, alpha, rope, seed):
         "reps": n_ok + n_bad,
         "truth_bidirected": truth_bidirected,
         "found_bidirected": found_bidirected,
+        "cert_recall": cert_recall.mean(axis=0),
+        "cert_undecided": cert_undecided.mean(axis=0),
+        "cert_false_ok": cert_false_ok,
+        "cert_false_bad": cert_false_bad,
     }
 
 
@@ -160,6 +197,23 @@ def main():
           "adjacency's\n  partial correlation below any usable delta, which is a "
           "property of the\n  instance, not of the procedure.\n")
 
+    print("CERT-FCI (the certificate-only extension; add-only, so a lost")
+    print("adjacency is not a defined error mode for it):")
+    for lbl, key, n in (("premise holds   ", "cert_false_ok", res["n_ok"]),
+                        ("premise violated", "cert_false_bad", res["n_bad"])):
+        if not n:
+            continue
+        lo, hi = wilson_interval(res[key], n)
+        print(f"  P(ever certifies a non-oracle adjacency), {lbl}: "
+              f"{res[key] / n:.3f}   95% CI [{lo:.3f}, {hi:.3f}]   (n={n})")
+    print(f"  oracle adjacencies certified at n={res['grid'][-1]}: "
+          f"{res['cert_recall'][-1]:.2f}")
+    print(f"  pairs left undecided at n={res['grid'][-1]}     : "
+          f"{res['cert_undecided'][-1]:.2f}")
+    print("  The undecided fraction is the honest cost of the extension and is")
+    print("  what a delete-on-non-rejection method converts into assertions.\n")
+
+    print("SPRINT-FCI (the delete-on-non-rejection comparator):")
     print("P(any oracle adjacency ever absent, at any monitoring point):")
     if res["n_ok"]:
         lo, hi = wilson_interval(res["ever_missing_ok"], res["n_ok"])

@@ -77,8 +77,9 @@ certificates stay within budget while methods that delete on non-rejection
 lose a true edge in most runs; the orientation certificates, whose null
 additionally requires a correctly specified functional model, exceed theirs on
 those same instances, and we identify the mechanism. On premise-satisfying
-instances $96\%$ of certified edges are oriented, against a
-Markov-equivalence-class ceiling of $33\%$. On the observational
+instances $93\%$ of true edges are certified and oriented, against a
+Markov-equivalence-class orientation ceiling of $33\%$ on the same
+denominator. On the observational
 protein-signalling data of Sachs and colleagues the two halves of the output
 diverge instructively: every certified edge lies in the published consensus
 skeleton, while every certified arrowhead is reversed relative to it---a
@@ -163,8 +164,8 @@ confidence statements for causal effects under structure uncertainty. What has
 not been available is orientation error control that is simultaneously
 finite-sample, time-uniform, family-wise over a whole graph, and not confined
 to the Markov equivalence class. Constraint-based orientation tests are
-confined to that class by construction, so an edge lying in no v-structure is
-unorientable in principle by any of them. The functional-model methods that
+confined to that class by construction, so an edge left undirected in the
+CPDAG is unorientable in principle by any of them. The functional-model methods that
 escape the class---LiNGAM and its descendants
 \citep{shimizu2006linear,shimizu2011directlingam,hyvarinen2013pairwise}---choose
 a direction by comparing scores, and the comparison itself carries no error
@@ -1276,7 +1277,7 @@ finite-sample, time-uniform, family-wise over a graph, and not confined to the
 Markov equivalence class.} Each of these four properties has precedent
 separately. \citet{strobl2019estimating} is finite-sample and family-wise (in
 the FDR sense) but confined to the equivalence class, so an edge in no
-v-structure is unorientable by it in principle. \citet{shimizu2008use} escapes
+CPDAG is unorientable by it in principle. \citet{shimizu2008use} escapes
 the class and is a genuine test, but is bivariate and fixed-sample.
 \citet{ruiz2022sequentially} is closest in statistic---likelihood-ratio scores
 on residuals---but proves only population-level identifiability, requires all
@@ -1299,6 +1300,9 @@ and extends it to orientations. The proof is not deep---it is a union bound
 over Ville events---but the statement is the one a practitioner needs and it
 was previously an assumption.
 
+Table~\ref{tab:related} sets the three claims against the closest prior work,
+one column per property.
+
 \paragraph{(iii) Time-uniformity on the adjacency side.} $\epsilon$-CUT
 \citep{shaska2025causal} holds the same one-sided, faithfulness-free ground
 \emph{at each fixed $n$}. Bounding the probability that a false edge is
@@ -1311,7 +1315,7 @@ zero-Type-II-error assumption is not needed here.
 \begin{table}[t]
 \centering
 \caption{Positioning against the closest prior work. ``Beyond MEC'' means the
-method can orient an edge lying in no v-structure. ``Time-uniform'' means the
+method can orient an edge that the CPDAG leaves undirected. ``Time-uniform'' means the
 error statement holds simultaneously at all sample sizes.
 ``Faithfulness-free'' refers to the \emph{validity} of the method's
 assertions, not to its power.}\label{tab:related}
@@ -1501,6 +1505,16 @@ generating model, computable before any data are simulated, so the comparison
 is cheap. Over $2000$ random DAGs per setting, Table~\ref{tab:premises} reports
 how often each premise holds at $k = 2$ and $\delta = 0.15$.
 
+One definitional point matters here and an earlier version of this paper got it
+wrong. $\delta$-strong faithfulness constrains \emph{every} partial correlation
+not forced to zero by d-separation, over all pairs. A margin computed only over
+pairs that are \emph{adjacent} in the true skeleton is the weaker
+adjacency-faithfulness condition, and reporting it as $\delta$-strong
+faithfulness overstates how often the competing premise holds---in the
+direction that flatters the comparators. The column below is the full
+condition, truncated at $|S| \le k$ because that is the family the experiments
+test; the adjacency-only margin is reported beside it so the gap is visible.
+
 \begin{table}[t]
 \centering
 \caption{How often each method's premise holds, over $2000$ random DAGs per
@@ -1645,7 +1659,8 @@ DirectLiNGAM orients all $692$ edges anyway and directs $356$ of them---$51\%$,
 which is chance---against the truth, in $167$ of $200$ runs. The certificate
 orients none, as Proposition~\ref{prop:abstain} requires. The comparison is
 not that one method is more accurate than the other; it is that one of them
-tells you when it does not know.
+tells you when it does not know. Figure~\ref{fig:exp7} shows both noise
+regimes side by side.
 
 \begin{figure}[t]
 \centering
@@ -1656,6 +1671,14 @@ accuracy but is reported with no such signal.}\label{fig:exp7}
 \end{figure}
 
 \subsection{Latent confounders}\label{sec:exp-latent}
+
+A note on what was run. An earlier version of this experiment reported
+numbers produced by the delete-on-non-rejection comparator under the CERT-FCI
+label; the metrics gave it away, since ``lost adjacency'' is not a defined
+error mode for a procedure that never deletes. CERT-FCI is now implemented as
+Section~\ref{sec:latent} describes it---an add-only certified skeleton with the
+FCI rules applied on top---and the two procedures are reported separately, each
+against the error mode it actually has.
 
 CERT-FCI (Section~\ref{sec:latent}) was run on $7$-variable graphs with one
 variable marginalised out, $\alpha = 0.1$, monitored to $n = 4000$. On the
@@ -1671,6 +1694,7 @@ than it is: at $d = 7$ with a latent variable, $0.15$-strong faithfulness
 holds in only $19\%$ of instances (Table~\ref{tab:premises}), so the
 favourable stratum is the minority one, and a reader shown only it would form
 the wrong impression of what CERT-FCI does on a graph drawn at random.
+Figure~\ref{fig:exp4} shows the trajectory and the margin distribution.
 
 \begin{figure}[t]
 \centering
@@ -1699,7 +1723,8 @@ rejected in $2$. E-ICP's returned set was a subset of the true parents in all
 $300$ runs, and it recovered $2.0$ of $2$ true parents on average against
 ICP's $1.99$. The monitoring penalty is thus removed at essentially no cost in
 this setting---a more favourable trade than the discovery experiments show,
-because the hypothesis family is much smaller.
+because the hypothesis family is much smaller. Figure~\ref{fig:exp5} shows
+both quantities.
 
 \begin{figure}[t]
 \centering
@@ -1724,7 +1749,9 @@ network, and we stress that this is a scientific consensus assembled from
 interventional experiments and prior literature, not ground truth; several of
 its arcs are contested.
 
-At $\alpha = 0.1$ and $k = 2$, streaming in batches of $50$, CERT-CD certifies
+At $\alpha = 0.1$ and $k = 2$, streaming in batches of $50$ after a
+$100$-observation warm-up that is discarded---so the e-processes see $753$
+of the $853$ cells---CERT-CD certifies
 $6$ edges out of $55$ pairs and leaves $49$ undecided. The two halves of the
 output behave very differently, and the contrast is the reason to report the
 experiment.
@@ -1732,7 +1759,8 @@ experiment.
 \paragraph{The adjacency half does what it claims.} All $6$ certified edges
 lie in the consensus skeleton, and none outside it: Raf--Mek, PIP2--PIP3,
 Erk--Akt, Akt--PKA, PKC--P38 and PKC--Jnk. Six of $17$ consensus edges is low
-recall, which is what one expects from $853$ observations, a family-wise
+recall, which is what one expects from the $753$ observations the
+certificates actually consume, a family-wise
 budget over $55$ pairs, and a certificate that must reject to assert. PC at
 the same level and order returns $7$ edges, all also in the consensus
 skeleton, and then \emph{calls the remaining $48$ pairs absent}---an assertion
@@ -1772,12 +1800,13 @@ theoretical risk rather than a footnote. The conclusion we resist is that the
 consensus is wrong and the certificates are right; observational
 non-Gaussianity-based orientation disagreeing with interventional evidence is
 much more likely to be the model failing than the biology.
+Figure~\ref{fig:exp10} shows how slowly the certified set accumulates.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.75\textwidth]{figs/exp10_sachs.png}
 \caption{CERT-CD on the Sachs observational sample. Certified edges accumulate
-slowly and the undecided set stays large: at $n = 853$, $49$ of $55$ pairs
+slowly and the undecided set stays large: at $n = 753$, $49$ of $55$ pairs
 remain undecided.}\label{fig:exp10}
 \end{figure}
 
@@ -2166,7 +2195,10 @@ two-component mixture & $0.097$ & $0.049$ & $0.028$ & $0.006$ \\
 \end{table}
 
 \paragraph{Hyperparameters.} Unless stated otherwise: warm-up $m = 50$
-observations (discarded), prior scale $g = 0.5$ after standardisation,
+observations (discarded), prior standard deviation $0.5$ after
+standardisation---so $g = 0.25$ in the parameterisation of
+Eq.~\eqref{eq:safelinear}, and $g = 0.16$ in the primitive-calibration
+experiment, which uses $0.4$---
 $k = 2$, adjacency share $\alpha_A/\alpha = 0.5$, batch size $250$ in the
 graph experiments and $100$ in the skeleton experiments, and a minimum of $80$
 post-certification observations before a direction process is first evaluated.
