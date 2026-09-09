@@ -203,15 +203,21 @@ We list these in what we take to be decreasing order of severity.
 \begin{enumerate}
 \item \emph{The direction certificate's family-wise bound is not delivered
   when its own premise fails, and the premise is correlated with
-  faithfulness.} Section~\ref{sec:exp-main} measures a wrong-arrow rate of
-  $0.080$ $([0.052, 0.120])$ against a budget of $0.05$ on instances violating
-  $\delta$-strong faithfulness. Theorem~\ref{thm:main} is not contradicted---%
-  its direction clause assumes the linear non-Gaussian model holds for the
-  pair given its frozen block, and that assumption is what fails---but the
-  practical reading of the theorem has to be adjusted: only the adjacency
-  clause is robust to unfaithfulness. Freezing the conditioning block to all
-  other variables rather than to the certified neighbours would decouple the
-  two layers, at a cost in power we have not measured.
+  faithfulness.} Section~\ref{sec:exp-main} measures a wrong-arrow rate
+  against budget on instances violating $\delta$-strong faithfulness, and
+  Section~\ref{sec:exp-main}'s block-completeness diagnostic traces the
+  mechanism to the frozen block more often omitting a true parent on those
+  instances. Theorem~\ref{thm:main} is not contradicted---its direction
+  clause assumes the linear non-Gaussian model holds for the pair given its
+  frozen block, and that assumption is what fails---but the practical reading
+  of the theorem has to be adjusted: only the adjacency clause is robust to
+  unfaithfulness. We do not have a fix to offer in its place. Freezing the
+  conditioning block to all other variables, the obvious alternative, is not
+  one: with no orientations available at freezing time it cannot exclude a
+  collider or a descendant of either endpoint, and conditioning on either
+  breaks the certifying-null property in a different way, even when every
+  true parent is present. Finding a conditioning rule that avoids both
+  failure modes is open.
 
 \item \emph{Misspecification of the direction certificate is not controlled
   more generally.} Proposition~\ref{prop:direction} requires the fitted

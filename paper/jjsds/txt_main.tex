@@ -36,15 +36,25 @@ Two consequences should be stated plainly. First, Theorem~\ref{thm:main}'s
 direction clause is conditional on a premise---causal sufficiency for the pair
 \emph{given the frozen block}---that the algorithm cannot verify and that is
 correlated with faithfulness through the certification order. It is therefore
-not the assumption-light guarantee the adjacency clause is, and the abstract's
-claim of a whole-graph bound holds unconditionally only for adjacency.
-Second, an easy fix is available and we did not take it: freezing $Z_{ij}$ to
-\emph{all} other variables rather than to the certified neighbours removes the
-dependence on the certification order at the cost of power, and is the right
-default when $d$ is small enough to afford it. We report the
-certified-neighbour variant because it is what the rest of the experiments
-use, and changing it after seeing this result would be the wrong order of
-operations.
+not the assumption-light guarantee the adjacency clause is, and the whole-graph
+bound holds unconditionally only for adjacency, as Section~\ref{sec:intro}
+now states.
+
+Second, there is no cheap fix, and we record why rather than gesturing at one.
+The obvious alternative---freezing $Z_{ij}$ to \emph{all} other variables
+rather than to the certified neighbours, removing the dependence on
+certification order---trades one failure for a worse one: with no
+orientations available at freezing time, an all-variables block cannot
+exclude a collider or a descendant of either endpoint, and conditioning on
+either takes the pair outside \emph{both} branches of
+Eqs.~\eqref{eq:fwd}--\eqref{eq:bwd}, so the certifying-null property fails
+even when every true parent is present and the global model holds
+everywhere. The certified-neighbour freeze used throughout this paper can
+miss a true parent; the all-variables freeze can include a collider; neither
+is a correct default, and we are not aware of a rule for $Z_{ij}$ that avoids
+both failure modes with only the orientations available at the moment a pair
+is certified. Closing this is, alongside the multiplicity gap of
+Section~\ref{sec:multiplicity}, the open problem we consider most pressing.
 
 Figure~\ref{fig:exp6} shows both panels: the validity comparison by stratum,
 and what accumulates as $n$ grows.
