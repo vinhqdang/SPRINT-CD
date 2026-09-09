@@ -1,30 +1,47 @@
 \begin{table}[t]
 \centering
-\caption{Probability of ever making an unsound assertion at any point in a
-monitored run, at $\alpha = 0.1$, $d = 5$, Laplace noise, $n \le 3000$, with
-Wilson $95\%$ intervals. Parenthesised counts are numbers of \emph{instances}
-in each stratum, not sample sizes. The budget is split evenly, so each of the
-two CERT-CD columns is bounded by $\alpha_A = \alpha_D = 0.05$, not by
-$0.1$. All four quantities are trajectory-worst; see
-Section~\ref{sec:exp-skeleton} for the comparators' fixed-sample behaviour.
-``SPRINT-CD'' and ``PC'' both decide absence by failing to reject, so their
-error mode is a lost edge; CERT-CD never deletes, so it has no such
-column.}\label{tab:main}
+\caption{CERT-CD's own two error types: probability of ever making an unsound
+assertion at any point in a monitored run, at $\alpha = 0.1$, $d = 5$, Laplace
+noise, $n \le 3000$, with Wilson $95\%$ intervals. Parenthesised counts are
+numbers of \emph{instances} in each stratum, not sample sizes. The budget is
+split evenly, so each column is bounded by $\alpha_A = \alpha_D = 0.05$, not by
+$0.1$. Both quantities are trajectory-worst.}\label{tab:main}
 \footnotesize
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lcc@{}}
 \toprule
-& \multicolumn{2}{c}{CERT-CD} & SPRINT-CD & PC \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}
-stratum & false edge & wrong arrow & lost edge & lost edge \\
+& \multicolumn{2}{c}{CERT-CD} \\
+\cmidrule(lr){2-3}
+stratum & false edge & wrong arrow \\
 \midrule
-$\delta$-strong faithfulness       & $0.000$          & $0.004$
-                                   & $0.000$          & $0.008$ \\
-holds (500 instances)              & \tiny{[.000,.008]} & \tiny{[.001,.015]}
-                                   & \tiny{[.000,.008]} & \tiny{[.003,.020]} \\[3pt]
-$\delta$-strong faithfulness       & $0.016$          & $\mathbf{0.080}$
-                                   & $0.560$          & $0.812$ \\
-fails (250 instances)              & \tiny{[.006,.040]} & \tiny{[.052,.120]}
-                                   & \tiny{[.498,.620]} & \tiny{[.759,.856]} \\
+$\delta$-strong faithfulness       & $0.000$          & $0.004$ \\
+holds (500 instances)              & \tiny{[.000,.008]} & \tiny{[.001,.015]} \\[3pt]
+$\delta$-strong faithfulness       & $0.016$          & $\mathbf{0.080}$ \\
+fails (250 instances)              & \tiny{[.006,.040]} & \tiny{[.052,.120]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{The comparators' own error type on the same instances as
+Table~\ref{tab:main}: probability of ever losing a true edge at any point in
+the monitored run (trajectory-worst), same setting and Wilson intervals.
+SPRINT-CD and PC both decide absence by failing to reject, so a lost edge is
+their analogue of an unsound assertion; CERT-CD never deletes, so it has no
+entry in this table and Table~\ref{tab:main} has none in this one. The two
+tables measure different failure modes on a shared set of instances---they
+are not meant to be read column-against-column, and no ratio taken across
+them is a validity comparison; only the within-table pattern by stratum
+supports one.}\label{tab:main-comparators}
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\toprule
+stratum & SPRINT-CD lost edge & PC lost edge \\
+\midrule
+$\delta$-strong faithfulness holds (500 instances) & $0.000$ & $0.008$ \\
+                                                    & \tiny{[.000,.008]} & \tiny{[.003,.020]} \\[3pt]
+$\delta$-strong faithfulness fails (250 instances) & $0.560$ & $0.812$ \\
+                                                    & \tiny{[.498,.620]} & \tiny{[.759,.856]} \\
 \bottomrule
 \end{tabular}
 \end{table}

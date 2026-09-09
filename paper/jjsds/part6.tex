@@ -22,14 +22,18 @@ script in \texttt{experiments/}.
 
 Two comparators recur. \textbf{PC} is the standard algorithm with a Fisher-$z$
 test, re-run from scratch at each sample size on the same stream.
-\textbf{SPRINT-CD} is an anytime-valid PC variant we also implemented, which
-deletes an edge when a confidence sequence for the partial correlation falls
-entirely inside a region of practical equivalence; it is unpublished and is
-included here as the strongest available representative of
-delete-on-non-rejection with sequential machinery, so that the comparison
-isolates the deletion rule rather than the fixed-sample/sequential
-distinction. Both decide absence by failing to find evidence of presence;
-that is the property under test.
+\textbf{SPRINT-CD} is an anytime-valid PC variant we implemented ourselves for
+this comparison: it deletes an edge when a confidence sequence for the partial
+correlation falls entirely inside a region of practical equivalence. It is
+unpublished, and we make no claim that it is the strongest possible
+delete-on-non-rejection design with sequential machinery---only that it lets
+the comparison isolate the deletion rule from the fixed-sample/sequential
+distinction, since it shares CERT-CD's streaming primitives and differs only
+in deciding absence by failing to reject rather than by never asserting
+without rejecting. A published sequential deletion rule, were one available to
+compare against, could behave differently. Both PC and SPRINT-CD decide
+absence by failing to find evidence of presence; that is the property under
+test.
 
 \subsection{What monitoring costs a fixed-sample test}
 \label{sec:exp-calibration}

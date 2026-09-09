@@ -1,14 +1,22 @@
 Over $948$ random DAGs, $0.15$-strong faithfulness held in $73.6\%$;
-Table~\ref{tab:main} reports the two strata separately at $500$ and $250$
-instances.
+Table~\ref{tab:main} and Table~\ref{tab:main-comparators} report the two
+strata separately at $500$ and $250$ instances, CERT-CD's own error types in
+the first and the comparators' in the second, because a false edge or a wrong
+arrow is not the same failure as a lost edge and the two are not a single
+table's columns.
 
 Where the premise holds, all four procedures behave. Where it fails---the
 regime that breaks delete-on-non-rejection---SPRINT-CD loses a true edge in
-$56\%$ of runs and PC in $81\%$, while CERT-CD's adjacency certificates stay
-comfortably inside their $\alpha_A = 0.05$ budget at $0.016$
-($[0.006, 0.040]$). Near-unfaithful instances cost the adjacency layer power
-rather than validity: the affected pairs stay undecided instead of being
-asserted wrongly.
+$56\%$ of runs and PC in $81\%$ (Table~\ref{tab:main-comparators}), while
+CERT-CD's adjacency certificates stay comfortably inside their
+$\alpha_A = 0.05$ budget at $0.016$ ($[0.006, 0.040]$,
+Table~\ref{tab:main}). Near-unfaithful instances cost the adjacency layer
+power rather than validity: the affected pairs stay undecided instead of
+being asserted wrongly. This is a within-stratum contrast for each method
+against its own budget or its own failing behaviour, not a claim that
+$0.016$ is smaller than $0.560$ in any sense that makes CERT-CD's adjacency
+layer superior to SPRINT-CD's skeleton on a shared scale---the two numbers
+answer different questions.
 
 \paragraph{The orientation budget is exceeded on the failing stratum.} The
 bolded entry in Table~\ref{tab:main} is a wrong arrowhead in $20$ of $250$

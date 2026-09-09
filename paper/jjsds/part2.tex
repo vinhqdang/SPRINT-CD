@@ -224,10 +224,13 @@ as a tuning parameter and nowhere in the guarantee.
 Proposition~\ref{prop:safelinear} is a theorem, but the implementation of a
 theorem can be wrong, and a miscalibrated primitive would invalidate every
 downstream claim while leaving all the proofs intact. We therefore verified
-calibration by simulation: monitoring~\eqref{eq:safelinear} after every
-observation over $3000$ replications and $1500$ time points under a true null
-gave realised crossing rates of $0.149$, $0.076$, $0.041$ and $0.008$ against
-nominal $\alpha \in \{0.20, 0.10, 0.05, 0.01\}$.
+calibration by simulation, reproducible by
+\texttt{experiments/exp1\_type1\_calibration.py --reps 3000 --nmax 1500}:
+monitoring~\eqref{eq:safelinear} at a grid of sample sizes over $3000$
+replications up to $n = 1500$ under a true null gave realised crossing rates
+of $0.108$, $0.051$, $0.025$ and $0.006$ against nominal
+$\alpha \in \{0.20, 0.10, 0.05, 0.01\}$---in every case comfortably inside the
+nominal level, as Proposition~\ref{prop:safelinear} requires.
 Section~\ref{sec:exp-primitive} repeats the exercise under six noise laws.
 \end{remark}
 

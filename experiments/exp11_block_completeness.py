@@ -139,7 +139,7 @@ def main():
                yerr=[vals - np.array(los), np.array(his) - vals],
                capsize=3, error_kw={"lw": 0.9})
     ax.axhline(args.alpha / 2, color="k", ls="--", lw=1.1,
-               label=rf"$\alpha_D={args.alpha/2}$")
+               label=rf"$\alpha_D={args.alpha/2}$ (whole-run budget, for scale)")
     ax.set_xticks(x); ax.set_xticklabels(["premise holds", "premise fails"])
     ax.set_ylabel("P(wrong arrowhead) per certified arrowhead")
     ax.set_title("Wrong arrowheads concentrate on incomplete blocks")

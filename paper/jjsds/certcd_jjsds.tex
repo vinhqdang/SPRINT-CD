@@ -62,7 +62,8 @@ that feature is absent, and never assert anything by failing to reject. Two
 certificates implement the rule. For adjacency, the statement ``some
 conditioning set separates the pair'' is a union null, and the minimum of the
 per-set e-processes is an e-process for it; crossing a threshold certifies an
-edge under the Markov condition alone, with no faithfulness assumption. For
+edge under the Markov condition and a bound on separator size, given a
+correctly specified per-set test, with no faithfulness assumption. For
 orientation, the two directions of a pair induce different joint densities
 under a linear non-Gaussian model, so a sequential universal-inference
 e-process against the reversed factorisation certifies an arrowhead, and
@@ -629,10 +630,13 @@ as a tuning parameter and nowhere in the guarantee.
 Proposition~\ref{prop:safelinear} is a theorem, but the implementation of a
 theorem can be wrong, and a miscalibrated primitive would invalidate every
 downstream claim while leaving all the proofs intact. We therefore verified
-calibration by simulation: monitoring~\eqref{eq:safelinear} after every
-observation over $3000$ replications and $1500$ time points under a true null
-gave realised crossing rates of $0.149$, $0.076$, $0.041$ and $0.008$ against
-nominal $\alpha \in \{0.20, 0.10, 0.05, 0.01\}$.
+calibration by simulation, reproducible by
+\texttt{experiments/exp1\_type1\_calibration.py --reps 3000 --nmax 1500}:
+monitoring~\eqref{eq:safelinear} at a grid of sample sizes over $3000$
+replications up to $n = 1500$ under a true null gave realised crossing rates
+of $0.108$, $0.051$, $0.025$ and $0.006$ against nominal
+$\alpha \in \{0.20, 0.10, 0.05, 0.01\}$---in every case comfortably inside the
+nominal level, as Proposition~\ref{prop:safelinear} requires.
 Section~\ref{sec:exp-primitive} repeats the exercise under six noise laws.
 \end{remark}
 
@@ -1367,10 +1371,14 @@ Per-test anytime-validity in discovery is not new
 \citep{csillag2025prediction}, but graph-level validity there is obtained by
 assumption: their Assumption~2.5 states that the downstream algorithm is valid
 whenever its inputs are, and they note the multiple-comparison concern without
-resolving it. Theorem~\ref{thm:main} proves the statement over a fixed family
-and extends it to orientations. The proof is not deep---it is a union bound
-over Ville events---but the statement is the one a practitioner needs and it
-was previously an assumption.
+resolving it. Theorem~\ref{thm:main} proves the statement over the fixed
+adjacency family unconditionally, and extends it to orientations only
+conditional on the linear non-Gaussian model describing each pair given its
+frozen block (Section~\ref{sec:exp-main} measures that premise failing on
+unfaithful instances). The proof is not deep---it is a union bound over Ville
+events---but the unconditional half of the statement is the one a
+practitioner needs for adjacency, and it was previously an assumption even
+there.
 
 Table~\ref{tab:related} sets the three claims against the closest prior work,
 one column per property.
@@ -1477,14 +1485,18 @@ script in \texttt{experiments/}.
 
 Two comparators recur. \textbf{PC} is the standard algorithm with a Fisher-$z$
 test, re-run from scratch at each sample size on the same stream.
-\textbf{SPRINT-CD} is an anytime-valid PC variant we also implemented, which
-deletes an edge when a confidence sequence for the partial correlation falls
-entirely inside a region of practical equivalence; it is unpublished and is
-included here as the strongest available representative of
-delete-on-non-rejection with sequential machinery, so that the comparison
-isolates the deletion rule rather than the fixed-sample/sequential
-distinction. Both decide absence by failing to find evidence of presence;
-that is the property under test.
+\textbf{SPRINT-CD} is an anytime-valid PC variant we implemented ourselves for
+this comparison: it deletes an edge when a confidence sequence for the partial
+correlation falls entirely inside a region of practical equivalence. It is
+unpublished, and we make no claim that it is the strongest possible
+delete-on-non-rejection design with sequential machinery---only that it lets
+the comparison isolate the deletion rule from the fixed-sample/sequential
+distinction, since it shares CERT-CD's streaming primitives and differs only
+in deciding absence by failing to reject rather than by never asserting
+without rejecting. A published sequential deletion rule, were one available to
+compare against, could behave differently. Both PC and SPRINT-CD decide
+absence by failing to find evidence of presence; that is the property under
+test.
 
 \subsection{What monitoring costs a fixed-sample test}
 \label{sec:exp-calibration}

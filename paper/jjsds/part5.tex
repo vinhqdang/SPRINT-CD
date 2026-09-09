@@ -103,10 +103,14 @@ Per-test anytime-validity in discovery is not new
 \citep{csillag2025prediction}, but graph-level validity there is obtained by
 assumption: their Assumption~2.5 states that the downstream algorithm is valid
 whenever its inputs are, and they note the multiple-comparison concern without
-resolving it. Theorem~\ref{thm:main} proves the statement over a fixed family
-and extends it to orientations. The proof is not deep---it is a union bound
-over Ville events---but the statement is the one a practitioner needs and it
-was previously an assumption.
+resolving it. Theorem~\ref{thm:main} proves the statement over the fixed
+adjacency family unconditionally, and extends it to orientations only
+conditional on the linear non-Gaussian model describing each pair given its
+frozen block (Section~\ref{sec:exp-main} measures that premise failing on
+unfaithful instances). The proof is not deep---it is a union bound over Ville
+events---but the unconditional half of the statement is the one a
+practitioner needs for adjacency, and it was previously an assumption even
+there.
 
 Table~\ref{tab:related} sets the three claims against the closest prior work,
 one column per property.
