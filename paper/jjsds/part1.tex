@@ -69,14 +69,20 @@ e-process against the reversed factorisation certifies an arrowhead, and
 abstains automatically under Gaussian noise, where the direction is not
 identified. Both certificates are anytime-valid, so the estimate may be
 monitored continuously and the run stopped by any data-dependent rule. The
-resulting algorithm, CERT-CD, grows from the empty graph, reports undecided
-pairs as undecided, and bounds by $\alpha$ the probability that any certified
-edge or arrowhead is \emph{ever} wrong, uniformly over time. On simulated
-instances that violate $\delta$-strong faithfulness, the adjacency
+resulting algorithm, CERT-CD, grows from the empty graph and reports
+undecided pairs as undecided. The adjacency certificate bounds by $\alpha$,
+unconditionally, the probability that any certified edge is \emph{ever}
+absent, uniformly over time; the same bound for a certified arrowhead holds
+only conditional on the linear non-Gaussian model actually describing the
+pair given its frozen conditioning block, a premise correlated with
+faithfulness through the order in which pairs are certified---not a
+contradiction of the theorem, which never claims the bound unconditionally,
+but exactly the gap a reader must know before trusting an arrowhead. On
+simulated instances that violate $\delta$-strong faithfulness, the adjacency
 certificates stay within budget while methods that delete on non-rejection
-lose a true edge in most runs; the orientation certificates, whose null
-additionally requires a correctly specified functional model, exceed theirs on
-those same instances, and we identify the mechanism. On premise-satisfying
+lose a true edge in most runs; the orientation certificates exceed theirs on
+those same instances, and we identify and measure the mechanism responsible.
+On premise-satisfying
 instances $93\%$ of true edges are certified and oriented, against a
 Markov-equivalence-class orientation ceiling of $33\%$ on the same
 denominator. On the observational

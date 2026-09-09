@@ -69,14 +69,20 @@ e-process against the reversed factorisation certifies an arrowhead, and
 abstains automatically under Gaussian noise, where the direction is not
 identified. Both certificates are anytime-valid, so the estimate may be
 monitored continuously and the run stopped by any data-dependent rule. The
-resulting algorithm, CERT-CD, grows from the empty graph, reports undecided
-pairs as undecided, and bounds by $\alpha$ the probability that any certified
-edge or arrowhead is \emph{ever} wrong, uniformly over time. On simulated
-instances that violate $\delta$-strong faithfulness, the adjacency
+resulting algorithm, CERT-CD, grows from the empty graph and reports
+undecided pairs as undecided. The adjacency certificate bounds by $\alpha$,
+unconditionally, the probability that any certified edge is \emph{ever}
+absent, uniformly over time; the same bound for a certified arrowhead holds
+only conditional on the linear non-Gaussian model actually describing the
+pair given its frozen conditioning block, a premise correlated with
+faithfulness through the order in which pairs are certified---not a
+contradiction of the theorem, which never claims the bound unconditionally,
+but exactly the gap a reader must know before trusting an arrowhead. On
+simulated instances that violate $\delta$-strong faithfulness, the adjacency
 certificates stay within budget while methods that delete on non-rejection
-lose a true edge in most runs; the orientation certificates, whose null
-additionally requires a correctly specified functional model, exceed theirs on
-those same instances, and we identify the mechanism. On premise-satisfying
+lose a true edge in most runs; the orientation certificates exceed theirs on
+those same instances, and we identify and measure the mechanism responsible.
+On premise-satisfying
 instances $93\%$ of true edges are certified and oriented, against a
 Markov-equivalence-class orientation ceiling of $33\%$ on the same
 denominator. On the observational
@@ -1384,7 +1390,11 @@ zero-Type-II-error assumption is not needed here.
 method can orient an edge that the CPDAG leaves undirected. ``Time-uniform'' means the
 error statement holds simultaneously at all sample sizes.
 ``Faithfulness-free'' refers to the \emph{validity} of the method's
-assertions, not to its power.}\label{tab:related}
+assertions, not to its power. $^\dagger$CERT-CD's orientation FWER and
+faithfulness-freedom hold conditional on the linear non-Gaussian model
+describing the pair given its frozen block, a premise Section~\ref{sec:exp-main}
+measures failing on unfaithful instances; only the adjacency
+column is unconditional.}\label{tab:related}
 \footnotesize
 \begin{tabular}{@{}lccccc@{}}
 \toprule
@@ -1403,7 +1413,7 @@ DirectLiNGAM \citep{shimizu2011directlingam} & -- & -- & yes & no & n/a \\
 \citet{strieder2023confidence}       & --  & conf.\ set & yes & no & n/a \\
 \citet{uehara2026iterative}          & provenance & provenance & no & no & no \\
 \midrule
-CERT-CD (this paper)                 & FWER & FWER & yes & yes & yes \\
+CERT-CD (this paper)                 & FWER & FWER$^\dagger$ & yes & yes & yes$^\dagger$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2101,24 +2111,31 @@ absence from an unexamined pair. We asked what an algorithm looks like if it
 refuses to do that: assert only by rejecting a null that is true whenever the
 asserted feature is absent.
 
-The answer is an algorithm that grows from the empty graph, reports undecided
-pairs as undecided, and bounds by $\alpha$ the probability that any asserted
-edge or arrowhead is ever wrong, uniformly over time and over the whole graph.
-Adjacency is certified by an e-process for a union null, requiring the Markov
-condition and a separator-size bound but no faithfulness. Orientation is
-certified by sequential universal inference against the reversed
-factorisation, escaping the Markov equivalence class and abstaining
-automatically under Gaussianity. What the design costs is power, and we have
-tried to report that cost as prominently as the guarantee---in the power
+The answer is an algorithm that grows from the empty graph and reports
+undecided pairs as undecided. Adjacency is certified by an e-process for a
+union null requiring the Markov condition and a separator-size bound but no
+faithfulness, and the resulting bound---the probability that any certified
+edge is ever absent, uniformly over time and over the whole graph---holds
+unconditionally. Orientation is certified by sequential universal inference
+against the reversed factorisation, escaping the Markov equivalence class and
+abstaining automatically under Gaussianity; the corresponding bound on a
+wrong arrowhead holds only conditional on the linear non-Gaussian model
+actually describing the pair given its frozen conditioning block, and
+Section~\ref{sec:exp-main} measures that condition failing on instances
+violating $\delta$-strong faithfulness, where the block is more often
+incomplete. What the design costs beyond that conditionality is power, and we
+have tried to report both as prominently as the guarantee---in the power
 curves of Section~\ref{sec:exp-calibration}, the undecided fractions of
 Section~\ref{sec:exp-main}, and the six-edges-out-of-fifty-five of
 Section~\ref{sec:exp-sachs}.
 
-The Sachs experiment also delivers the paper's own counterexample. Where the
+The real-data experiments deliver the paper's own counterexamples. Where the
 certifying null rests on the Markov condition alone, the method behaves as
-advertised on real data. Where it rests on a parametric functional model, the
-method is confidently and systematically wrong, with nothing in its output to
-say so. A certificate is only ever as good as the null it certifies against,
+advertised on real data. Where it rests on a parametric functional model, it
+does not: on Sachs it is confidently and systematically wrong, with nothing
+in its output to say so; on the Tübingen pairs it mostly declines to commit,
+correctly, but is no better than chance on the minority of pairs where it
+does. A certificate is only ever as good as the null it certifies against,
 and we think making that dependence visible---rather than absorbing it into an
 assumption stated once and not revisited---is the more useful contribution.
 

@@ -126,7 +126,11 @@ zero-Type-II-error assumption is not needed here.
 method can orient an edge that the CPDAG leaves undirected. ``Time-uniform'' means the
 error statement holds simultaneously at all sample sizes.
 ``Faithfulness-free'' refers to the \emph{validity} of the method's
-assertions, not to its power.}\label{tab:related}
+assertions, not to its power. $^\dagger$CERT-CD's orientation FWER and
+faithfulness-freedom hold conditional on the linear non-Gaussian model
+describing the pair given its frozen block, a premise Section~\ref{sec:exp-main}
+measures failing on unfaithful instances; only the adjacency
+column is unconditional.}\label{tab:related}
 \footnotesize
 \begin{tabular}{@{}lccccc@{}}
 \toprule
@@ -145,7 +149,7 @@ DirectLiNGAM \citep{shimizu2011directlingam} & -- & -- & yes & no & n/a \\
 \citet{strieder2023confidence}       & --  & conf.\ set & yes & no & n/a \\
 \citet{uehara2026iterative}          & provenance & provenance & no & no & no \\
 \midrule
-CERT-CD (this paper)                 & FWER & FWER & yes & yes & yes \\
+CERT-CD (this paper)                 & FWER & FWER$^\dagger$ & yes & yes & yes$^\dagger$ \\
 \bottomrule
 \end{tabular}
 \end{table}
