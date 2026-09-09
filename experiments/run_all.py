@@ -27,6 +27,8 @@ SCRIPTS = [
     ("exp10_sachs.py", "Real data: Sachs et al. (2005) protein signalling"),
     ("exp11_block_completeness.py",
      "Why the direction certificates exceed their budget"),
+    ("exp12_tuebingen_cep.py",
+     "Real bivariate direction benchmark: Tuebingen cause-effect pairs"),
 ]
 
 

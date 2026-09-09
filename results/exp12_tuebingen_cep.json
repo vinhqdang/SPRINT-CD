@@ -1,0 +1,747 @@
+{
+  "config": {
+    "alpha": 0.1,
+    "batch": 50,
+    "min_fit": 60,
+    "max_n": 2000,
+    "seed": 20260908,
+    "quick": false
+  },
+  "n_total": 102,
+  "n_excluded_multivariate": 6,
+  "excluded_pairs": [
+    "0052",
+    "0053",
+    "0054",
+    "0055",
+    "0071",
+    "0105"
+  ],
+  "coverage": 0.13725490196078433,
+  "n_decided": 14,
+  "unweighted_accuracy_given_decided": 0.42857142857142855,
+  "accuracy_ci": [
+    0.21380509930400526,
+    0.6740973309713064
+  ],
+  "weighted_accuracy_given_decided": 0.5574051026757935,
+  "lr_weighted_accuracy_forced_choice": 0.5352993280152941,
+  "both_directions_hit": 0,
+  "agreement_with_lr_given_decided": 0.8571428571428571,
+  "rows": [
+    {
+      "pair": "0001",
+      "n": 349,
+      "weight": 0.166,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0002",
+      "n": 349,
+      "weight": 0.166,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0003",
+      "n": 349,
+      "weight": 0.167,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0004",
+      "n": 349,
+      "weight": 0.166,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0005",
+      "n": 2000,
+      "weight": 0.143,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0006",
+      "n": 2000,
+      "weight": 0.143,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0007",
+      "n": 2000,
+      "weight": 0.143,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0008",
+      "n": 2000,
+      "weight": 0.143,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0009",
+      "n": 2000,
+      "weight": 0.143,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0010",
+      "n": 2000,
+      "weight": 0.143,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0011",
+      "n": 2000,
+      "weight": 0.142,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0012",
+      "n": 2000,
+      "weight": 0.5,
+      "verdict": "x->y",
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0013",
+      "n": 392,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0014",
+      "n": 392,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0015",
+      "n": 392,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0016",
+      "n": 392,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0017",
+      "n": 2000,
+      "weight": 0.5,
+      "verdict": "x->y",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0018",
+      "n": 314,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0019",
+      "n": 194,
+      "weight": 1.0,
+      "verdict": "x->y",
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0020",
+      "n": 349,
+      "weight": 0.166,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0021",
+      "n": 349,
+      "weight": 0.167,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0022",
+      "n": 450,
+      "weight": 0.333,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0023",
+      "n": 452,
+      "weight": 0.333,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0024",
+      "n": 451,
+      "weight": 0.334,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0025",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0026",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0027",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0028",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0029",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0030",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0031",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0032",
+      "n": 1030,
+      "weight": 0.125,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0033",
+      "n": 345,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0034",
+      "n": 345,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0035",
+      "n": 345,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0036",
+      "n": 345,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0037",
+      "n": 345,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0038",
+      "n": 757,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0039",
+      "n": 394,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0040",
+      "n": 733,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0041",
+      "n": 763,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0042",
+      "n": 2000,
+      "weight": 0.5,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0043",
+      "n": 2000,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0044",
+      "n": 2000,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0045",
+      "n": 2000,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0046",
+      "n": 2000,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0047",
+      "n": 254,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0048",
+      "n": 168,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0049",
+      "n": 365,
+      "weight": 0.333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0050",
+      "n": 365,
+      "weight": 0.333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0051",
+      "n": 365,
+      "weight": 0.334,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0056",
+      "n": 192,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0057",
+      "n": 192,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0058",
+      "n": 192,
+      "weight": 0.084,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0059",
+      "n": 192,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0060",
+      "n": 192,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0061",
+      "n": 192,
+      "weight": 0.084,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0062",
+      "n": 192,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0063",
+      "n": 192,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0064",
+      "n": 162,
+      "weight": 0.084,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0065",
+      "n": 1331,
+      "weight": 0.333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0066",
+      "n": 1331,
+      "weight": 0.333,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0067",
+      "n": 1331,
+      "weight": 0.334,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0068",
+      "n": 498,
+      "weight": 1.0,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0069",
+      "n": 2000,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0070",
+      "n": 2000,
+      "weight": 1.0,
+      "verdict": "y->x",
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0072",
+      "n": 1632,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0073",
+      "n": 2000,
+      "weight": 0.083,
+      "verdict": "x->y",
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0074",
+      "n": 194,
+      "weight": 0.083,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0075",
+      "n": 205,
+      "weight": 0.084,
+      "verdict": "y->x",
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0076",
+      "n": 347,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0077",
+      "n": 2000,
+      "weight": 0.5,
+      "verdict": "x->y",
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0078",
+      "n": 721,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0079",
+      "n": 721,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0080",
+      "n": 721,
+      "weight": 0.3334,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0081",
+      "n": 365,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0082",
+      "n": 365,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0083",
+      "n": 365,
+      "weight": 0.3334,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0084",
+      "n": 2000,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0085",
+      "n": 994,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0086",
+      "n": 666,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0087",
+      "n": 2000,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0088",
+      "n": 261,
+      "weight": 1.0,
+      "verdict": "x->y",
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0089",
+      "n": 131,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0090",
+      "n": 126,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0091",
+      "n": 149,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0092",
+      "n": 150,
+      "weight": 0.25,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0093",
+      "n": 432,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0094",
+      "n": 2000,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0095",
+      "n": 2000,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0096",
+      "n": 2000,
+      "weight": 0.3333,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0097",
+      "n": 202,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0098",
+      "n": 94,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0099",
+      "n": 2000,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0100",
+      "n": 209,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0101",
+      "n": 300,
+      "weight": 0.5,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0102",
+      "n": 109,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0103",
+      "n": 109,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0104",
+      "n": 109,
+      "weight": 0.2,
+      "verdict": null,
+      "lr_favours": "x->y"
+    },
+    {
+      "pair": "0106",
+      "n": 114,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0107",
+      "n": 240,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "y->x"
+    },
+    {
+      "pair": "0108",
+      "n": 112,
+      "weight": 1.0,
+      "verdict": null,
+      "lr_favours": "x->y"
+    }
+  ]
+}

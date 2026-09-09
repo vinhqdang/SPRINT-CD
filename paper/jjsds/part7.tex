@@ -41,18 +41,23 @@ consensus arcs running the other way. Four out of four is not sampling
 variation, and we investigated it rather than reporting it as an anomaly.
 
 The reversal is a property of these data under a linear non-Gaussian model,
-not of the inferential machinery. DirectLiNGAM, which shares the model but
-none of the sequential apparatus, produces a causal order that reverses
-\emph{the same four arcs} (and agrees with the consensus on Akt--PKA and
-PKC--Jnk, which the certificate left unoriented). Two procedures with
-different estimators, different loss functions and different error criteria
-agreeing on all four reversals locates the disagreement in the shared
-assumption: the pairs in question are embedded in a densely confounded,
-demonstrably nonlinear signalling network, where the bivariate linear
-non-Gaussian model of Section~\ref{sec:direction} is simply false. Under
-misspecification the supremum in~\eqref{eq:direction} is taken over a model
-not containing the truth, and Proposition~\ref{prop:direction} gives nothing
-(Remark~\ref{rem:misspec}).
+not of an idiosyncrasy of the sequential machinery. DirectLiNGAM produces a
+causal order that reverses \emph{the same four arcs} (and agrees with the
+consensus on Akt--PKA and PKC--Jnk, which the certificate left unoriented).
+We do not read this agreement as independent corroboration: DirectLiNGAM uses
+exactly the pairwise comparison of Eq.~\eqref{eq:direction}'s two branches
+(Section~\ref{sec:related}), so the two procedures share their statistic and
+their model, and agreeing on all four reversals is what two implementations
+of the same comparison should do when the shared model is wrong, not evidence
+that anything beyond the model has been ruled out. What the agreement does
+show is that the reversal is not an artefact of the sequential
+apparatus---the plain comparison reverses the same arcs with no e-process, no
+threshold and no monitoring involved. The pairs in question are embedded in a
+densely confounded, demonstrably nonlinear signalling network, where the
+bivariate linear non-Gaussian model of Section~\ref{sec:direction} is simply
+false. Under misspecification the supremum in~\eqref{eq:direction} is taken
+over a model not containing the truth, and Proposition~\ref{prop:direction}
+gives nothing (Remark~\ref{rem:misspec}).
 
 We draw two conclusions and resist a third. First, the experiment is a clean
 illustration of the asymmetry the paper is about: the certificate whose null
@@ -67,6 +72,101 @@ consensus is wrong and the certificates are right; observational
 non-Gaussianity-based orientation disagreeing with interventional evidence is
 much more likely to be the model failing than the biology.
 Figure~\ref{fig:exp10} shows how slowly the certified set accumulates.
+
+\paragraph{Against a 2026 comparator on the same data.} \citet{uehara2026iterative}
+evaluates the same observational Sachs recording ($n=853$, $11$ proteins) and
+reports, at a default operating point, direction precision $0.933$ and recall
+$0.700$ against $21$ practitioner queries, with a cheaper $8$-query
+configuration reaching precision and recall $1.000$. Three differences make
+this a comparison of methods rather than a scoreboard. First, that protocol
+is \emph{interactive}: it consumes expert answers to structural queries as
+part of reaching its numbers, where CERT-CD uses none---an interactive method
+that may ask a human is not doing the same task as one that may not, and a
+higher precision bought with $21$ queries is not a free improvement over one
+bought with zero. Second, its reference network has $20$ directed edges
+including a PKA$\leftrightarrow$PIP3 feedback pair, not the $17$-arc acyclic
+consensus of \citet{sachs2005causal} we certify against; a certificate-only
+method built on a DAG cannot certify a cycle, so the two evaluations are
+scored against different ground truths by construction, not by oversight.
+Third, recall is a well-posed quantity for a method that outputs a complete
+DAG at every operating point; for CERT-CD, at $\alpha=0.1$ recall over the
+full $20$- or $17$-edge network is $6/17 \approx 0.35$ on the adjacency side
+and $0/17$ on the (wrong) orientation side, and neither number means what
+Uehara's recall means, since the undecided $49$ pairs are not a rejection.
+We report the juxtaposition because it is the only case in this paper where a
+comparator we already cite for other reasons evaluates the identical real
+sample, not because the numbers settle anything against each other.
+
+\subsection{A real bivariate direction benchmark}\label{sec:exp-tuebingen}
+
+Sachs is one dataset. A single real instance, however carefully analysed,
+cannot say whether Section~\ref{sec:exp-sachs}'s failure is characteristic of
+the direction certificate on real data or a property of that one confounded,
+nonlinear network. The standard corrective in the bivariate-direction
+literature is the Tübingen cause-effect pairs benchmark
+\citep{mooij2016distinguishing}: $108$ real pairs drawn from $37$ underlying
+datasets across meteorology, biology, medicine, engineering and economics,
+each with a direction the literature treats as ground truth---though, as the
+benchmark's own documentation states and we repeat rather than launder, that
+ground truth was not established by intervention. It is the benchmark
+LiNGAM, ANM, IGCI and RECI are conventionally scored against, and, as far as
+we can establish from the papers themselves, at least two of the 2025--2026
+papers already cited in Section~\ref{sec:related} for other reasons evaluate
+on it: \citet{ding2025gaussdetect} and the statistical-power diagnostic of
+\citet{prakash2026power}. Six of the $108$ pairs have a multivariate cause or
+effect and are excluded, matching standard practice for this benchmark's
+bivariate accuracy figures; the excluded pair numbers are reported alongside
+the result rather than silently dropped.
+
+Running the direction certificate on each of the remaining $102$ pairs as an
+unconditioned bivariate test (Eqs.~\eqref{eq:fwd}--\eqref{eq:bwd} with $Z$ an
+intercept only), at $\alpha=0.1$: it certifies a direction for $14$ of $102$
+pairs, a coverage of $0.137$. Coverage this low is itself informative---most
+of these pairs are close to linear only locally, or their noise is not well
+approximated by the generalised-Gaussian family of Eq.~\eqref{eq:gg}, and the
+certificate's response to a poor fit is to stay silent, exactly as
+Remark~\ref{rem:misspec} says it should. What the low coverage does not buy is
+accuracy on the pairs where it does commit: of the $14$ certified pairs, $6$
+agree with the benchmark's assumed ground truth, a weighted accuracy of
+$0.557$, with a $95\%$ Wilson interval of $[0.214, 0.674]$ that comfortably
+contains chance. The forced-choice comparison statistic---the same pairwise
+likelihood ratio DirectLiNGAM uses, run on every pair with no abstention
+available to it---reaches a weighted accuracy of $0.535$. \citet{mooij2016distinguishing}
+report $63\% \pm 10\%$ accuracy (AUC $0.74 \pm 0.05$) for the best-performing
+additive-noise-model method on this same real-world benchmark, and additive
+noise models are a strictly more general family than the linear one
+Eqs.~\eqref{eq:fwd}--\eqref{eq:bwd} assume; a linear method landing well below
+that ceiling is the expected consequence of the benchmark's mechanisms being
+predominantly nonlinear, not a sign our implementation is behaving
+differently from other LiNGAM-family methods on the same data. Where
+the certificate does commit, it agrees with the forced-choice statistic on
+$12$ of $14$ pairs ($0.857$)---the same near-chance answer, reached the same
+way, on a benchmark whose mechanisms are known to be predominantly nonlinear
+where a strictly linear model like Eqs.~\eqref{eq:fwd}--\eqref{eq:bwd} has no
+purchase. Figure~\ref{fig:exp12} shows the coverage/accuracy split and which
+pairs, by sample size, get decided at all.
+
+We take two things from this. First, low coverage under model
+misspecification is the certificate behaving as designed, and it is visible
+here at a scale Sachs alone could not demonstrate: thirteen percent
+commitment, not zero and not everything. Second, near-chance accuracy on the
+pairs it does commit to is a genuine limitation stated plainly rather than a
+result to defend: a certificate is a statement about a null model, and on a
+benchmark built to be hard for exactly that model, committing rarely does not
+guarantee committing correctly when the model happens to look locally
+plausible but is not. Both Sachs and Tübingen point at the same open problem
+named in Remark~\ref{rem:misspec}: bounding, rather than only measuring, what
+happens when the parametric family is wrong.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figs/exp12_tuebingen_cep.png}
+\caption{The direction certificate on $102$ Tübingen cause-effect pairs.
+Left: coverage (fraction of pairs certified), weighted accuracy conditional on
+certification, and the forced-choice comparison statistic's weighted
+accuracy, against chance. Right: which pairs get decided, by sample
+size.}\label{fig:exp12}
+\end{figure}
 
 \begin{figure}[t]
 \centering
@@ -223,7 +323,9 @@ scripts are available at
 \url{https://github.com/vinhqdang/SPRINT-CD}. The protein-signalling data of
 \citet{sachs2005causal} are redistributed with the \texttt{bnlearn} package
 \citep{scutari2010learning} and are downloaded by the experiment script rather
-than included in the repository.
+than included in the repository. The Tübingen cause-effect pairs of
+Section~\ref{sec:exp-tuebingen} are likewise downloaded on first use from
+\url{https://webdav.tuebingen.mpg.de/cause-effect/} and are not redistributed.
 
 \paragraph{Author contributions.} The author is solely responsible for all
 aspects of this work.
