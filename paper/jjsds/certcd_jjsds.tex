@@ -174,9 +174,10 @@ induce different joint densities and exactly one is correct, so ``the
 direction is $j \to i$'' is a genuine null hypothesis; a sequential
 universal-inference e-process against it certifies the arrowhead $i \to j$
 (Section~\ref{sec:direction}). Under Gaussian noise the two factorisations are
-observationally indistinguishable, the process does not grow, and no
-certificate is issued---the procedure abstains exactly where the direction is
-unidentified, without being told to.
+observationally indistinguishable, both directions' nulls hold simultaneously,
+and neither is certified with probability more than $\alpha$---the procedure
+abstains exactly where the direction is unidentified, at the same level that
+governs every other certificate, without being told to.
 
 \paragraph{Why anytime-valid.} Both certificates are built as e-processes
 rather than as fixed-sample tests, and the choice is not decorative. A
@@ -700,6 +701,46 @@ hypothesis. Under Gaussianity, both are compatible, so no evidence can
 separate them and any method that reports a direction anyway is reporting an
 artefact of its tie-breaking rule. Our construction inherits both halves.
 
+The certifying null of Section~\ref{sec:dirnull} is conditional on a
+covariate block $Z$, and Proposition~\ref{prop:lingam} is bivariate and
+unconditional; an earlier version of this paper cited the marginal
+non-Gaussianity of $X_j$ and $e_i$ as the licence for the conditional
+construction of Eqs.~\eqref{eq:fwd}--\eqref{eq:bwd}, and that citation does not
+bridge the gap on its own. The bridge is short, and we record it as a lemma
+because both Proposition~\ref{prop:direction} and
+Proposition~\ref{prop:abstain} depend on it.
+
+\begin{lemma}[Conditional identifiability]\label{lem:cond-lingam}
+Suppose $(X_i, X_j)$ given $Z$ follows the $j \to i$ factorisation
+$D^{j\to i}_\theta$ of~\eqref{eq:fwd}, with $u \indep Z$ and
+$e \indep (X_j, Z)$, and write $\tilde e = \beta u + e$ for the population
+$Z$-residual of $X_i$. If at most one of $u, e$ is Gaussian, then
+$(X_i, X_j)$ given $Z$ does not also admit the reversed factorisation
+$D^{i \to j}_\theta$ of~\eqref{eq:bwd} for any $\theta$. If both are
+Gaussian, it admits both.
+\end{lemma}
+
+\begin{proof}
+Because $e \indep (X_j, Z)$ and $u$ is $\sigma(X_j, Z)$-measurable, $u \indep e$,
+and $\tilde e = \beta u + e$ is exactly the bivariate model of
+Proposition~\ref{prop:lingam} with $u$ in the role of its ``$X_j$'' and $e$ in
+the role of its ``$e_i$''. If $(X_i, X_j)$ given $Z$ also admitted
+$D^{i \to j}_\theta$ for some $\theta = (b, \delta, \eta, \cdot)$, the same
+computation applied to~\eqref{eq:bwd} gives that the $Z$-residual of $X_i$ is
+$v := X_i - b^\top Z$ and the $Z$-residual of $X_j$ is $\delta v + w$, with
+$v \indep w$. Population linear regression residuals on $Z$ are unique
+(given $Z$ full rank with finite second moments), so $v = \tilde e$ and
+$u = \delta \tilde e + w$ with $\tilde e \indep w$---precisely the
+representation Proposition~\ref{prop:lingam} rules out when at most one of
+$u, e$ is Gaussian, and permits when both are.
+\end{proof}
+
+Lemma~\ref{lem:cond-lingam} is what licenses~\eqref{eq:fwd}--\eqref{eq:bwd}: the
+non-Gaussianity the construction needs is of the $Z$-residuals $u$ and $e$, not
+of $X_j$ and $e_i$ themselves, and conditioning on $Z$ leaves the bivariate
+argument intact only because $Z$ enters both factorisations linearly and
+$e \indep (X_j, Z)$ rather than merely $e \indep X_j$.
+
 DirectLiNGAM \citep{shimizu2011directlingam} and the pairwise measures of
 \citet{hyvarinen2013pairwise} exploit the first half by \emph{comparing} the
 two directions' scores and taking the larger. \citet{shimizu2008use} take a
@@ -733,9 +774,9 @@ H^{\mathrm{dir}}_{j \to i} \;:\quad
 \;=\; \{D^{j\to i}_\theta : \theta \in \Theta\},
 \end{equation}
 where $\theta = (a, \beta, \gamma, \text{noise parameters})$. Under
-Proposition~\ref{prop:lingam} and non-Gaussianity, $H^{\mathrm{dir}}_{j \to
-i}$ is true whenever the arrowhead $i \to j$ is absent, so it is a certifying
-null in the sense of Definition~\ref{def:cert}.
+Lemma~\ref{lem:cond-lingam} and non-Gaussianity of the $Z$-residuals $u, e$,
+$H^{\mathrm{dir}}_{j \to i}$ is true whenever the arrowhead $i \to j$ is
+absent, so it is a certifying null in the sense of Definition~\ref{def:cert}.
 
 We test it by \emph{sequential universal inference}
 \citep{wasserman2020universal}. Let $\hat\theta_{s-1}$ be any estimator of the
@@ -833,33 +874,58 @@ fitted supremum never falls below the likelihood there.
 \subsection{Abstention under Gaussianity}\label{sec:abstention}
 
 \begin{proposition}\label{prop:abstain}
-Suppose $(X_i, X_j)$ given $Z$ is jointly Gaussian. Then the null and
-alternative models in~\eqref{eq:direction} have identical maximised
-likelihoods, and $\log E_t \le 0$ for every $t$.
+Suppose $(X_i, X_j)$ given $Z$ is jointly Gaussian, linear in $Z$. Then
+$H^{\mathrm{dir}}_{j \to i}$ and $H^{\mathrm{dir}}_{i \to j}$ both hold, and
+for every $\alpha \in (0,1)$ and every stopping time $\tau$, the arrowhead
+$i \to j$ is certified at level $\alpha$ with probability at most $\alpha$,
+and likewise for $j \to i$.
 \end{proposition}
 
 \begin{proof}
-Under joint Gaussianity both~\eqref{eq:fwd} and~\eqref{eq:bwd} parameterise
-the same set of joint conditional densities---the bivariate Gaussians with
-mean linear in $Z$---by Proposition~\ref{prop:lingam}. Hence
-$\sup_\theta \sum_s \log D^{j\to i}_\theta(o_s)
-= \sup_\theta \sum_s \log D^{i\to j}_\theta(o_s)
-\ge \sum_s \log D^{i\to j}_{\hat\theta_{s-1}}(o_s)$,
-the last inequality because a sequentially fitted parameter cannot beat the
-maximised one on the same data. Substituting into~\eqref{eq:direction} gives
-$\log E_t \le 0$.
+By the ``both Gaussian'' clause of Lemma~\ref{lem:cond-lingam}, applied with
+$u, e$ jointly Gaussian, $(X_i, X_j)$ given $Z$ admits \emph{both}
+factorisations~\eqref{eq:fwd} and~\eqref{eq:bwd} for some parameter values, so
+$P \in H^{\mathrm{dir}}_{j \to i} \cap H^{\mathrm{dir}}_{i \to j}$. The proof
+of Proposition~\ref{prop:direction} did not use non-Gaussianity anywhere: it
+holds for every $P$ in the null it names, whichever that is. Applying it to
+$H^{\mathrm{dir}}_{j \to i}$, $(E_t)$ built from~\eqref{eq:direction} is an
+e-process for that null under joint Gaussianity, and Ville's
+inequality~\eqref{eq:ville} gives $P(\exists\, t : E_t \ge 1/\alpha) \le \alpha$,
+which is exactly the certification of $i \to j$. The symmetric argument, with
+the two factorisations' roles exchanged, bounds the certification of
+$j \to i$.
 \end{proof}
 
+The earlier version of this proposition claimed the deterministic statement
+$\log E_t \le 0$ for every $t$, on the ground that the null and alternative
+models in~\eqref{eq:direction} have identical maximised likelihoods under joint
+Gaussianity. That step does not go through: the numerator and denominator are
+each fitted over the generalised-Gaussian family of Eq.~\eqref{eq:gg}, whose
+member distributions coincide with each other only at the single point
+$\kappa = 2$, so their \emph{sample} maximised log-likelihoods need not agree
+even when the data are exactly Gaussian---one family can fit an
+above-Gaussian-tailed realisation better than the other does, purely by
+chance. Simulating $300$ replications of a conditionally Gaussian pair at
+$n = 400$ against the fitting procedure of Section~\ref{sec:supremum}, the
+reversed factorisation's maximised log-likelihood exceeded the forward one in
+$154$ of $300$ replications, by up to $3.8$ nats---i.e.\ $\log E_t$ does
+occasionally exceed zero along the way. The revised proposition needs none of
+this: it does not claim the process never rises, only that crossing its
+threshold is no more likely than $\alpha$, which is what
+Proposition~\ref{prop:direction} already gives for any null the pair
+satisfies, Gaussian or not.
+
 The procedure therefore abstains exactly where the direction is not
-identified, and it does so as a consequence of the construction rather than
-because a Gaussianity pre-test told it to. This matters practically: a
-pre-test would itself have a Type-II error, and a method that orients whenever
-the pre-test fails to reject Gaussianity is once again asserting on
-non-rejection. \citet{ding2025gaussdetect} give the underlying equivalence in
-a usable form---Gaussianity of the forward model's noise is equivalent to
-independence between regressor and residual in the \emph{reverse}
-regression---and use it to avoid an explicit Gaussianity test in a different
-way. Section~\ref{sec:exp-orientation} shows the abstention empirically: under
+identified, at the same level $\alpha$ that governs every other certificate in
+this paper, rather than deterministically or because a Gaussianity pre-test
+told it to. This matters practically: a pre-test would itself have a Type-II
+error, and a method that orients whenever the pre-test fails to reject
+Gaussianity is once again asserting on non-rejection.
+\citet{ding2025gaussdetect} give the underlying equivalence in a usable
+form---Gaussianity of the forward model's noise is equivalent to independence
+between regressor and residual in the \emph{reverse} regression---and use it
+to avoid an explicit Gaussianity test in a different way.
+Section~\ref{sec:exp-orientation} shows the abstention empirically: under
 Gaussian noise the certificate orients $0$ of $692$ edges over $200$
 replications, while DirectLiNGAM orients all $692$ and gets $356$ of them
 wrong.

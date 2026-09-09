@@ -140,32 +140,37 @@ test; the adjacency-only margin is reported beside it so the gap is visible.
 \centering
 \caption{How often each method's premise holds, over $2000$ random DAGs per
 setting. Assumption~\ref{ass:sep} is checked directly by d-separation, not via
-the sufficient in-degree condition. The last row marginalises one variable out
-of a $7$-node graph, so the observed model has a latent
+the sufficient in-degree condition. ``Adjacency-faithful'' restricts the
+$0.15$ margin to pairs adjacent in the true skeleton, the weaker condition an
+earlier version of this table reported under the ``$0.15$-strong
+faithfulness'' label; the column beside it is the condition
+Section~\ref{sec:faithfulness} actually defines, quantified over every pair.
+The last row marginalises one variable out of a $7$-node graph and additionally
+requires the latent to confound at least two observed edges, matching
+Section~\ref{sec:exp-latent}, so the observed model has a genuine
 confounder.}\label{tab:premises}
-\begin{tabular}{@{}lcc@{}}
+\begin{tabular}{@{}lccc@{}}
 \toprule
-setting & Assumption~\ref{ass:sep} at $k=2$ &
+setting & Assumption~\ref{ass:sep} at $k=2$ & adjacency-faithful &
 $0.15$-strong faithfulness \\
 \midrule
-$d=5$, edge prob.\ $0.35$              & $0.988$ & $0.748$ \\
-$d=6$, edge prob.\ $0.30$              & $0.972$ & $0.667$ \\
-$d=7$, edge prob.\ $0.35$              & $0.815$ & $0.331$ \\
-$d=7$, one latent marginalised         & ---     & $0.187$ \\
+$d=5$, edge prob.\ $0.35$              & $0.988$ & $0.758$ & $0.581$ \\
+$d=6$, edge prob.\ $0.30$              & $0.972$ & $0.663$ & $0.404$ \\
+$d=7$, edge prob.\ $0.35$              & $0.815$ & $0.325$ & $0.102$ \\
+$d=7$, one latent, confounding          & ---     & ---     & $0.054$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Two things follow. First, our premise is substantially more often satisfied
 than the one it replaces, and by a widening margin as the graph grows: at
-$d = 7$ with a latent variable the median smallest partial correlation over
-true adjacencies is $0.034$, so $0.15$-strong faithfulness holds in under a
-fifth of instances. Second---and this is the reason to report the table rather
-than assert the first point---Assumption~\ref{ass:sep} is \emph{not} always
-satisfied either, and its violation is just as silent as unfaithfulness: if a
-non-adjacent pair has no separating set within $\Scal_k$, the separability
-null is false for that pair, $(A_t)$ is not an e-process for it, and a false
-edge can be certified with no bound at all.
+$d = 7$ with a confounding latent variable, $0.15$-strong faithfulness holds in
+about one instance in twenty. Second---and this is the reason to report the
+table rather than assert the first point---Assumption~\ref{ass:sep} is
+\emph{not} always satisfied either, and its violation is just as silent as
+unfaithfulness: if a non-adjacent pair has no separating set within $\Scal_k$,
+the separability null is false for that pair, $(A_t)$ is not an e-process for
+it, and a false edge can be certified with no bound at all.
 Section~\ref{sec:exp-violations} measures what happens then.
 
 \subsection{Certificate-only against delete-on-non-rejection}
@@ -202,13 +207,17 @@ comparators is a \emph{lost} edge---an edge of the true CPDAG that the method
 deletes at some point in the run---since that is the error mode that
 delete-on-non-rejection has and CERT-CD structurally cannot have.
 
-SPRINT-CD ever loses a true edge in $1$ of $120$ premise-satisfying runs
-($0.008$, Wilson $95\%$ interval $[0.001, 0.046]$) against a budget of $0.1$,
-and in $30$ of $40$ premise-violating runs ($0.750$). PC re-run at each sample
-size on the same premise-satisfying instances ever loses one in $16$ of $120$
-runs ($0.133$, $[0.083, 0.207]$)---above the $0.1$ level it is nominally run
-at, which is the monitoring effect of Section~\ref{sec:exp-calibration}
-appearing at graph level. These are SPRINT-CD's and PC's numbers, not
+Over the $285$ DAGs generated for this stratification, $0.15$-strong
+faithfulness (the condition of Section~\ref{sec:faithfulness}, not the
+adjacency-restricted margin of Table~\ref{tab:premises}'s earlier printing)
+holds in $42\%$. SPRINT-CD ever loses a true edge in $0$ of $120$
+premise-satisfying runs ($0.000$, Wilson $95\%$ interval $[0.000, 0.031]$)
+against a budget of $0.1$, and in $14$ of $40$ premise-violating runs
+($0.350$, $[0.221, 0.505]$). PC re-run at each sample size on the same
+premise-satisfying instances ever loses one in $5$ of $120$ runs ($0.042$,
+$[0.018, 0.094]$)---inside the $0.1$ level here, though
+Section~\ref{sec:exp-calibration} shows the same monitoring effect can push it
+above budget at other settings. These are SPRINT-CD's and PC's numbers, not
 CERT-CD's: CERT-CD never deletes, so ``lost edge'' is not defined for it, and
 the corresponding quantity---a pair that is truly adjacent and never
 certified---is a power statement, reported in
@@ -218,8 +227,8 @@ Section~\ref{sec:exp-main}. Figure~\ref{fig:exp2} shows the trajectories.
 \centering
 \includegraphics[width=\textwidth]{figs/exp2_graph_fwer.png}
 \caption{Skeleton errors over monitored runs at $d = 6$. SPRINT-CD's extra
-edges fall from $11.4$ to $0.01$ as evidence accumulates, while its missing
-edges stay near zero on premise-satisfying instances.}\label{fig:exp2}
+edges fall from $12.2$ to $0.00$ as evidence accumulates, while its missing
+edges stay at zero on premise-satisfying instances.}\label{fig:exp2}
 \end{figure}
 
 Sample efficiency is reported separately (Figure~\ref{fig:exp3}). On $60$
@@ -301,20 +310,29 @@ Section~\ref{sec:latent} describes it---an add-only certified skeleton with the
 FCI rules applied on top---and the two procedures are reported separately, each
 against the error mode it actually has.
 
-CERT-FCI (Section~\ref{sec:latent}) was run on $7$-variable graphs with one
-variable marginalised out, $\alpha = 0.1$, monitored to $n = 4000$. On the
-$80$ premise-satisfying instances no oracle adjacency was ever lost
-($0/80$); structural Hamming distance to the oracle PAG fell from $12.7$ to
-$0.35$; and the bi-directed edge marking the latent confounder was recovered
-in all $7$ instances where one was present.
+Both CERT-FCI and its delete-on-non-rejection comparator SprintFCI were run
+on $7$-variable graphs with one confounding variable marginalised out,
+$\alpha = 0.1$, monitored to $n = 4000$. CERT-FCI never certified an edge
+absent from the oracle skeleton, in either stratum ($0/80$ premise-satisfying,
+$0/40$ premise-violating): its adjacency layer is unchanged from
+Section~\ref{sec:adjacency} and inherits that validity regardless of the
+faithfulness stratum. What varies with the stratum is power, not soundness:
+on the $80$ premise-satisfying instances CERT-FCI certifies every oracle
+adjacency by $n = 4000$ and leaves $74\%$ of pairs undecided at that size---the
+add-only layer is conservative here, and the undecided fraction is the cost of
+that.
 
-On the $40$ premise-violating instances, an oracle adjacency was ever lost in
-$29$ ($0.725$). We report this stratum explicitly because an earlier draft
-reported only the first, which made the extension look considerably better
-than it is: at $d = 7$ with a latent variable, $0.15$-strong faithfulness
-holds in only $19\%$ of instances (Table~\ref{tab:premises}), so the
-favourable stratum is the minority one, and a reader shown only it would form
-the wrong impression of what CERT-FCI does on a graph drawn at random.
+SprintFCI, which does delete, is the one for which ``lost adjacency'' is a
+defined error mode. It never loses one on the $80$ premise-satisfying
+instances ($0/80$) but loses one in $26$ of $40$ premise-violating instances
+($0.650$). We report this stratum explicitly because pooling would flatter the
+comparator: at $d = 7$ with a confounding latent variable, $0.15$-strong
+faithfulness now holds in only about one instance in twenty
+(Table~\ref{tab:premises}), so the premise-satisfying stratum is a small
+minority of graphs drawn at random, not the typical case. Structural Hamming
+distance of SprintFCI's estimated PAG to the oracle falls from $12.3$ to
+$0.01$ on the premise-satisfying stratum, and the single instance with a
+bi-directed oracle edge has it recovered.
 Figure~\ref{fig:exp4} shows the trajectory and the margin distribution.
 
 \begin{figure}[t]
