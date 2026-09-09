@@ -1,31 +1,45 @@
-Over $948$ random DAGs, $0.15$-strong faithfulness held in $73.6\%$;
+Over $1780$ random DAGs, $0.15$-strong faithfulness held in $56.2\%$;
 Table~\ref{tab:main} and Table~\ref{tab:main-comparators} report the two
-strata separately at $500$ and $250$ instances, CERT-CD's own error types in
+strata separately at $1000$ and $500$ instances, CERT-CD's own error types in
 the first and the comparators' in the second, because a false edge or a wrong
 arrow is not the same failure as a lost edge and the two are not a single
 table's columns.
 
 Where the premise holds, all four procedures behave. Where it fails---the
 regime that breaks delete-on-non-rejection---SPRINT-CD loses a true edge in
-$56\%$ of runs and PC in $81\%$ (Table~\ref{tab:main-comparators}), while
+$33.8\%$ of runs and PC in $48.2\%$ (Table~\ref{tab:main-comparators}), while
 CERT-CD's adjacency certificates stay comfortably inside their
-$\alpha_A = 0.05$ budget at $0.016$ ($[0.006, 0.040]$,
+$\alpha_A = 0.05$ budget at $0.012$ ($[0.006, 0.026]$,
 Table~\ref{tab:main}). Near-unfaithful instances cost the adjacency layer
 power rather than validity: the affected pairs stay undecided instead of
 being asserted wrongly. This is a within-stratum contrast for each method
 against its own budget or its own failing behaviour, not a claim that
-$0.016$ is smaller than $0.560$ in any sense that makes CERT-CD's adjacency
+$0.012$ is smaller than $0.338$ in any sense that makes CERT-CD's adjacency
 layer superior to SPRINT-CD's skeleton on a shared scale---the two numbers
 answer different questions.
 
-\paragraph{The orientation budget is exceeded on the failing stratum.} The
-bolded entry in Table~\ref{tab:main} is a wrong arrowhead in $20$ of $250$
-runs, $0.080$ with interval $[0.052, 0.120]$, against an orientation budget of
-$\alpha_D = 0.05$. The interval excludes the budget, so this is not sampling
-noise: on premise-failing instances the direction certificates do not deliver
-the guarantee of Theorem~\ref{thm:main}. A lower-replication version of this
-experiment reported $0/20$ here and we drew the opposite conclusion from it;
-the effect is only visible at a few hundred instances per stratum.
+\paragraph{The orientation rate sits above budget on the failing stratum,
+without our replication settling whether that is real.} The bolded entry in
+Table~\ref{tab:main} is a wrong arrowhead in $29$ of $500$ runs, $0.058$ with
+interval $[0.041, 0.082]$, against an orientation budget of $\alpha_D = 0.05$.
+The interval contains the budget, and a one-sided binomial test against
+$\alpha_D$ gives $p = 0.23$: at this replication count we cannot conclude
+that the direction certificates fail to deliver the guarantee of
+Theorem~\ref{thm:main} on this stratum. This number has a history worth
+stating rather than hiding. A $20$-run check once reported $0/20$ here, and
+we drew the wrong conclusion that the stratum was safe. A $250$-run check,
+computed before we found and fixed the supremum-attainment defect
+Remark~\ref{rem:supremum} describes, reported $20$ of $250$ with an interval
+that excluded the budget, and an earlier version of this paper reported that
+as a confirmed exceedance. The fix changes the fitting routine, not the
+generating model or the stratification, and re-running the identical design
+after the fix gives $16$ of $250$; the $500$-run design above, run
+independently at higher replication, gives $29$ of $500$. Both post-fix point
+estimates sit at or slightly above $0.05$; neither excludes it. We do not
+know whether a small real exceedance survives on this stratum or whether two
+point estimates landing on the high side is itself unremarkable at this
+effect size---what the fix demonstrably removed was an artefact large enough
+to look like proof of one.
 
 The mechanism is the one Remark~\ref{rem:misspec} names, and it reaches the
 direction certificate through the adjacency layer rather than independently of
@@ -40,11 +54,14 @@ proof of Proposition~\ref{prop:direction} has nothing to stand on.
 
 \input{txt_diag}
 
-Two consequences should be stated plainly. First, Theorem~\ref{thm:main}'s
+Two consequences should be stated plainly, and the first does not depend on
+how the inconclusive test above eventually resolves. Theorem~\ref{thm:main}'s
 direction clause is conditional on a premise---causal sufficiency for the pair
 \emph{given the frozen block}---that the algorithm cannot verify and that is
-correlated with faithfulness through the certification order. It is therefore
-not the assumption-light guarantee the adjacency clause is, and the whole-graph
+correlated with faithfulness through the certification order. That is a
+property of the proof, true whether or not this particular experiment's point
+estimate turns out to sit significantly above $\alpha_D$. It is therefore not
+the assumption-light guarantee the adjacency clause is, and the whole-graph
 bound holds unconditionally only for adjacency, as Section~\ref{sec:intro}
 now states.
 
@@ -68,16 +85,16 @@ Figure~\ref{fig:exp6} shows both panels: the validity comparison by stratum,
 and what accumulates as $n$ grows.
 
 \paragraph{What is certified.} On premise-satisfying instances at $n = 3000$,
-$97\%$ of true edges are certified and $93\%$ are also oriented---so $96\%$ of
+$97\%$ of true edges are certified and $94\%$ are also oriented---so $97\%$ of
 \emph{certified} edges carry a direction---against a Markov-equivalence-class
-orientation ceiling of $33\%$, the fraction a CPDAG can orient at all on these
+orientation ceiling of $28\%$, the fraction a CPDAG can orient at all on these
 graphs. That gap is the practical content of the direction certificate: an
 edge left undirected in the CPDAG is unorientable in principle by any
-constraint-based method, and roughly two thirds of these edges are of that
+constraint-based method, and about $72\%$ of these edges are of that
 kind.
 
-The cost side of the same run is that $72\%$ of all pairs remain undecided at
+The cost side of the same run is that $75\%$ of all pairs remain undecided at
 $n = 3000$. Most of those pairs are genuinely non-adjacent---the graphs are
 sparse---and CERT-CD is structurally unable to say so. A reader comparing
 output sizes should keep this in view: PC returns a complete verdict on all
-$10$ pairs, CERT-CD returns a verdict on about three.
+$10$ pairs, CERT-CD returns a verdict on about two or three.

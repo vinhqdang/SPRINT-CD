@@ -188,7 +188,8 @@ def main():
                              (w / 2, "bad", "premise fails", PALETTE["naive"])):
         n = max(r["n_ok"] if s == "ok" else r["n_bad"], 1)
         ax.bar(x + off, [r["stat"][s][k] / n for k in keys], w, label=lbl, color=col)
-    ax.axhline(args.alpha, color="k", ls="--", lw=1.1, label=rf"$\alpha={args.alpha}$")
+    ax.axhline(args.alpha / 2, color="k", ls="--", lw=1.1,
+               label=rf"$\alpha_A=\alpha_D={args.alpha/2}$")
     ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=7)
     ax.set_ylabel("P(unsound assertion, ever)")
     ax.set_title("Validity when faithfulness fails")

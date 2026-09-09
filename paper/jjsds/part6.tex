@@ -204,9 +204,12 @@ model, stratified samples can be obtained cheaply by rejection sampling.
 \centering
 \includegraphics[width=\textwidth]{figs/exp6_certcd.png}
 \caption{Left: probability of an unsound assertion at any point in a monitored
-run, by stratum. Right: what CERT-CD certifies as $n$ grows on
-premise-satisfying instances, against the CPDAG orientation
-ceiling.}\label{fig:exp6}
+run, by stratum. The dashed line marks CERT-CD's own per-type budget
+$\alpha_A = \alpha_D = 0.05$; SPRINT-CD and PC carry no analogous formal
+budget; it is plotted for both to give the comparator bars a common scale, not
+because their pre-registered guarantee is $0.05$ too. Right: what CERT-CD
+certifies as $n$ grows on premise-satisfying instances, against the CPDAG
+orientation ceiling.}\label{fig:exp6}
 \end{figure}
 
 \subsection{Skeleton recovery and sample efficiency}\label{sec:exp-skeleton}

@@ -81,11 +81,13 @@ contradiction of the theorem, which never claims the bound unconditionally,
 but exactly the gap a reader must know before trusting an arrowhead. On
 simulated instances that violate $\delta$-strong faithfulness, the adjacency
 certificates stay within budget while methods that delete on non-rejection
-lose a true edge in most runs; the orientation certificates exceed theirs on
-those same instances, and we identify and measure the mechanism responsible.
-On premise-satisfying
-instances $93\%$ of true edges are certified and oriented, against a
-Markov-equivalence-class orientation ceiling of $33\%$ on the same
+lose a true edge in most runs; the orientation certificates' wrong-arrowhead
+rate on those same instances sits above the nominal budget without our
+replication count being able to rule out chance, and we identify and measure
+the mechanism that would produce a real exceedance if one exists. On
+premise-satisfying
+instances $94\%$ of true edges are certified and oriented, against a
+Markov-equivalence-class orientation ceiling of $28\%$ on the same
 denominator. On the observational
 protein-signalling data of Sachs and colleagues the two halves of the output
 diverge instructively: every certified edge lies in the published consensus
@@ -231,10 +233,14 @@ than eliding it.
 
 The study is not uniformly favourable to the method, and the two places where
 it is not are the more informative ones. On instances violating
-$\delta$-strong faithfulness the orientation certificates exceed their
-family-wise budget (Section~\ref{sec:exp-main}), because the conditioning
-block they freeze is built from already-certified neighbours and is therefore
-incomplete exactly when certification is slow. On the protein-signalling data
+$\delta$-strong faithfulness the orientation certificates' wrong-arrowhead
+rate sits above their family-wise budget, though our replication count cannot
+distinguish a real exceedance from chance at this effect size
+(Section~\ref{sec:exp-main}); the mechanism that would produce one is real
+and independently confirmed regardless: the conditioning block the
+certificates freeze is built from already-certified neighbours and is
+measurably more often incomplete exactly when certification is slow. On the
+protein-signalling data
 every certified arrowhead is reversed relative to the published consensus
 (Section~\ref{sec:exp-sachs}), and DirectLiNGAM reverses the same arcs, which
 locates the failure in the shared functional model rather than in the
@@ -1699,9 +1705,12 @@ model, stratified samples can be obtained cheaply by rejection sampling.
 \centering
 \includegraphics[width=\textwidth]{figs/exp6_certcd.png}
 \caption{Left: probability of an unsound assertion at any point in a monitored
-run, by stratum. Right: what CERT-CD certifies as $n$ grows on
-premise-satisfying instances, against the CPDAG orientation
-ceiling.}\label{fig:exp6}
+run, by stratum. The dashed line marks CERT-CD's own per-type budget
+$\alpha_A = \alpha_D = 0.05$; SPRINT-CD and PC carry no analogous formal
+budget; it is plotted for both to give the comparator bars a common scale, not
+because their pre-registered guarantee is $0.05$ too. Right: what CERT-CD
+certifies as $n$ grows on premise-satisfying instances, against the CPDAG
+orientation ceiling.}\label{fig:exp6}
 \end{figure}
 
 \subsection{Skeleton recovery and sample efficiency}\label{sec:exp-skeleton}
