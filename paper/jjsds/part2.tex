@@ -1,279 +1,199 @@
 
-\section{The certificate-only principle}\label{sec:principle}
+\section{Related work}\label{sec:related}
 
-We state the rule formally and record what it forces.
+Most of the primitives used in this paper are standard, and the value of the
+contribution depends on saying precisely which. We therefore separate the
+accounting into what is not new, what we believe is new, and---because we
+think this is the more useful disclosure---three claims of novelty we made in
+earlier drafts and withdrew after reading the prior art.
 
-\begin{definition}[Certificate]\label{def:cert}
-Let $\phi$ be a feature of $\Gstar$---a proposition such as ``$i$ and $j$ are
-adjacent'' or ``$\Gstar$ contains the arrowhead $i \to j$''. A
-\emph{certifying null} for $\phi$ is a hypothesis $H_\phi$ with the property
-that $P \in H_\phi$ whenever $\phi$ is false. A \emph{certificate for $\phi$
-at level $\alpha$} is the event that an e-process for $H_\phi$ exceeds
-$1/\alpha$.
-\end{definition}
+\subsection{What is not new}\label{sec:notnew}
 
-The implication in Definition~\ref{def:cert} runs one way only, and that is
-the whole point. $H_\phi$ must be true whenever $\phi$ is false; it may also
-be true in some cases where $\phi$ is true, and then the certificate simply
-never fires. This asymmetry is what buys validity without faithfulness, and
-what costs power.
+\paragraph{The minimum of e-values.} That $\min_k E^{(k)}$ is an e-value for a
+union null is standard \citep{vovk2021evalues}, and
+Proposition~\ref{prop:adjacency} is that fact applied to a particular union.
 
-\begin{proposition}[Soundness of a single certificate]\label{prop:single}
-If $(E_t)$ is an e-process for a certifying null $H_\phi$, then
-$\Prob(\exists t: \text{$\phi$ is certified at level $\alpha$ and $\phi$ is
-false}) \le \alpha$.
-\end{proposition}
+\paragraph{Edge-level aggregation over conditioning sets.} PC-p
+\citep{strobl2019estimating} upper-bounds an edge's p-value by the
+\emph{maximum} p-value over conditioning sets---the exact p-value analogue
+of~\eqref{eq:adjacency}---and controls the false discovery rate of the
+resulting edge decisions with Benjamini--Yekutieli
+\citep{benjamini2001control}. Treating adjacency rather than conditional
+independence as the object being tested is also the premise of DAT
+\citep{amin2024scalable}, which replaces the exponential family of tests with
+a relaxed optimisation problem solved by neural networks.
 
-\begin{proof}
-If $\phi$ is false then $P \in H_\phi$ by Definition~\ref{def:cert}, so
-$(E_t)$ is an e-process under $P$ and~\eqref{eq:ville} bounds the probability
-that it ever exceeds $1/\alpha$ by $\alpha$. If $\phi$ is true the event in
-question is empty.
-\end{proof}
+\paragraph{One-sided, faithfulness-free false-edge control.} This is exactly
+Theorem~2 of $\epsilon$-CUT \citep{shaska2025causal}, reached by the same
+reasoning we use: a guarantee against false edges needs a correct null, not
+faithfulness. We had believed this was ours; it is not.
 
-Proposition~\ref{prop:single} is elementary; we state it to make explicit that
-the burden of the design is entirely in constructing $H_\phi$, not in the
-inference. Three structural consequences follow, and they shape everything
-below.
+\paragraph{Abstention and three-valued output.} FCI leaves unidentifiable
+edges undirected; the conservative PC of \citet{ramsey2006adjacency} marks
+ambiguous triples rather than resolving them; \citet{uehara2026iterative}
+attaches per-edge \texttt{resolved}/\texttt{impossible} codes with tiers that
+abstain when a precondition test rejects; and \citet{prakash2024diagnostic}
+give a bivariate direction test with an explicit inconclusive outcome.
 
-\paragraph{The algorithm cannot delete.} There is no certifying null for the
-proposition ``$i$ and $j$ are non-adjacent''. Such a null would have to be
-true whenever the pair \emph{is} adjacent, that is, it would have to be a
-dependence hypothesis rejected by evidence of independence; but evidence of
-independence is exactly what a hypothesis test does not provide. Equivalence
-testing supplies the nearest available substitute---one can reject ``the
-partial correlation exceeds $\delta$ in absolute value''---but the resulting
-statement is ``the association is smaller than $\delta$'', which is a claim
-about effect size, not about absence. We return to this in
-Section~\ref{sec:negligible}. In the absence of such a null, an algorithm
-obeying the rule must start from the empty graph.
+\paragraph{Sequential e-values inside a constraint-based algorithm.}
+\citet{csillag2025prediction} already do this, calibrating batched Fisher-$z$
+p-values into per-test e-values within PC.
 
-\paragraph{The output is three-valued.} Each pair is in exactly one of three
-states: \emph{certified adjacent} (with or without a certified orientation),
-\emph{undecided}, or---if the extension of Section~\ref{sec:negligible} is
-enabled---\emph{certified negligible at margin $\delta$}. The absence of an
-edge in the output graph is not an assertion.
+\paragraph{Residual-based direction criteria.} DirectLiNGAM
+\citep{shimizu2011directlingam} and the pairwise likelihood ratios of
+\citet{hyvarinen2013pairwise} use exactly the comparison
+in~\eqref{eq:direction}'s two branches, and \citet{ruiz2022sequentially} learn
+a topological ordering from likelihood-ratio scores on residuals. The
+entropy-based approximations underlying the pairwise measures go back to
+\citet{hyvarinen1998new}.
 
-\paragraph{Power is descriptive, not guaranteed.} Nothing in
-Proposition~\ref{prop:single} promises that a true edge is ever certified.
-Whether it is depends on adjacency-faithfulness, on the sample size, and on
-the primitive's power. This is a real limitation and we treat it as one:
-Section~\ref{sec:experiments} reports certification rates alongside error
-rates throughout, and reports the fraction of pairs left undecided rather than
-suppressing it.
+\paragraph{Orientation error control per se.} \citet{strobl2019estimating}
+control the FDR of orientations, using the rule set of
+\citet{meek1995causal}; \citet{shimizu2008use} test direction of
+causation using non-normality; \citet{komatsu2010assessing} attach bootstrap
+reliability to LiNGAM outputs; \citet{strieder2023confidence} give confidence
+statements under structure uncertainty for equal-variance models. None of
+these is a time-uniform family-wise statement, but the general project of
+attaching error control to orientation decisions is well established, and it
+would be wrong to present it as new.
 
-\section{The adjacency certificate}\label{sec:adjacency}
+\subsection{Three withdrawn claims}\label{sec:withdrawn}
 
-\subsection{The separability null}\label{sec:sepnull}
+We record these because the accounting above is only credible if the failures
+are visible too.
 
-Fix a pair $(i,j)$ and consider
-\begin{equation}\label{eq:sepnull}
-H^{\mathrm{sep}}_{ij} \;:\quad
-\exists\, S \in \Scal_k(i,j) \ \text{ such that } \ X_i \indep X_j \mid X_S .
-\end{equation}
+\begin{enumerate}
+\item \emph{``Orientation error is uncontrolled in the literature.''} False.
+  PC-p \citep{strobl2019estimating} controls the FDR of unshielded-collider
+  and Meek-rule orientations, and \citet{shimizu2008use}---published in this
+  journal's subject area two decades ago---tests direction of causation
+  directly.
+\item \emph{``Faithfulness-free finite-sample false-edge control is new.''}
+  False. It is Theorem~2 of \citet{shaska2025causal}, at each fixed $n$.
+\item \emph{``Sequential anytime-valid e-values have not been used inside
+  constraint-based discovery.''} False;
+  see \citet{csillag2025prediction}.
+\end{enumerate}
 
-\begin{lemma}\label{lem:certifying}
-Under Assumptions~\ref{ass:markov} and~\ref{ass:sep},
-$H^{\mathrm{sep}}_{ij}$ is a certifying null for the adjacency of $i$ and $j$.
-\end{lemma}
+\subsection{What we believe is new}\label{sec:new}
 
-\begin{proof}
-Suppose $i$ and $j$ are non-adjacent in $\Gstar$. By
-Assumption~\ref{ass:sep} there is a set $S$ with $|S| \le k$ that d-separates
-them, and $S \subseteq V \setminus \{i,j\}$, so $S \in \Scal_k(i,j)$. By
-Assumption~\ref{ass:markov}, $X_i \indep X_j \mid X_S$ under $P$. Hence
-$P \in H^{\mathrm{sep}}_{ij}$.
-\end{proof}
+Three claims survive that accounting. We state each in the narrowest form we
+can defend.
 
-Note what the lemma does \emph{not} require. It says nothing about adjacent
-pairs. If $i$ and $j$ are adjacent, $P$ may or may not lie in
-$H^{\mathrm{sep}}_{ij}$: an adjacent pair whose dependence is exactly
-cancelled by a path through some $S$ satisfies the null too, and then the
-certificate cannot fire. That is the failure of adjacency-faithfulness, and it
-costs power, not validity.
+\paragraph{(i) Orientation error control that is simultaneously
+finite-sample, time-uniform, family-wise over a graph, and not confined to the
+Markov equivalence class.} Each of these four properties has precedent
+separately. \citet{strobl2019estimating} is finite-sample and family-wise (in
+the FDR sense) but confined to the equivalence class, so an edge in no
+CPDAG is unorientable by it in principle. \citet{shimizu2008use} escapes
+the class and is a genuine test, but is bivariate and fixed-sample.
+\citet{ruiz2022sequentially} is closest in statistic---likelihood-ratio scores
+on residuals---but proves only population-level identifiability, requires all
+noise terms to come from a single scale-location family, and its
+``sequential'' refers to greedy sorting rather than to sequential inference.
+\citet{strieder2023confidence} is finite-sample and escapes the class but
+assumes equal error variances and targets causal effects rather than
+arrowheads. \citet{uehara2026iterative} certifies \emph{provenance}---which
+theorem licensed a direction---rather than error, and its Theorem~1 bounds
+expert query counts under an ideal-oracle assumption. We are not aware of a
+predecessor combining all four properties.
 
-\subsection{The minimum construction}\label{sec:minconstruction}
+\paragraph{(ii) A whole-graph guarantee proved rather than assumed.}
+Per-test anytime-validity in discovery is not new
+\citep{csillag2025prediction}, but graph-level validity there is obtained by
+assumption: their Assumption~2.5 states that the downstream algorithm is valid
+whenever its inputs are, and they note the multiple-comparison concern without
+resolving it. Theorem~\ref{thm:main} proves the statement over the fixed
+adjacency family unconditionally, and extends it to orientations only
+conditional on the linear non-Gaussian model describing each pair given its
+frozen block (Section~\ref{sec:exp-main} measures that premise failing on
+unfaithful instances). The proof is not deep---it is a union bound over Ville
+events---but the unconditional half of the statement is the one a
+practitioner needs for adjacency, and it was previously an assumption even
+there.
 
-Let $(E^{(S)}_t)_{t \ge 0}$ be an e-process for the point null
-$X_i \indep X_j \mid X_S$, for each $S \in \Scal_k(i,j)$, all built from the
-same data stream. Define
-\begin{equation}\label{eq:adjacency}
-A_t(i,j) \;=\; \min_{S \in \Scal_k(i,j)} E^{(S)}_t(i,j) .
-\end{equation}
+Table~\ref{tab:related} sets the three claims against the closest prior work,
+one column per property.
 
-\begin{proposition}\label{prop:adjacency}
-$(A_t)_{t \ge 0}$ is an e-process for $H^{\mathrm{sep}}_{ij}$.
-\end{proposition}
+\paragraph{(iii) Time-uniformity on the adjacency side.} This claim is a delta
+against a single unrefereed source: $\epsilon$-CUT \citep{shaska2025causal} is
+an arXiv preprint, not a peer-reviewed publication, at the time of writing,
+and a special issue's review lag is long enough that its status could change
+before this paper appears. $\epsilon$-CUT holds the same one-sided,
+faithfulness-free ground \emph{at each fixed $n$}. Bounding the probability
+that a false edge is
+\emph{ever} certified over a monitored run is a different statement, and it is
+the one a monitored run needs; Section~\ref{sec:exp-calibration} measures the
+size of the gap. Secondarily, minimising over the complete family $\Scal_k$
+performs all the tests that PC-p's maximum-p bound requires, so PC-p's
+zero-Type-II-error assumption is not needed here.
 
-\begin{proof}
-Let $P \in H^{\mathrm{sep}}_{ij}$. By~\eqref{eq:sepnull} there exists
-$S^\star \in \Scal_k(i,j)$ with $X_i \indep X_j \mid X_{S^\star}$ under $P$,
-so $P$ satisfies the point null for which $(E^{(S^\star)}_t)$ is an e-process.
-By~\eqref{eq:adjacency}, $A_t \le E^{(S^\star)}_t$ pointwise for every $t$,
-hence $A_\tau \le E^{(S^\star)}_\tau$ for every stopping time $\tau$, and
-non-negativity gives
-$\Exp_P[A_\tau] \le \Exp_P[E^{(S^\star)}_\tau] \le 1$.
-\end{proof}
+\begin{table}[t]
+\centering
+\caption{Positioning against the closest prior work. ``Beyond MEC'' means the
+method can orient an edge that the CPDAG leaves undirected. ``Time-uniform'' means the
+error statement holds simultaneously at all sample sizes.
+``Faithfulness-free'' refers to the \emph{validity} of the method's
+assertions, not to its power. $^\dagger$CERT-CD's orientation FWER and
+faithfulness-freedom hold conditional on the linear non-Gaussian model
+describing the pair given its frozen block, a premise Section~\ref{sec:exp-main}
+measures failing on unfaithful instances; only the adjacency
+column is unconditional.}\label{tab:related}
+\footnotesize
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+& \multicolumn{2}{c}{error control on} & beyond & time- & faithf.- \\
+\cmidrule(lr){2-3}
+method & adjacency & orientation & MEC & uniform & free \\
+\midrule
+PC \citep{spirtes2000causation}      & --  & --  & no  & no  & no  \\
+PC-p \citep{strobl2019estimating}    & FDR & FDR & no  & no  & no  \\
+$\epsilon$-CUT \citep{shaska2025causal} & one-sided & -- & no & no & yes \\
+DAT \citep{amin2024scalable}         & --  & --  & no  & no  & no  \\
+PPE-PC \citep{csillag2025prediction} & per-test & -- & no & yes & no \\
+DirectLiNGAM \citep{shimizu2011directlingam} & -- & -- & yes & no & n/a \\
+\citet{shimizu2008use}               & --  & test & yes & no  & n/a \\
+\citet{ruiz2022sequentially}         & --  & --  & yes & no  & n/a \\
+\citet{strieder2023confidence}       & --  & conf.\ set & yes & no & n/a \\
+\citet{uehara2026iterative}          & provenance & provenance & no & no & no \\
+\midrule
+CERT-CD (this paper)                 & FWER & FWER$^\dagger$ & yes & yes & yes$^\dagger$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Combining Lemma~\ref{lem:certifying}, Proposition~\ref{prop:adjacency} and
-Proposition~\ref{prop:single} gives the adjacency guarantee: the probability
-that $A_t(i,j)$ ever exceeds $1/\alpha$ for a non-adjacent pair is at most
-$\alpha$.
+\subsection{Other neighbouring literatures}\label{sec:neighbours}
 
-That a minimum of e-values is an e-value for a union null is standard
-\citep{vovk2021evalues}, and the proof above is the standard one. What is
-specific here is the identification of adjacency as the complement of such a
-union, and the two consequences that follow.
+\paragraph{Score-based and permutation-based discovery.} GES
+\citep{chickering2002optimal} and greedy permutation methods
+\citep{solus2021consistency} search over equivalence classes or orderings with
+consistency guarantees; they do not attach finite-sample error statements to
+individual features, and the certificate-only rule has no direct analogue
+there, since a score comparison is not a test.
 
-\begin{remark}[No faithfulness]\label{rem:faithfulness}
-The proof uses only that~\eqref{eq:sepnull} is true for non-adjacent pairs,
-which follows from Assumptions~\ref{ass:markov} and~\ref{ass:sep}.
-Faithfulness enters only through power: adjacency-faithfulness
-\citep{ramsey2006adjacency} is what makes every $E^{(S)}$ grow for a genuinely
-adjacent pair, and hence what makes the minimum grow. An instance where it
-fails leaves pairs undecided rather than producing wrong edges. Stated
-exactly, validity requires three things: the Markov condition,
-Assumption~\ref{ass:sep}, and a valid per-set e-process. The third is not
-free. Our default primitive (Section~\ref{sec:primitive}) is a linear-Gaussian
-safe test, so that model is assumed \emph{there}; substituting a nonparametric
-sequential test \citep{he2026sequential} removes it at a cost in power.
-Proposition~\ref{prop:adjacency} is indifferent to which primitive is used,
-and Section~\ref{sec:exp-primitive} measures the primitive's calibration under
-six noise laws, including three outside its model.
-\end{remark}
+\paragraph{Functional causal models beyond LiNGAM.} Additive noise models
+\citep{hoyer2009nonlinear}, post-nonlinear models
+\citep{zhang2009identifiability}, causal additive models
+\citep{buhlmann2014cam} and equal-variance Gaussian models
+\citep{peters2014identifiability} all break the equivalence class by
+restricting the functional form. Any of them could in principle replace the
+generalised-Gaussian likelihoods in~\eqref{eq:direction}, provided the
+resulting null model admits a computable supremum; this is the most direct
+route to relaxing Remark~\ref{rem:misspec}.
 
-\begin{remark}[Multiplicity over pairs]\label{rem:multiplicity-pairs}
-The construction tests one hypothesis per pair, not one per (pair,
-conditioning set) triple. A union bound over the adjacency family therefore
-runs over $\binom{d}{2}$ hypotheses rather than
-$\binom{d}{2} \cdot |\Scal_k|$. At $d = 6$ and $k = 2$ we have
-$|\Scal_k| = \binom{4}{0} + \binom{4}{1} + \binom{4}{2} = 11$, so the
-per-hypothesis level is $11$ times larger than a triple-indexed budget would
-allow. The saving grows with $k$: at $d = 10$, $k = 3$ it is $93$. This is not
-a free lunch---the minimum in~\eqref{eq:adjacency} is itself conservative,
-since it discards all but the least favourable conditioning set---but the
-conservatism is of a different kind from a multiplicity correction, and it is
-the kind that vanishes as the least favourable set becomes uninformative.
-\end{remark}
+\paragraph{Invariance-based methods.} Invariant causal prediction
+\citep{peters2016causal} identifies a set of causal parents by intersecting
+the environments in which a candidate set is invariant, and controls the
+probability that the returned set is not a subset of the true parents. The
+logic is close to ours in spirit---it asserts by rejecting non-invariance, and
+returns the empty set rather than guessing---and it is the one established
+method whose guarantee has the same one-sided shape.
+Section~\ref{sec:exp-eicp} reports an anytime-valid variant of it built on the
+same primitives.
 
-\subsection{The per-set primitive}\label{sec:primitive}
-
-Proposition~\ref{prop:adjacency} needs an e-process for each point null
-$X_i \indep X_j \mid X_S$. For linear-Gaussian data we use an exact one,
-obtained as a Bayes factor with right-Haar priors on the nuisance parameters.
-Write the hypothesis in regression form,
-\begin{equation}\label{eq:regform}
-X_i \;=\; X_S^\top \alpha \;+\; \beta X_j \;+\; \varepsilon,
-\qquad \varepsilon \sim N(0, \sigma^2),
-\end{equation}
-so that the null is $\beta = 0$ with nuisance parameters $(\alpha, \sigma)$
-shared between the hypotheses. Place the right-Haar prior
-$\pi(\alpha, \sigma) \propto \sigma^{-1}$ on the nuisance block under both
-hypotheses, and $\beta \mid \sigma \sim N(0, \sigma^2 g)$ on the tested
-coefficient under the alternative, in the manner of Zellner's $g$-prior
-\citep{zellner1986assessing}. The right-Haar choice on the nuisance block is
-the invariance-based prior of \citet{jeffreys1946invariant} specialised to
-this group. Integrating both marginal likelihoods in
-closed form (Appendix~\ref{app:safelinear}) gives, after $n$ observations,
-\begin{equation}\label{eq:safelinear}
-E_n \;=\; (1+G)^{-1/2}\,\bigl(1 - \kappa\,\hat r_n^2\bigr)^{-(n-p)/2},
-\qquad
-G \;=\; g\,S_{yy}, \quad \kappa \;=\; \frac{G}{1+G},
-\end{equation}
-where $p = |S| + 1$; $S_{xx}$, $S_{xy}$, $S_{yy}$ are the cross-products of
-the $X_S$-residualised versions of $X_j$ and $X_i$; and
-$\hat r_n^2 = S_{xy}^2 / (S_{xx} S_{yy})$ is the squared sample partial
-correlation.
-
-\begin{proposition}\label{prop:safelinear}
-Under the linear-Gaussian model~\eqref{eq:regform} with $\beta = 0$, the
-process $(E_n)$ of~\eqref{eq:safelinear} is a test martingale with respect to
-the filtration generated by the observations, and hence an e-process.
-\end{proposition}
-
-The proof (Appendix~\ref{app:safelinear}) is the standard right-Haar argument
-\citep{berger1998bayes,hendriksen2021optional}: the null model is invariant
-under the group of location shifts in the $X_S$ directions and scale changes,
-the right-Haar prior is relatively invariant under that group, and the
-resulting Bayes factor is a ratio of marginal likelihoods of the maximal
-invariant, whose null distribution is free of the nuisance parameters. Bayes
-factors of this form are exactly the ones for which optional stopping is
-valid, which is why not every Bayes factor would do here.
-
-Two properties of~\eqref{eq:safelinear} drive the implementation.
-
-\paragraph{Sufficiency.} $E_n$ depends on the data only through Schur
-complements of the running Gram matrix
-$\sum_{s \le n} (o_s - \bar o)(o_s - \bar o)^\top$. A single $O(d^2)$
-sufficient statistic therefore serves the \emph{entire} hypothesis family
-$\{(i,j,S)\}$ simultaneously: no per-hypothesis state is stored, and the cost
-of an update is $O(d^2)$ regardless of how many hypotheses are live. This is
-what makes it feasible to keep every pair's minimum
-in~\eqref{eq:adjacency} current after every batch.
-
-\paragraph{The prior scale must be fixed in advance.} $g$ enters
-through $G = g S_{yy}$, and $S_{yy}$ grows with $n$. A prior scale chosen to
-adapt to the running sample size---for instance by rescaling $g$ so that $G$
-stays constant---destroys the martingale property, because the ``prior'' would
-then depend on the data it is being used to weigh. We fix $g$ from a warm-up
-prefix of the stream that is excluded from every e-process, using it only to
-set standardisation constants. The warm-up length appears in the experiments
-as a tuning parameter and nowhere in the guarantee.
-
-\begin{remark}[Calibration was verified, not assumed]\label{rem:calibration}
-Proposition~\ref{prop:safelinear} is a theorem, but the implementation of a
-theorem can be wrong, and a miscalibrated primitive would invalidate every
-downstream claim while leaving all the proofs intact. We therefore verified
-calibration by simulation, reproducible by
-\texttt{experiments/exp1\_type1\_calibration.py --reps 3000 --nmax 1500}:
-monitoring~\eqref{eq:safelinear} at a grid of sample sizes over $3000$
-replications up to $n = 1500$ under a true null gave realised crossing rates
-of $0.108$, $0.051$, $0.025$ and $0.006$ against nominal
-$\alpha \in \{0.20, 0.10, 0.05, 0.01\}$---in every case comfortably inside the
-nominal level, as Proposition~\ref{prop:safelinear} requires.
-Section~\ref{sec:exp-primitive} repeats the exercise under six noise laws.
-\end{remark}
-
-\subsection{Confidence sequence by inversion}\label{sec:cs}
-
-Because~\eqref{eq:safelinear} is available in closed form for every value of
-the tested coefficient, it can be inverted to give a confidence sequence---a
-sequence of intervals covering $\beta$ simultaneously at all times with
-probability $1-\alpha$ \citep{howard2021timeuniform}. Writing $\hat\beta = S_{xy}/S_{yy}$ for the
-least-squares estimate of the coefficient of $X_j$ in the residualised
-regression, the level-$(1-\alpha)$ confidence sequence is
-\begin{equation}\label{eq:cs}
-\hat\beta \;\pm\; \frac{1}{S_{yy}}
-  \sqrt{\frac{\tau\,\bigl(S_{xx} S_{yy} - S_{xy}^2\bigr)}{1-\tau}},
-\qquad
-\tau \;=\; \frac{1}{\kappa}
-  \left[ 1 - \left(\frac{\alpha}{\sqrt{1+G}}\right)^{2/(n-p)} \right] ,
-\end{equation}
-valid whenever $\tau > 0$, and the whole line otherwise. The derivation is in
-Appendix~\ref{app:cs}. We report it because it is the natural summary of
-evidence about an edge's strength, because it is what the equivalence-testing
-extension of Section~\ref{sec:negligible} uses, and because it provides an
-independent check on the implementation: \eqref{eq:cs} must agree with a
-brute-force inversion of~\eqref{eq:safelinear}, and an early version of our
-code did not. The discrepancy was a sign error in the $\log(1+G)$ term, which
-produced intervals roughly half the correct width---a defect invisible in any
-Type-I error simulation of the test itself, since the test was correct and
-only the reported interval was wrong. Agreement between the closed form and a
-numerical inversion is now a unit test.
-
-\subsection{Beyond the linear-Gaussian primitive}\label{sec:beyondlg}
-
-Conditional independence testing is hard in general: \citet{shah2020hardness}
-show that no test can have non-trivial power against all alternatives while
-controlling size over all null distributions with continuous conditional
-laws. Every usable primitive therefore buys power with a model. The two
-mainstream routes are the Model-X framework
-\citep{candes2018panning}, which assumes the conditional law of $X_i$ given
-$X_S$ is known, and parametric or kernel-based assumptions on the joint law.
-Sequential conditional-independence tests to date have largely taken the
-Model-X route; \citet{csillag2025prediction} note that the requirement is
-typically inaccessible in a discovery setting, where the conditional laws are
-precisely what is unknown. Construction~\eqref{eq:safelinear} avoids it by
-assuming linearity and Gaussianity instead, which is a strong assumption but a
-checkable one. Section~\ref{sec:exp-violations} reports what happens when it
-fails.
+\paragraph{Terminology.} ``Anytime FCI'' \citep{spirtes2001anytime} denotes a
+\emph{computational} property: the outer loop over conditioning-set sizes may
+be interrupted and the algorithm still returns a sound graph.
+``Anytime-valid'' in this paper is an \emph{inferential} property:
+time-uniform error control at data-dependent stopping times. The two notions
+are unrelated, and the collision of names is unfortunate.
