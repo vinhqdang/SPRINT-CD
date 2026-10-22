@@ -1,0 +1,858 @@
+{
+  "n_pairs": 80,
+  "weights_total": 31.86490000000001,
+  "seed": 20261023,
+  "max_n": 2000,
+  "git": "daf086d1f0db59ccc2c55ab75875121582ff94e2",
+  "kinds": {
+    "agree": {
+      "decided": 12,
+      "correct": 11,
+      "coverage": 0.15,
+      "weighted_coverage": 0.17037241604398567,
+      "acc": 0.9166666666666666,
+      "acc_cp95": [
+        0.6152038348490559,
+        0.9978924067681397
+      ],
+      "weighted_acc": 0.8158006225938955,
+      "binom_p_gt_half": 0.003173828125
+    },
+    "gg": {
+      "decided": 23,
+      "correct": 19,
+      "coverage": 0.2875,
+      "weighted_coverage": 0.28077602628597614,
+      "acc": 0.8260869565217391,
+      "acc_cp95": [
+        0.6121881100452025,
+        0.9504923546942066
+      ],
+      "weighted_acc": 0.7205736065005756,
+      "binom_p_gt_half": 0.001299738883972168
+    },
+    "ggh": {
+      "decided": 18,
+      "correct": 14,
+      "coverage": 0.225,
+      "weighted_coverage": 0.2682324438488744,
+      "acc": 0.7777777777777778,
+      "acc_cp95": [
+        0.5236272342635198,
+        0.9359079522823335
+      ],
+      "weighted_acc": 0.6685113253463123,
+      "binom_p_gt_half": 0.01544189453125
+    },
+    "forced_gg": {
+      "acc": 0.725,
+      "weighted_acc": 0.649856111269767
+    },
+    "forced_ggh": {
+      "acc": 0.7,
+      "weighted_acc": 0.7046781882259162
+    }
+  },
+  "rows": [
+    {
+      "pair": "0001",
+      "n": 349,
+      "weight": 0.166,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0002",
+      "n": 349,
+      "weight": 0.166,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0003",
+      "n": 349,
+      "weight": 0.167,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0004",
+      "n": 349,
+      "weight": 0.166,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0005",
+      "n": 2000,
+      "weight": 0.143,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0006",
+      "n": 2000,
+      "weight": 0.143,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0007",
+      "n": 2000,
+      "weight": 0.143,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0008",
+      "n": 2000,
+      "weight": 0.143,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0009",
+      "n": 2000,
+      "weight": 0.143,
+      "agree": null,
+      "gg": null,
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0010",
+      "n": 2000,
+      "weight": 0.143,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0011",
+      "n": 2000,
+      "weight": 0.142,
+      "agree": null,
+      "gg": null,
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0012",
+      "n": 2000,
+      "weight": 0.5,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0013",
+      "n": 392,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0014",
+      "n": 392,
+      "weight": 0.25,
+      "agree": null,
+      "gg": "y->x",
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0015",
+      "n": 392,
+      "weight": 0.25,
+      "agree": null,
+      "gg": "y->x",
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0016",
+      "n": 392,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0017",
+      "n": 2000,
+      "weight": 0.5,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0018",
+      "n": 314,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0020",
+      "n": 349,
+      "weight": 0.166,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0021",
+      "n": 349,
+      "weight": 0.167,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0022",
+      "n": 450,
+      "weight": 0.333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0023",
+      "n": 452,
+      "weight": 0.333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0024",
+      "n": 451,
+      "weight": 0.334,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0025",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0026",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0027",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0028",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0029",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0030",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0031",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0032",
+      "n": 1030,
+      "weight": 0.125,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0033",
+      "n": 345,
+      "weight": 0.2,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0034",
+      "n": 345,
+      "weight": 0.2,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0035",
+      "n": 345,
+      "weight": 0.2,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0036",
+      "n": 345,
+      "weight": 0.2,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0037",
+      "n": 345,
+      "weight": 0.2,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0038",
+      "n": 757,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0039",
+      "n": 394,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0040",
+      "n": 733,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0041",
+      "n": 763,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0042",
+      "n": 2000,
+      "weight": 0.5,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0043",
+      "n": 2000,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0044",
+      "n": 2000,
+      "weight": 0.25,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0045",
+      "n": 2000,
+      "weight": 0.25,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0046",
+      "n": 2000,
+      "weight": 0.25,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0047",
+      "n": 254,
+      "weight": 1.0,
+      "agree": "y->x",
+      "gg": "y->x",
+      "ggh": "y->x",
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0049",
+      "n": 365,
+      "weight": 0.333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0050",
+      "n": 365,
+      "weight": 0.333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0051",
+      "n": 365,
+      "weight": 0.334,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0065",
+      "n": 1331,
+      "weight": 0.333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0066",
+      "n": 1331,
+      "weight": 0.333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0067",
+      "n": 1331,
+      "weight": 0.334,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0068",
+      "n": 498,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0069",
+      "n": 2000,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0070",
+      "n": 2000,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0072",
+      "n": 1632,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0073",
+      "n": 2000,
+      "weight": 0.083,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0075",
+      "n": 205,
+      "weight": 0.084,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0076",
+      "n": 347,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0077",
+      "n": 2000,
+      "weight": 0.5,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0078",
+      "n": 721,
+      "weight": 0.3333,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0079",
+      "n": 721,
+      "weight": 0.3333,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": "y->x",
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0080",
+      "n": 721,
+      "weight": 0.3334,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0081",
+      "n": 365,
+      "weight": 0.3333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0082",
+      "n": 365,
+      "weight": 0.3333,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0083",
+      "n": 365,
+      "weight": 0.3334,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0084",
+      "n": 2000,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0085",
+      "n": 994,
+      "weight": 1.0,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0086",
+      "n": 666,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": "y->x",
+      "forced_gg": "y->x",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0087",
+      "n": 2000,
+      "weight": 1.0,
+      "agree": null,
+      "gg": "y->x",
+      "ggh": "x->y",
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0088",
+      "n": 261,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0093",
+      "n": 432,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "y->x",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0094",
+      "n": 2000,
+      "weight": 0.3333,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0095",
+      "n": 2000,
+      "weight": 0.3333,
+      "agree": null,
+      "gg": "x->y",
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0096",
+      "n": 2000,
+      "weight": 0.3333,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0097",
+      "n": 202,
+      "weight": 0.2,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0099",
+      "n": 2000,
+      "weight": 1.0,
+      "agree": "x->y",
+      "gg": "x->y",
+      "ggh": "x->y",
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0100",
+      "n": 209,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    },
+    {
+      "pair": "0101",
+      "n": 300,
+      "weight": 0.5,
+      "agree": null,
+      "gg": null,
+      "ggh": "y->x",
+      "forced_gg": "x->y",
+      "forced_ggh": "y->x"
+    },
+    {
+      "pair": "0107",
+      "n": 240,
+      "weight": 1.0,
+      "agree": null,
+      "gg": null,
+      "ggh": null,
+      "forced_gg": "x->y",
+      "forced_ggh": "x->y"
+    }
+  ]
+}
