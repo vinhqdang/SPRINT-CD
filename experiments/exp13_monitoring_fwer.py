@@ -376,7 +376,7 @@ def make_figure(summaries: dict):
         ax.set_ylim(-0.03, 1.03)
         ax.axhline(0.1, color="k", ls=":", lw=1)
     axes[0].set_ylabel("P(a false edge has been reported by $n$)")
-    axes[1].legend(fontsize=7.2, loc="upper left")
+    axes[0].legend(fontsize=7.2, loc="center right")
     fig.tight_layout()
     return fig
 
