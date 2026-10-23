@@ -1,20 +1,11 @@
-"""A worked example from the Tuebingen benchmark, chosen for concreteness.
+"""Two Tuebingen pairs under the frozen exp14 protocol.
 
-Section 4.11 reports aggregate coverage and accuracy over 102 pairs. This
-script draws one specific pair -- Tuebingen pair 1, altitude versus mean
-temperature across weather stations, ground truth altitude -> temperature --
-so a reader can see an actual scatter of real data next to what the
-certificate concluded, rather than only the aggregate numbers.  This is the
-pair the direction certificate got wrong (it certifies temperature ->
-altitude here), which is the honest example to show: Section 4.11's finding
-is that the certificate is barely better than chance on the pairs where it
-commits, and this is a concrete instance of that, not a flattering outlier.
-
-Reads the cached data/tuebingen_cep/pair0001.txt (fetched by
-experiments/exp12_tuebingen_cep.py) and reruns only the certificate on this
-one pair; does not repeat the full 102-pair sweep.
+Pair 0005 is the first pair on which the agreement certificate commits and is
+right; pair 0047 is the only pair on which it commits and is wrong.  For each
+pair the figure shows the scatter plot and the confidence sequence for the
+running mean of the log-score difference under the constant-scale class.
+Data are read from data/tuebingen_cep (fetched by experiments/exp12).
 """
-
 from __future__ import annotations
 
 import pathlib
@@ -26,40 +17,62 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "experiments"))
 from common import PALETTE, setup_matplotlib  # noqa: E402
-from exp12_tuebingen_cep import certify_direction  # noqa: E402
+from exp14_tuebingen_relfit import dequantise, MAX_N, SEED  # noqa: E402
+from sprint_cd.relative_fit import _GG, cs_radius  # noqa: E402
 
-DATA = pathlib.Path(__file__).resolve().parent.parent / "data" / "tuebingen_cep" / "pair0001.txt"
-OUT = pathlib.Path(__file__).resolve().parent.parent / "results" / "tuebingen_demo_pair0001.png"
+PAIRS = {"0005": "correct", "0047": "wrong"}
+
+
+def trace(x, y, m0, seed, batch=50, alpha=0.05, min_warm=100):
+    p = np.random.default_rng(seed).permutation(len(x))
+    x, y = x[p], y[p]
+    x = (x - x[:min_warm].mean()) / (x[:min_warm].std() + 1e-12)
+    y = (y - y[:min_warm].mean()) / (y[:min_warm].std() + 1e-12)
+    kx = np.quantile(x[:m0], (.2, .4, .6, .8))
+    ky = np.quantile(y[:m0], (.2, .4, .6, .8))
+    n, s, ds, rows = len(x), m0, [], []
+    while s < n:
+        e = min(s + batch, n)
+        fa = _GG().fit(x[:s], y[:s], kx)
+        fb = _GG().fit(y[:s], x[:s], ky)
+        ds.extend(fa.logp(x[s:e], y[s:e]) - fb.logp(y[s:e], x[s:e]))
+        s = e
+        D = np.asarray(ds)
+        if len(D) >= 60:
+            mu, sd = D.mean(), D.std(ddof=1) + 1e-12
+            r = cs_radius(len(D), sd, alpha)
+            rows.append((len(D), mu, mu - r, mu + r))
+    return x, y, np.array(rows)
 
 
 def main():
-    arr = np.loadtxt(DATA)
-    x, y = arr[:, 0], arr[:, 1]  # x = altitude (m), y = mean temperature (degC)
-
-    verdict = certify_direction(x, y, alpha=0.1, batch=50, min_fit=60)
-    verdict_label = {
-        "x->y": "altitude $\\to$ temperature (correct)",
-        "y->x": "temperature $\\to$ altitude (wrong)",
-        None: "undecided",
-    }[verdict]
-    label_color = {"x->y": PALETTE["oracle"], "y->x": PALETTE["naive"],
-                   None: PALETTE["fixed"]}[verdict]
-
-    plt = setup_matplotlib()
-    fig, ax = plt.subplots(figsize=(4.6, 3.6))
-    ax.scatter(x, y, s=10, alpha=0.5, color=PALETTE["fixed"])
-    ax.set_xlabel("altitude (m)")
-    ax.set_ylabel("mean temperature ($^\\circ$C)")
-    ax.set_title(f"Tuebingen pair 1, $n={x.size}$")
-    ax.text(0.03, 0.06,
-            f"ground truth: altitude $\\to$ temperature\ncertificate: {verdict_label}",
-            transform=ax.transAxes, fontsize=7.5, va="bottom",
-            color=label_color,
-            bbox=dict(boxstyle="round", fc="white", ec="0.7", alpha=0.9))
+    import matplotlib.pyplot as plt
+    from exp12_tuebingen_cep import load_pairs
+    setup_matplotlib()
+    fig, axes = plt.subplots(2, 2, figsize=(9, 6.2))
+    for row, (pid, x, y, w) in enumerate(p for p in load_pairs() if p[0] in PAIRS):
+        rng = np.random.default_rng(SEED + int(pid))
+        if len(x) > MAX_N:
+            idx = np.sort(rng.choice(len(x), MAX_N, replace=False))
+            x, y = x[idx], y[idx]
+        x, y = dequantise(x, rng), dequantise(y, rng)
+        m0 = max(100, int(np.ceil(0.2 * len(x))))
+        xs, ys, tr = trace(x, y, m0, SEED + int(pid))
+        ax = axes[row, 0]
+        ax.scatter(xs, ys, s=3, alpha=0.4, color=PALETTE.get("blue", "C0"))
+        ax.set_xlabel("cause (standardised)")
+        ax.set_ylabel("effect (standardised)")
+        ax.set_title(f"pair {pid} ({PAIRS[pid]})", fontsize=10)
+        ax = axes[row, 1]
+        ax.fill_between(tr[:, 0], tr[:, 2], tr[:, 3], alpha=0.25, color="C1")
+        ax.plot(tr[:, 0], tr[:, 1], color="C1")
+        ax.axhline(0, color="k", lw=0.8)
+        ax.set_xlabel("scored observations")
+        ax.set_ylabel("mean log-score difference")
     fig.tight_layout()
-    fig.savefig(OUT, bbox_inches="tight")
-    print(f"verdict: {verdict}")
-    print(f"wrote {OUT}")
+    out = ROOT / "results" / "tuebingen_demo_pairs.png"
+    fig.savefig(out, dpi=180)
+    print("wrote", out)
 
 
 if __name__ == "__main__":
