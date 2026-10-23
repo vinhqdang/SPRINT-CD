@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["igci", "reci", "anm_hsic", "lingam_pair"]
+__all__ = ["igci", "reci", "anm_hsic", "lingam_pair", "scored"]
 
 
 def _minmax(v):
@@ -91,3 +91,39 @@ def lingam_pair(x, y):
     if kurt < 0:
         R = -R
     return "x->y" if R > 0 else "y->x"
+
+
+def scored(x, y, seed=0):
+    """Direction and a confidence score for each rule (larger = more confident).
+
+    Used to compare with the abstaining certificate at matched coverage: rank
+    pairs by confidence and keep the top k.
+    """
+    x0, y0 = np.asarray(x, float), np.asarray(y, float)
+    out = {}
+    h = _spacing_entropy(_minmax(y0)) - _spacing_entropy(_minmax(x0))
+    out["IGCI"] = ("x->y" if h < 0 else "y->x", abs(h))
+    a, b = _poly_mse(_minmax(x0), _minmax(y0)), _poly_mse(_minmax(y0), _minmax(x0))
+    out["RECI"] = ("x->y" if a < b else "y->x", abs(np.log((a + 1e-12) / (b + 1e-12))))
+    xs, ys = x0, y0
+    if len(xs) > 500:
+        idx = np.random.default_rng(seed).choice(len(xs), 500, replace=False)
+        xs, ys = xs[idx], ys[idx]
+    xs = (xs - xs.mean()) / (xs.std() + 1e-12)
+    ys = (ys - ys.mean()) / (ys.std() + 1e-12)
+
+    def stat(u, v):
+        A = _basis(u)
+        coef, *_ = np.linalg.lstsq(A, v, rcond=None)
+        r = v - A @ coef
+        return _hsic(r / (r.std() + 1e-12), u)
+
+    sx, sy = stat(xs, ys), stat(ys, xs)
+    out["ANM-HSIC"] = ("x->y" if sx < sy else "y->x", abs(np.log((sx + 1e-12) / (sy + 1e-12))))
+    xz = (x0 - x0.mean()) / (x0.std() + 1e-12)
+    yz = (y0 - y0.mean()) / (y0.std() + 1e-12)
+    R = float(np.mean(xz * yz)) * float(np.mean(xz * np.tanh(yz) - np.tanh(xz) * yz))
+    if 0.5 * (np.mean(xz ** 4) + np.mean(yz ** 4)) - 3.0 < 0:
+        R = -R
+    out["LiNGAM-pair"] = ("x->y" if R > 0 else "y->x", abs(R))
+    return out
