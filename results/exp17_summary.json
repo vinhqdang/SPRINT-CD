@@ -1,0 +1,252 @@
+{
+ "scaling": {
+  "4": {
+   "CERT-CD": {
+    "dags": 60,
+    "ever_false": 0.0,
+    "ever_false_ci": [
+     -0.0,
+     0.06
+    ],
+    "precision": 1.0,
+    "recall": 0.963855421686747,
+    "undecided": 0.5555555555555555,
+    "median_sec": 17.144257187843323
+   },
+   "PC a=0.05": {
+    "dags": 60,
+    "ever_false": 0.23333333333333334,
+    "ever_false_ci": [
+     0.144,
+     0.354
+    ],
+    "precision": 0.9819277108433735,
+    "recall": 0.9819277108433735,
+    "undecided": 0.0,
+    "median_sec": 0.01950526237487793
+   },
+   "PC a=0.01": {
+    "dags": 60,
+    "ever_false": 0.03333333333333333,
+    "ever_false_ci": [
+     0.009,
+     0.114
+    ],
+    "precision": 1.0,
+    "recall": 0.9819277108433735,
+    "undecided": 0.0,
+    "median_sec": 0.01779353618621826
+   },
+   "GES-BIC": {
+    "dags": 60,
+    "ever_false": 0.31666666666666665,
+    "ever_false_ci": [
+     0.213,
+     0.442
+    ],
+    "precision": 0.9818181818181818,
+    "recall": 0.9759036144578314,
+    "undecided": 0.0,
+    "median_sec": 0.02630472183227539
+   },
+   "DirectLiNGAM": {
+    "dags": 60,
+    "ever_false": 0.21666666666666667,
+    "ever_false_ci": [
+     0.131,
+     0.336
+    ],
+    "precision": 1.0,
+    "recall": 1.0,
+    "undecided": 0.0,
+    "median_sec": 0.07149994373321533
+   }
+  },
+  "8": {
+   "CERT-CD": {
+    "dags": 60,
+    "ever_false": 0.05,
+    "ever_false_ci": [
+     0.017,
+     0.137
+    ],
+    "precision": 0.9922680412371134,
+    "recall": 0.9299516908212561,
+    "undecided": 0.769047619047619,
+    "median_sec": 45.36329698562622
+   },
+   "PC a=0.05": {
+    "dags": 60,
+    "ever_false": 0.6666666666666666,
+    "ever_false_ci": [
+     0.541,
+     0.773
+    ],
+    "precision": 0.963855421686747,
+    "recall": 0.966183574879227,
+    "undecided": 0.0,
+    "median_sec": 0.06835818290710449
+   },
+   "PC a=0.01": {
+    "dags": 60,
+    "ever_false": 0.26666666666666666,
+    "ever_false_ci": [
+     0.171,
+     0.39
+    ],
+    "precision": 0.9899749373433584,
+    "recall": 0.9541062801932367,
+    "undecided": 0.0,
+    "median_sec": 0.05714070796966553
+   },
+   "GES-BIC": {
+    "dags": 60,
+    "ever_false": 0.9333333333333333,
+    "ever_false_ci": [
+     0.841,
+     0.974
+    ],
+    "precision": 0.9351851851851852,
+    "recall": 0.9758454106280193,
+    "undecided": 0.0,
+    "median_sec": 0.1474703550338745
+   },
+   "DirectLiNGAM": {
+    "dags": 60,
+    "ever_false": 0.8666666666666667,
+    "ever_false_ci": [
+     0.758,
+     0.931
+    ],
+    "precision": 0.9975903614457832,
+    "recall": 1.0,
+    "undecided": 0.0,
+    "median_sec": 0.3554419279098511
+   }
+  },
+  "12": {
+   "CERT-CD": {
+    "dags": 60,
+    "ever_false": 0.06666666666666667,
+    "ever_false_ci": [
+     0.026,
+     0.159
+    ],
+    "precision": 0.9914965986394558,
+    "recall": 0.9224683544303798,
+    "undecided": 0.8515151515151518,
+    "median_sec": 66.83932971954346
+   },
+   "PC a=0.05": {
+    "dags": 60,
+    "ever_false": 0.8833333333333333,
+    "ever_false_ci": [
+     0.778,
+     0.942
+    ],
+    "precision": 0.9276923076923077,
+    "recall": 0.9541139240506329,
+    "undecided": 0.0,
+    "median_sec": 0.15186476707458496
+   },
+   "PC a=0.01": {
+    "dags": 60,
+    "ever_false": 0.36666666666666664,
+    "ever_false_ci": [
+     0.256,
+     0.493
+    ],
+    "precision": 0.9819672131147541,
+    "recall": 0.9477848101265823,
+    "undecided": 0.0,
+    "median_sec": 0.12788176536560059
+   },
+   "GES-BIC": {
+    "dags": 60,
+    "ever_false": 1.0,
+    "ever_false_ci": [
+     0.94,
+     1.0
+    ],
+    "precision": 0.9241071428571429,
+    "recall": 0.9825949367088608,
+    "undecided": 0.0,
+    "median_sec": 0.4250830411911011
+   },
+   "DirectLiNGAM": {
+    "dags": 60,
+    "ever_false": 0.9666666666666667,
+    "ever_false_ci": [
+     0.886,
+     0.991
+    ],
+    "precision": 0.9984202211690363,
+    "recall": 1.0,
+    "undecided": 0.0,
+    "median_sec": 1.0858014822006226
+   }
+  },
+  "16": {
+   "CERT-CD": {
+    "dags": 60,
+    "ever_false": 0.08333333333333333,
+    "ever_false_ci": [
+     0.036,
+     0.181
+    ],
+    "precision": 0.9937421777221527,
+    "recall": 0.9189814814814815,
+    "undecided": 0.8890277777777774,
+    "median_sec": 93.86020827293396
+   },
+   "PC a=0.05": {
+    "dags": 60,
+    "ever_false": 1.0,
+    "ever_false_ci": [
+     0.94,
+     1.0
+    ],
+    "precision": 0.9367231638418079,
+    "recall": 0.9594907407407407,
+    "undecided": 0.0,
+    "median_sec": 0.28301751613616943
+   },
+   "PC a=0.01": {
+    "dags": 60,
+    "ever_false": 0.6666666666666666,
+    "ever_false_ci": [
+     0.541,
+     0.773
+    ],
+    "precision": 0.9868263473053892,
+    "recall": 0.9537037037037037,
+    "undecided": 0.0,
+    "median_sec": 0.241036057472229
+   },
+   "GES-BIC": {
+    "dags": 60,
+    "ever_false": 1.0,
+    "ever_false_ci": [
+     0.94,
+     1.0
+    ],
+    "precision": 0.9165775401069519,
+    "recall": 0.9918981481481481,
+    "undecided": 0.0,
+    "median_sec": 0.9683561325073242
+   },
+   "DirectLiNGAM": {
+    "dags": 60,
+    "ever_false": 1.0,
+    "ever_false_ci": [
+     0.94,
+     1.0
+    ],
+    "precision": 0.9988439306358381,
+    "recall": 1.0,
+    "undecided": 0.0,
+    "median_sec": 2.4291625022888184
+   }
+  }
+ }
+}
