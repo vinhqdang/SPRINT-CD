@@ -65,10 +65,13 @@ when two model classes agree, so what it certifies is better predictive fit,
 which identifies the causal direction in additive-noise models. In 150 random
 graphs monitored from $n = 100$ to $6400$, CERT-CD reported a false edge in
 $2.7\%$ of graphs under Laplace noise, against $27\%$ to $91\%$ for PC, GES and
-DirectLiNGAM, at the price of leaving most non-adjacent pairs undecided. On the
-Tübingen cause-effect pairs, under a protocol fixed before the run, the
+DirectLiNGAM, at the price of leaving most non-adjacent pairs undecided and
+a low recall at small samples; the rate stays below $9\%$ up to $16$ nodes. On
+the Tübingen cause-effect pairs, under a protocol fixed before the run, the
 orientation certificate committed on $12$ of $80$ scorable pairs and was right
-on $11$. Both certificates fail outside their models, and we report where.}
+on $11$; on nine held-out simulated families it was wrong on $5$ of its $83$
+commitments, all in one family. Both certificates fail outside their models,
+and we report where.}
 
 \keywords{causal discovery, anytime-valid inference, e-values, sequential
 testing, additive noise models, family-wise error control}

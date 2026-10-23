@@ -19,6 +19,16 @@ was right on $11$ of the $12$ pairs on which it committed.
   independence testing without a model restriction is impossible
   \citep{shah2020hardness}, so none is to be expected without further
   assumptions.
+\item \emph{Power at small samples.} Skeleton recall is $0.21$ at $n=100$ and
+  $0.65$ at $n=200$, and at a single large sample size DirectLiNGAM is more
+  accurate on the same data. The case for CERT-CD is monitoring, not
+  single-sample accuracy.
+\item \emph{The order $k$.} Validity needs $k$ at least the size of a separator
+  for every non-adjacent pair; $k=0$ and $k=1$ produced false edges in most
+  graphs (Section~\ref{sec:exp-ablation}), and nothing in the output warns of it.
+\item \emph{Model-class errors in orientation.} On a family with a bimodal cause
+  and Gaussian noise, the agreement certificate was wrong on all $5$ pairs it
+  decided, because a generalised-Gaussian marginal cannot represent the cause.
 \item \emph{Most pairs stay undecided.} About three quarters of the pairs in the
   eight-node experiments are undecided at $n=6400$ because the algorithm
   never certifies absence, and the orientation certificate decided $15\%$ of

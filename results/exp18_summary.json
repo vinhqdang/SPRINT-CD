@@ -297,5 +297,304 @@
    "ANM-HSIC": 1.0,
    "LiNGAM-pair": 1.0
   }
+ },
+ "sweep": {
+  "h_cubic@200": {
+   "reps": 20,
+   "agree": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 2,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "forced_gg": 1.0,
+   "forced_ggh": 1.0,
+   "IGCI": 1.0,
+   "RECI": 1.0,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 0.1
+  },
+  "h_cubic@400": {
+   "reps": 20,
+   "agree": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 8,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "forced_gg": 1.0,
+   "forced_ggh": 1.0,
+   "IGCI": 1.0,
+   "RECI": 1.0,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 0.2
+  },
+  "h_cubic@1600": {
+   "reps": 20,
+   "agree": {
+    "decided": 15,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 19,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 15,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "forced_gg": 1.0,
+   "forced_ggh": 1.0,
+   "IGCI": 1.0,
+   "RECI": 1.0,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 0.15
+  },
+  "h_lin_skew@200": {
+   "reps": 20,
+   "agree": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 3,
+    "wrong": 3,
+    "wrong_ci": [
+     0.052,
+     0.36
+    ]
+   },
+   "forced_gg": 0.7,
+   "forced_ggh": 0.7,
+   "IGCI": 0.05,
+   "RECI": 0.45,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 1.0
+  },
+  "h_lin_skew@400": {
+   "reps": 20,
+   "agree": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 1,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 1,
+    "wrong": 1,
+    "wrong_ci": [
+     0.009,
+     0.236
+    ]
+   },
+   "forced_gg": 0.95,
+   "forced_ggh": 0.95,
+   "IGCI": 0.25,
+   "RECI": 0.45,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 1.0
+  },
+  "h_lin_skew@1600": {
+   "reps": 20,
+   "agree": {
+    "decided": 0,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 18,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 15,
+    "wrong": 15,
+    "wrong_ci": [
+     0.531,
+     0.888
+    ]
+   },
+   "forced_gg": 1.0,
+   "forced_ggh": 0.8,
+   "IGCI": 0.15,
+   "RECI": 0.3,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 1.0
+  },
+  "h_het_cos@200": {
+   "reps": 20,
+   "agree": {
+    "decided": 3,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 6,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 3,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "forced_gg": 0.95,
+   "forced_ggh": 1.0,
+   "IGCI": 0.95,
+   "RECI": 1.0,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 0.15
+  },
+  "h_het_cos@400": {
+   "reps": 20,
+   "agree": {
+    "decided": 6,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 15,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 7,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "forced_gg": 0.95,
+   "forced_ggh": 1.0,
+   "IGCI": 0.95,
+   "RECI": 1.0,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 0.25
+  },
+  "h_het_cos@1600": {
+   "reps": 20,
+   "agree": {
+    "decided": 19,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "gg": {
+    "decided": 20,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "ggh": {
+    "decided": 19,
+    "wrong": 0,
+    "wrong_ci": [
+     0,
+     0.161
+    ]
+   },
+   "forced_gg": 1.0,
+   "forced_ggh": 1.0,
+   "IGCI": 1.0,
+   "RECI": 1.0,
+   "ANM-HSIC": 1.0,
+   "LiNGAM-pair": 0.05
+  }
  }
 }

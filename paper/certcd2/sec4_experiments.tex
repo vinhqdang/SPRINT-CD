@@ -328,6 +328,36 @@ dominating. The certificate trades coverage for a lower error rate on this set,
 and it does not rule out failures in model classes it cannot represent.
 
 
+\paragraph{Sample size.} For three of the held-out families we varied $n$
+(Table~\ref{tab:sweep}; $20$ pairs per cell, and the $n=800$ column from
+Table~\ref{tab:heldout} with $30$). The agreement certificate commits more
+often as $n$ grows and made no wrong certification in any of these cells. The
+cubic and cosine families go from no or few commitments at $n=200$ to $15$ and
+$19$ of $20$ at $n=1600$. For skewed linear errors it never commits: the
+constant-scale class alone is right on $18$ of $20$ at $n=1600$, but the
+location-scale class certifies the wrong direction on $15$ of $20$, so the
+agreement rule stays silent, which is the protection it is meant to give and also
+its cost. The four forced-choice rules have their own regimes in these families:
+ANM-HSIC is right throughout, and the LiNGAM rule fails on the cubic and cosine
+families.
+
+\begin{table}[t]
+\caption{Agreement certificate by sample size (decided, of $20$ pairs; wrong in
+parentheses); $n=800$ has $30$ pairs. Also the constant-scale class alone for
+skewed linear errors.}\label{tab:sweep}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Family & $n=200$ & $400$ & $800$ ($30$) & $1600$\\
+\midrule
+cubic ANM & 0 (0) & 0 (0) & 6 (0) & 15 (0)\\
+heteroscedastic, cosine & 3 (0) & 6 (0) & 17 (0) & 19 (0)\\
+linear, skewed errors & 0 (0) & 0 (0) & 0 (0) & 0 (0)\\
+\quad constant-scale class alone & 0 (0) & 1 (0) & 17 (0) & 18 (0)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{The Tübingen cause-effect pairs}\label{sec:exp-tuebingen}
 
 The protocol was fixed before the run: all $102$ scalar-scalar pairs, official
