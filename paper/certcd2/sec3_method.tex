@@ -1,6 +1,38 @@
 
 \section{Method}\label{sec:method}
 
+\subsection{Overview}\label{sec:overview}
+
+CERT-CD has two certificates and one rule for combining them. The
+\emph{adjacency certificate} for a pair is a sequential test of the hypothesis
+that some admissible conditioning set makes the partial regression coefficient
+zero; it fires when the evidence against that hypothesis, minimised over
+conditioning sets, is large. The \emph{orientation certificate} for a pair
+compares two sequentially fitted forecasters of the joint law and fires when one
+factorisation predicts strictly better. The combining rule is that the graph is
+built only from fired certificates, starting from the empty graph, so that the
+output of a run is a set of edges and arrowheads each of which carries a
+stated bound on the probability that it is ever wrong. Table~\ref{tab:notation}
+collects the notation.
+
+\begin{table}[t]
+\caption{Notation.}\label{tab:notation}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+$\Gstar$, $d$ & true DAG and number of variables\\
+$\Scal_k(i,j)$ & admissible conditioning sets of size at most $k$\\
+$E^{(S)}_t(i,j)$ & Bayes-factor process for $\beta_{i\leftarrow j\cdot S}=0$ after $t$ rows\\
+$A_t(i,j)$ & adjacency evidence, minimum over $S\in\Scal_k(i,j)$\\
+$g$, $G=gS_{jj}$ & prior variance factor and its data-scaled version\\
+$\alpha=\alpha_A+\alpha_D$ & total error budget split between adjacency and direction\\
+$\lambda_A$, $\lambda_D$ & fixed thresholds for the two certificate families\\
+$d_s$ & log-score difference of the two forecasters at observation $s$\\
+$m_0$ & warm-up length, excluded from every monitored process\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Setting and assumptions}\label{sec:setting}
 
 Let $\Gstar$ be a directed acyclic graph on $V=\{1,\dots,d\}$ and let
@@ -31,11 +63,22 @@ If $S$ d-separates $i$ and $j$ in $\Gstar$, then
 $\beta_{i\leftarrow j\cdot S}=0$.
 \end{lemma}
 
-\noindent This is the standard fact that d-separation implies a vanishing
-partial covariance in a linear structural equation model
-\citep{spirtes2000causation}. It is a moment condition, weaker than
-conditional independence, and it does not require Gaussian errors. Faithfulness
-is the converse and is not assumed.
+\begin{proof}[Proof sketch]
+In a linear structural equation model with independent errors the covariance of
+$X$ is $\Sigma=(I-B)^{-\top}\Omega(I-B)^{-1}$ with $\Omega$ diagonal, and the
+partial covariance of $X_i$ and $X_j$ given $X_S$ is a rational function of the
+entries of $\Sigma$. It depends on the error laws only through $\Omega$. For
+Gaussian errors, d-separation of $i$ and $j$ by $S$ implies conditional
+independence by the global Markov property and hence a zero partial covariance
+\citep{spirtes2000causation}; the partial covariance is the same function of
+$(B,\Omega)$ for any other error laws with the same variances, so it vanishes
+for them as well. The population regression coefficient $\beta_{i\leftarrow
+j\cdot S}$ is proportional to the partial covariance.
+\end{proof}
+
+\noindent This is a moment condition, weaker than conditional independence, and
+it does not require Gaussian errors. Faithfulness is the converse and is not
+assumed.
 
 \subsection{Certificates}\label{sec:principle}
 
@@ -243,7 +286,58 @@ flexible to resolve linear non-Gaussian pairs
 are dequantised, the order is randomly permuted, and $\max(100,\lceil0.2n\rceil)$
 observations form a warm-up prefix used for standardisation and knots.
 
+
+\paragraph{Fitting.} Both classes standardise $x$ and $y$ on the warm-up and set
+four knots at the $20,40,60,80\%$ quantiles of the warm-up. The conditional
+density of the effect given the cause is fitted by maximising the generalised
+Gaussian likelihood with the mean a cubic truncated-power spline of the cause,
+by iteratively reweighted least squares with a continuation over the shape
+grid, so that the Gaussian shape $\kappa=2$ and the Laplace shape $\kappa=1$ are
+both reachable. In class \texttt{ggh} the scale is $\exp(\gamma_0+\gamma_1x+\gamma_2x^2)$,
+re-estimated by two alternating rounds of weighted refitting. The forecasters are
+refit on all rows before each batch of $50$ scored rows, and each scored row
+contributes one term $d_s$. A direction is reported at the first batch after
+$60$ scored rows at which the confidence sequence excludes zero, and the
+verdict is not revised.
+
+\begin{algorithm}[t]
+\caption{Relative-fit orientation of a pair}\label{alg:relfit}
+\begin{algorithmic}[1]
+\Require $(x_s,y_s)_{s\le n}$, level $\alpha$, model classes $\{\texttt{gg},\texttt{ggh}\}$
+\State dequantise ties; permute rows at random; standardise and place knots using the first $m_0=\max(100,\lceil0.2n\rceil)$ rows
+\If{$n-m_0<100$} \Return \textsc{unscorable} \EndIf
+\For{each class $c$}
+  \For{each batch $s\in\{m_0,m_0+50,\dots\}$}
+    \State fit $p^{x\to y},p^{y\to x}$ in class $c$ on rows $1..s-1$; score the next $50$ rows, append the $d_s$
+    \If{at least $60$ scored and no verdict yet} compute $\hat\mu_t\pm r_t$ from Eq.~\eqref{eq:csd}; if the lower end $>0$ set verdict $x\to y$, if the upper end $<0$ set verdict $y\to x$ \EndIf
+  \EndFor
+\EndFor
+\State \Return the common verdict if both classes agree, else \textsc{undecided}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proof}[Proof of Proposition~\ref{prop:orient}]
+The increments $d_s$ are $\Fcal_s$-measurable and the forecasters are
+$\Fcal_{s-1}$-measurable, so $d_s-\Exp[d_s\mid\Fcal_{s-1}]$ is a martingale
+difference sequence. Under the moment conditions, Theorem~2.2 of
+\citet{waudbysmith2024asymptotic} gives a confidence sequence for the average
+conditional mean $\bar\mu_t$ that holds asymptotically, uniformly in $t$. If
+$\bar\mu_t\le0$ for all $t$ then crossing of the lower end above zero implies
+that the interval fails to cover $\bar\mu_t$ at some $t$.
+\end{proof}
+
+\paragraph{What the claim does and does not say.} The proposition is a
+statement about which forecaster scores better on the sequence of fitted models,
+not about the data-generating process. If neither class contains the truth, the
+better-scoring direction can still be the wrong causal one; the certificate is
+then valid for the statement it makes and misleading as a causal claim. Its
+causal reading needs identifiability, and then only if the fitted classes
+approximate the truth well enough for the gap in expected log score to have the
+right sign. The agreement rule reduces, but does not remove, this risk, and
+Section~\ref{sec:exp-pairs} measures it in simulation.
+
 \subsection{The algorithm and its guarantee}\label{sec:algorithm}
+
 
 CERT-CD maintains a three-valued state for every pair. It streams data in
 batches, updates the running Gram matrix, recomputes $A_t(i,j)$ for every
@@ -279,3 +373,95 @@ of conditioning variables frozen when the edge is certified
 Section~\ref{sec:orientation} is bivariate and is evaluated on pairs. An
 extension that conditions the relative-fit forecasters on the frozen block is
 possible but not evaluated here.
+
+\subsection{Implementation of the streaming algorithm}\label{sec:implementation}
+
+Algorithm~\ref{alg:certcd} gives the streaming procedure. The sufficient
+statistic is the Gram matrix of the standardised rows, updated in $O(bd^2)$ per
+batch of $b$ rows. Standardisation constants are computed once from the
+warm-up prefix of $m_0$ rows, which are then discarded; after that, no quantity
+used by a monitored process depends on the future.
+
+\begin{algorithm}[t]
+\caption{CERT-CD (streaming)}\label{alg:certcd}
+\begin{algorithmic}[1]
+\Require $d$, level $\alpha$, split $\alpha_A=\alpha_D=\alpha/2$, order $k$, prior scale, batches $B_1,B_2,\dots$
+\State fix $\lambda_A=\binom d2/\alpha_A$, $\lambda_D=d(d-1)/\alpha_D$; set all pairs to \textsc{undecided}
+\State standardise with mean and scale of the warm-up rows; discard them
+\For{each batch $B_t$}
+  \State update the Gram matrix with the standardised rows of $B_t$
+  \For{each undecided pair $(i,j)$}
+    \State $A\gets\min_{S\in\Scal_k(i,j)}$ role-averaged $E^{(S)}$ from Eq.~\eqref{eq:safelinear}
+    \State record $\bar A(i,j)\gets\max(\bar A(i,j),A)$
+    \If{$\bar A(i,j)\ge\lambda_A$} mark $(i,j)$ \textsc{adjacent}; freeze $Z_{ij}\gets$ certified neighbours of $i$ and $j$; open two direction processes \EndIf
+  \EndFor
+  \For{each open direction process $(a\to b)$}
+    \State extend the numerator on $B_t$ with a forecaster fitted on rows before $B_t$ since opening
+    \If{running maximum of $\log$ of the ratio $\ge\log\lambda_D$} mark $a\to b$ certified \EndIf
+  \EndFor
+  \State output the current marked graph (certified edges, certified arrowheads, all else undecided)
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Complexity.} Each pair has $\sum_{s\le k}\binom{d-2}{s}$ conditioning
+sets, so one pass over a batch costs $O\bigl(d^2\,d^{k}\,k^3\bigr)$ for the
+Schur complements, independently of $n$, and the adjacency state is $O(d^2)$.
+The direction processes keep the rows since the pair was certified and refit on
+them, so their cost grows with the time since certification. In our
+implementation a run on $3200$ rows takes about $43$ seconds at $d=8$ and $87$
+seconds at $d=16$ with $k=2$ on one core (Section~\ref{sec:exp-scaling} reports
+it across sizes). Certified pairs are skipped, and the evaluation of $A_t$ stops
+as soon as one conditioning set has evidence below the threshold, since the
+minimum is then known not to cross.
+
+\paragraph{Choosing the constants.} Validity does not depend on any of the
+following, and each is fixed before the monitored data arrive. The order $k$ is
+the only choice with an assumption attached (Assumption~\ref{ass:sep}): any
+$k$ at least the maximum in-degree suffices, and a smaller $k$ is valid as long
+as every non-adjacent pair has a separator of size at most $k$; otherwise the
+guarantee is lost, as the experiment on violations shows
+(Section~\ref{sec:exp-scope}). The prior scale $g$ sets which effect sizes the
+test is tuned to detect: with variables standardised on the warm-up, a prior
+standard deviation of $0.5$ ($g=0.25$) concentrates power on coefficients of a
+few tenths, and Section~\ref{sec:exp-ablation} varies it. The split of $\alpha$
+between families affects the thresholds only; the batch size affects how often
+the process is inspected and nothing else.
+
+\paragraph{Properties of the output.} Because certificates are never retracted,
+the output is monotone: edges and arrowheads are added and never removed, and
+so the estimate at time $t$ is contained in the estimate at every later time.
+Because the guarantee is time-uniform, the run may be stopped at any
+data-dependent time without changing the stated bounds, and the bound does not
+depend on the order in which pairs are examined. The guarantee concerns false
+assertions only. It says nothing about missed edges, and the number of
+undecided pairs is the price of that choice.
+
+\paragraph{Relation to PC.} CERT-CD examines the same objects as the first
+layer of PC (partial correlations given small conditioning sets) but reverses
+the decision rule. PC removes $(i,j)$ as soon as some $S$ yields a
+non-rejection; CERT-CD adds $(i,j)$ only when \emph{every} $S$ in the family
+yields rejection, which is why the family size multiplies computation but not
+the error bound: the bound for a non-adjacent pair uses only the one set that
+separates it.
+
+\paragraph{A worked example.} Figure~\ref{fig:trace} follows the adjacency
+evidence for every pair in one random six-node DAG with Laplace errors (the
+first draw of a fixed seed, six true edges). The running maximum of
+$\log_{10}A_t$ is plotted against the number of observations. Evidence for the
+true edges rises past the threshold of $\lambda_A=\binom62/0.05=300$ between
+$150$ and $350$ observations and is then frozen, since certified pairs are no
+longer updated; the evidence of the nine non-adjacent pairs stays below it. The
+highest of these, at about $10^{2.4}$, lies just under the threshold, which is
+the situation the family bound is designed to cover: with $15$ pairs, a few
+non-adjacent pairs are expected to come close, and the threshold is placed so
+that, in the Gaussian model, none of them crosses with probability at least
+$1-2\alpha_A$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\linewidth]{trace_demo.png}
+\caption{Running maximum of the adjacency evidence for the $15$ pairs of one
+six-node DAG with Laplace errors; $n=3200$ observations. Red: true edges. Grey:
+non-adjacent pairs. Dashed: threshold.}\label{fig:trace}
+\end{figure}
