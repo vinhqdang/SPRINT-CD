@@ -56,25 +56,26 @@ who reruns it at each sample size and keeps any edge ever reported accumulates
 false edges. We study certificate-only discovery, which asserts a feature of
 the graph only by rejecting a null that is true whenever the feature is absent.
 The adjacency certificate is the minimum over conditioning sets of sequential
-tests that a partial regression coefficient is zero. It bounds the probability
-that a false edge is ever certified, uniformly over time and without
-faithfulness; the bound is exact under Gaussian errors and asymptotic
-otherwise. The orientation certificate compares sequentially fitted
+tests, either a Bayes-factor test of a partial regression coefficient (exact
+under Gaussian errors) or a nonparametric sequential generalised covariance test
+that allows nonlinear mechanisms; it bounds the probability that a false edge is
+ever certified, uniformly over time and without faithfulness, exactly or
+asymptotically. The orientation certificate compares sequentially fitted
 forecasters for the two factorisations of a pair and certifies a direction only
-when two model classes agree, so what it certifies is better predictive fit,
-which identifies the causal direction in additive-noise models. In 150 random
-graphs monitored from $n = 100$ to $6400$, CERT-CD reported a false edge in
-$2.7\%$ of graphs under Laplace noise, against $27\%$ to $91\%$ for PC, GES and
-DirectLiNGAM, at the price of leaving most non-adjacent pairs undecided and
-a low recall at small samples; the rate stays below $9\%$ up to $16$ nodes. On
-the Tübingen cause-effect pairs, under a protocol fixed before the run, the
-orientation certificate committed on $12$ of $80$ scorable pairs and was right
-on $11$; on nine held-out simulated families it was wrong on $5$ of its $83$
-commitments, all in one family. On two physical experiments with known graphs
-(Causal Chambers) the adjacency certificate was no better than PC, since the
-models do not hold there, while every direction it committed to ($31$ of $94$ pair
-runs) was correct. Both certificates fail outside their models, and we report
-where.}
+when two model classes agree. In 150 random graphs monitored from $n=100$ to
+$6400$, CERT-CD reported a false edge in $2.7\%$ of graphs under Laplace noise,
+against $27\%$ to $91\%$ for PC, GES and DirectLiNGAM, at the price of leaving
+most non-adjacent pairs undecided and a low recall at small samples. With
+nonlinear mechanisms the linear test reported a false edge in about half of the
+graphs and the nonparametric test in $1$ to $2$ of $60$. On the Tübingen
+cause-effect pairs, under a protocol fixed before the run, the orientation
+certificate committed on $12$ of $80$ scorable pairs and was right on $11$. On
+two physical devices with known graphs (Causal Chambers), every method
+including the first version of CERT-CD reported edges the graph does not
+contain; after a redesign made on these data, the nonparametric certificate
+reported none outside the graph and the pairs the graph cannot explain in $9$ of
+$10$ and $10$ of $10$ subsamples, with low recall. Both certificates fail outside
+their models, and we report where.}
 
 \keywords{causal discovery, anytime-valid inference, e-values, sequential
 testing, additive noise models, family-wise error control}

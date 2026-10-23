@@ -36,14 +36,16 @@ survives continuous monitoring.
 \paragraph{Contributions.}
 
 \begin{enumerate}
-\item \emph{Adjacency certificates under monitoring.} For a linear structural
-  equation model with independent errors, d-separation implies that a partial
-  regression coefficient is zero, so adjacency has a certifying null that
-  needs no faithfulness and no Gaussian errors. The minimum over conditioning
-  sets of per-set sequential tests bounds the probability that a false edge is
-  \emph{ever} certified (Section~\ref{sec:adjacency}). The bound is exact for
-  Gaussian errors and asymptotic otherwise, and we measure how far from
-  nominal it is off-model (Section~\ref{sec:exp-primitive}).
+\item \emph{Adjacency certificates under monitoring.} In a structural equation
+  model, d-separation implies that the conditional covariance of a pair given
+  a separating set vanishes, so adjacency has a certifying null that needs no
+  faithfulness. The minimum over conditioning sets of per-set sequential tests
+  bounds the probability that a false edge is \emph{ever} certified
+  (Section~\ref{sec:adjacency}). We give two per-set tests: a Bayes factor for a
+  linear model, exact for Gaussian errors, and a nonparametric sequential
+  generalised covariance test, asymptotic, that allows nonlinear mechanisms
+  (Section~\ref{sec:npprimitive}). We measure how far from nominal they are
+  off-model (Sections~\ref{sec:exp-primitive} and~\ref{sec:exp-nonlinear}).
 \item \emph{An orientation certificate based on predictive fit.} For a pair of
   variables we fit forecasters for the factorisations $x\to y$ and $y\to x$
   sequentially, and certify a direction when the running mean of the

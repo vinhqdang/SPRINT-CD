@@ -26,11 +26,16 @@ was right on $11$ of the $12$ pairs on which it committed.
 \item \emph{The order $k$.} Validity needs $k$ at least the size of a separator
   for every non-adjacent pair; $k=0$ and $k=1$ produced false edges in most
   graphs (Section~\ref{sec:exp-ablation}), and nothing in the output warns of it.
-\item \emph{Real physical devices.} On the Causal Chambers, where the mechanisms
-  are nonlinear and some sensors share a drift, every method including CERT-CD
-  reported false edges in every subsample, with precision around $0.4$
+\item \emph{Real physical devices.} On the Causal Chambers every method,
+  including the first version of CERT-CD, reported edges that the graph does not
+  contain in every subsample, with precision around $0.4$. The redesign
+  (nonparametric test, $k=3$) was made after seeing these data, so its
+  result there is not an independent test; it reports no edge outside the graph
+  and the reference set of dependences the graph cannot explain in $9$ and $10$ of
+  $10$ subsamples, but its recall of the graph edges is $0.12$ and $0.18$
   (Section~\ref{sec:exp-chamber}). The false-edge guarantee should not be read as
-  a property of any real dataset.
+  a property of any real dataset, and it needs $k$ at least the size of the
+  largest separator, which is not known in practice.
 \item \emph{Model-class errors in orientation.} On a family with a bimodal cause
   and Gaussian noise, the agreement certificate was wrong on all $5$ pairs it
   decided, because a generalised-Gaussian marginal cannot represent the cause.

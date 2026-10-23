@@ -219,6 +219,78 @@ The validity statement of the orientation certificate
 (Section~\ref{sec:orientation}) does not depend on either error law.
 \end{remark}
 
+
+\subsubsection{A nonparametric primitive}\label{sec:npprimitive}
+
+The Bayes factor above needs the regression of $X_i$ on $(X_j,X_S)$ to be
+linear with a constant-variance error. For the dependences that structural
+equations with nonlinear mechanisms produce, this is too much to ask: if $S$
+contains a mediator between $i$ and $j$ whose effect is nonlinear, a linear
+regression leaves residual dependence, and the pair is certified although it is
+non-adjacent (Section~\ref{sec:exp-nonlinear}). We therefore give a second
+primitive, a sequential version of the generalised covariance measure of
+\citet{shah2020hardness}, in the spirit of the anytime-valid conditional
+independence test without the model-X assumption of
+\citet{waudbysmith2023sequential}. Write
+$r^{S}_{i}=X_i-\Exp[X_i\mid X_S]$. If $S$ d-separates $i$ and $j$ then
+$X_i\indep X_j\mid X_S$ and
+\begin{equation}\label{eq:gcm}
+\Exp\bigl[r^{S}_{i}\,r^{S}_{j}\bigr]=0 ,
+\end{equation}
+with no assumption on the form of the conditional means. We use three versions
+of the product, $r_i^Sr_j^S$ and the two products in which one factor is the
+residual of the square, $r_i^S\,(X_j^2-\Exp[X_j^2\mid X_S])$ and its transpose;
+each is zero under the separation null, and the squares let the test see
+dependences that are symmetric, such as $X_j=X_i^2+\epsilon$, which the plain
+covariance misses.
+
+\paragraph{Construction.} Let $\hat f^{S}_{v,s}$ be an estimate of
+$\Exp[X_v\mid X_S]$ computed from the rows before row $s$ only, for $v\in\{i,j\}$
+(and for the squares). The scored product is
+$z_s=(X_{i,s}-\hat f^S_{i,s}(X_{S,s}))(X_{j,s}-\hat f^S_{j,s}(X_{S,s}))$. Its
+running mean has the asymptotic confidence sequence of
+\citet[Theorem~2.2]{waudbysmith2024asymptotic}, as in Eq.~\eqref{eq:csd}. The set
+$S$ is \emph{rejected} at the first time at which the sequence for any of the three
+products excludes zero (level $\alpha_{\mathrm{pair}}/3$ each), and the pair is
+certified adjacent once \emph{every} $S\in\Scal_k(i,j)$ has been rejected.
+
+\begin{proposition}\label{prop:np}
+Let $(i,j)$ be non-adjacent in $\Gstar$ and let $S^\star\in\Scal_k(i,j)$ separate
+them. Suppose the conditional-mean estimates are predictable and the moment
+conditions of \citet{waudbysmith2024asymptotic} hold for $z_s$, and that the
+product of the estimation errors, $\Exp[(f-\hat f_i)(g-\hat f_j)]$, has a running
+average that is $o_P(t^{-1/2})$. Then the probability that $S^\star$ is ever rejected is at most
+$\alpha_{\mathrm{pair}}$, asymptotically, and so is the probability that
+the pair is ever certified.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Under~\eqref{eq:gcm} the conditional mean of $z_s$ given the past is the product
+of the two estimation errors, so $z_s$ has a martingale-difference part with mean
+zero and a predictable remainder; the remainder is negligible by the
+product-rate condition, and the confidence sequence covers zero uniformly in $t$
+with asymptotic probability at least $1-\alpha_{\mathrm{pair}}/3$ per product. A union bound over the three products gives
+$\alpha_{\mathrm{pair}}$. The pair is certified only if $S^\star$ is rejected, so its
+probability is smaller.
+\end{proof}
+
+\noindent The guarantee is asymptotic, and it is conditional on the estimation
+error being small: no sequential test of conditional independence is valid
+uniformly over all laws \citep{shah2020hardness}. In exchange it covers nonlinear
+conditional means, which the linear primitive does not.
+
+\paragraph{Implementation.} The regression of each $X_v$ and $X_v^2$ on $X_S$ is a
+ridge-penalised additive cubic spline (three knots at the quartiles of the
+warm-up, inputs clipped at the $1\%$ and $99\%$ warm-up quantiles) with
+the products of pairs of variables added when $|S|=2$; it is refit on all rows
+seen so far when the number of rows has grown by a factor $1.25$, and the
+residuals of the current fit are used for scoring the rows that follow. One
+multi-output solve per $S$ serves all variables, so a pass costs
+$O\bigl(\sum_{|S|\le k}n\,p_S^2\bigr)$ for the refits and $O(d^2)$ per set per
+batch for scoring. For $d=8$ and $k=2$ a run on $3200$ rows takes about $0.3$
+seconds, and for $d=20$ and $k=3$ (about $1350$ sets) about $25$ seconds on
+$4000$ rows.
+
 \subsection{The orientation certificate}\label{sec:orientation}
 
 Fix a pair $(x,y)$. For each direction we fit a forecaster of the joint law on
@@ -365,7 +437,10 @@ most $\binom d2$ non-adjacent pairs gives $\binom d2\cdot 2/\lambda_A=2\alpha_A$
 \noindent Choosing $\lambda_A=2\binom d2/\alpha_A$ gives $\alpha_A$ exactly; the
 experiments use the shipped threshold, so the guaranteed bound there is
 $2\alpha_A$. Under non-Gaussian errors the bound holds asymptotically
-(Remark~\ref{rem:offmodel}). The orientation layer inside the multivariate
+(Remark~\ref{rem:offmodel}). With the nonparametric primitive of
+Section~\ref{sec:npprimitive} each pair has the level $\alpha_A/\binom d2$ and no
+factor $2$ arises, so the probability that a false edge is ever certified is at
+most $\alpha_A$ asymptotically, without linearity or Gaussian errors. The orientation layer inside the multivariate
 algorithm uses a linear generalised-Gaussian universal-inference certificate
 whose validity is conditional on the model describing each pair given a block
 of conditioning variables frozen when the edge is certified
