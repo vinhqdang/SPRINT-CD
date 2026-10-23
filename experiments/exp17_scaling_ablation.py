@@ -170,19 +170,23 @@ def main():
     jobs = ([(d, r) for d in SIZES for r in range(args.R)] if args.suite == "scaling"
             else list(range(args.R)))
     fn = run_scaling if args.suite == "scaling" else run_ablation
-    recs = []
+    path = HERE.parent / "results" / f"exp17_{args.suite}.json"
+    part = path.with_suffix(".partial.json")
+    recs = json.loads(part.read_text())["records"] if part.exists() else []
+    done = {(r["d"], r["r"]) if args.suite == "scaling" else r["r"] for r in recs}
+    jobs = [j for j in jobs if j not in done]
     with Pool(args.workers) as pool:
         for i, rec in enumerate(pool.imap_unordered(fn, jobs, chunksize=1)):
             recs.append(rec)
-            if (i + 1) % 10 == 0:
-                print(f"{i + 1}/{len(jobs)} done, {(time.time() - t0) / 60:.1f} min",
-                      flush=True)
+            part.write_text(json.dumps({"records": recs}))
+            if (i + 1) % 5 == 0:
+                print(f"{len(recs)} done, {(time.time() - t0) / 60:.1f} min", flush=True)
     out = {"config": {"suite": args.suite, "R": args.R, "grid": GRID,
                       "alpha_cert": 0.1, "base_seed": BASE_SEED,
                       "elapsed_s": time.time() - t0},
            "records": sorted(recs, key=lambda r: (r["d"], r["r"]))}
-    path = HERE.parent / "results" / f"exp17_{args.suite}.json"
     path.write_text(json.dumps(out))
+    part.unlink()
     print("wrote", path)
 
 
