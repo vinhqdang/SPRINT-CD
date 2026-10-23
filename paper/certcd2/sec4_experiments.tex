@@ -447,6 +447,79 @@ sequence for the running mean log-score difference under the constant-scale
 class; a lower end above zero certifies the true direction.}\label{fig:tuebingen}
 \end{figure}
 
+\subsection{Real physical data with a known graph: the Causal Chambers}
+\label{sec:exp-chamber}
+
+The Causal Chambers \citep{gamella2025chamber} are two physical devices, a wind
+tunnel and a light tunnel, whose causal graphs are known from the construction of
+the devices and which provide real measurements. We used two recorded
+experiments in which the actuators are randomised, fixed before any result was
+seen (\texttt{exp20}): the wind tunnel with random intake loads
+(\texttt{random\_loads\_intake}, $10$ varying variables, $8$ true edges among
+them) and the light tunnel with uniform inputs (\texttt{uniform\_reference},
+$20$ variables, $39$ true edges). A third experiment, the wind tunnel with random
+loads on both fans, was dropped before running because the two load variables
+are identical in the recording, so the two nodes cannot be told apart. Variables
+are the nodes of the chamber graph with at least $20$ distinct values; no node is
+hidden. For each dataset we drew $10$ random subsamples of $4000$ rows (rows are
+shuffled, to break the serial dependence of the recording) and ran each method
+on nested prefixes $n=250,\dots,4000$, as in Section~\ref{sec:exp-monitoring}.
+
+\begin{table}[t]
+\caption{Causal Chambers, $10$ subsamples each. Skeleton precision / recall at
+$n=4000$ and the number of subsamples in which a false edge was ever reported
+(of $10$).}\label{tab:chamber}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{wind tunnel ($d=10$)} & \multicolumn{2}{c}{light tunnel ($d=20$)}\\
+Method & P / R & ever false & P / R & ever false\\
+\midrule
+CERT-CD & 0.40 / 0.39 & 10 & 0.41 / 0.18 & 10\\
+PC, $\alpha=0.05$ & 0.35 / 0.53 & 10 & 0.44 / 0.24 & 10\\
+PC, $\alpha=0.01$ & 0.33 / 0.44 & 10 & 0.46 / 0.22 & 10\\
+GES-BIC & 0.25 / 0.69 & 10 & 0.64 / 0.60 & 10\\
+DirectLiNGAM & 0.31 / 0.61 & 10 & 0.79 / 0.59 & 10\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Graph.} Here the adjacency certificate does not deliver its
+guarantee. Every method reports a false edge in every subsample
+(Table~\ref{tab:chamber}), CERT-CD's precision ($0.40$ and $0.41$) is similar to
+PC's, and DirectLiNGAM is the most accurate on the light tunnel ($0.79$
+precision, $0.59$ recall). On average CERT-CD reports $4.6$ and $9.9$ false edges
+per subsample at $n=4000$, fewer than PC at $\alpha=0.05$ ($7.9$ and $11.9$) and
+GES ($16.8$ and $12.9$) on the wind tunnel and similar on the light tunnel. The
+bound assumes a linear model with independent errors, which these devices do not
+satisfy. We did not isolate the cause, but two features are likely contributors:
+the mechanisms are nonlinear, so conditioning on a mediator by a linear regression
+does not remove the dependence between a cause and a distant effect, and in the
+wind tunnel the four pressure sensors are correlated at $0.99$ or more, which is
+consistent with a shared slow drift that the graph does not contain. These are the
+situations that the violation experiments of Section~\ref{sec:exp-scope} produce
+on purpose, and the chambers show that failures of this kind occur on real
+measurements.
+
+\paragraph{Direction.} The orientation certificate does much better. Among the
+edges certified by CERT-CD that are true edges, the bivariate agreement
+certificate decided $30$ of $31$ in the wind tunnel and $27$ of $70$ in the light
+tunnel (the constant-scale class alone $50$ of $70$), and every decision was
+correct ($30/30$ and $27/27$). Separately, we applied the certificate to every
+true directed edge among the varying variables, each on two random subsamples of
+$2000$ rows (\texttt{exp21}, $16$ and $78$ pair-runs for the two devices). The
+agreement certificate committed on $8$ of $16$ and $23$ of $78$ and was right
+every time ($31/31$); the constant-scale class alone committed on $8$ and $40$,
+and the location-scale class on $9$ and $25$, also always correctly. The forced
+accuracy of the two classes is $0.69$ and $0.69$ in the wind tunnel and $0.74$
+and $0.81$ in the light tunnel, against $0.88$ and $1.00$ for RECI, $1.00$ and
+$0.92$ for IGCI, $0.38$ and $0.81$ for ANM-HSIC and $0.81$ and $0.77$ for the
+pairwise LiNGAM rule. As on the Tübingen pairs, the forced accuracy of
+the forecasters is not better than a simple rule, and the certificate is
+valuable for what it declines to decide. The causes in these experiments are
+uniformly distributed actuators, an easy case for identifiability; the $31$
+decisions are $47$ edges analysed twice and not independent.
+
 \subsection{Scope: where the certificates fail}\label{sec:exp-scope}
 
 \paragraph{Assumption violations.} We simulated $200$ datasets of $n=3000$ for each

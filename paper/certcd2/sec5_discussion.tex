@@ -26,6 +26,11 @@ was right on $11$ of the $12$ pairs on which it committed.
 \item \emph{The order $k$.} Validity needs $k$ at least the size of a separator
   for every non-adjacent pair; $k=0$ and $k=1$ produced false edges in most
   graphs (Section~\ref{sec:exp-ablation}), and nothing in the output warns of it.
+\item \emph{Real physical devices.} On the Causal Chambers, where the mechanisms
+  are nonlinear and some sensors share a drift, every method including CERT-CD
+  reported false edges in every subsample, with precision around $0.4$
+  (Section~\ref{sec:exp-chamber}). The false-edge guarantee should not be read as
+  a property of any real dataset.
 \item \emph{Model-class errors in orientation.} On a family with a bimodal cause
   and Gaussian noise, the agreement certificate was wrong on all $5$ pairs it
   decided, because a generalised-Gaussian marginal cannot represent the cause.
