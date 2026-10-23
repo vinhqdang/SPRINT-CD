@@ -206,17 +206,19 @@ CPDAG ceiling of $28\%$ of edges orientable).
 
 \subsection{Orientation of pairs}\label{sec:exp-pairs}
 
-\paragraph{Simulated pairs.} We simulated $50$ pairs of $n=800$ for each of nine
-families, and ran the relative-fit certificate at $\alpha=0.05$
-(Table~\ref{tab:pairs}). The agreement certificate committed to a wrong direction
-in none of the $450$ pairs. The two classes alone fail in the way the
-design anticipated: the constant-scale class certifies the wrong direction on
-all $32$ and $9$ pairs it decides in the two heteroscedastic Gaussian families,
-and the location-scale class is wrong on all $7$ it decides for uniform linear
-errors. Agreement commits on all the additive-noise families (for example
-$41$ of $50$ for the $\tanh$ mechanism) and on Laplace heteroscedastic pairs ($39$ of $50$),
-declines the strongly heteroscedastic Gaussian pairs, and, as it should,
-declines linear Gaussian pairs, which are not identifiable.
+\paragraph{Design families.} The nine families of Table~\ref{tab:pairs} were
+used while the certificate was being designed: the agreement rule was adopted
+because each class alone failed on some of them, so the absence of wrong
+certifications there is not independent evidence. We simulated $50$ pairs of
+$n=800$ per family and ran the certificate at $\alpha=0.05$. The agreement
+certificate committed to a wrong direction in none of the $450$ pairs. The
+constant-scale class certifies the wrong direction on all $32$ and $9$ pairs it
+decides in the two heteroscedastic Gaussian families, and the location-scale class
+is wrong on all $7$ it decides for uniform linear errors. Agreement commits on all
+the additive-noise families (for example $41$ of $50$ for the $\tanh$ mechanism)
+and on Laplace heteroscedastic pairs ($39$ of $50$), declines the strongly
+heteroscedastic Gaussian pairs, and declines linear Gaussian pairs, which are not
+identifiable.
 
 \begin{table}[t]
 \caption{Pair orientation, $50$ simulated pairs per family, $n=800$. Entries are
@@ -239,6 +241,52 @@ heteroscedastic Laplace & (39,0) & (45,0) & (40,0) & 1.00 & 1.00\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Held-out families.} To measure behaviour outside the design set we
+fixed nine further families before running (\texttt{exp18}), none used during
+design, with $30$ pairs of $n=800$ each (Table~\ref{tab:heldout}), and compared
+with four forced-choice published rules (IGCI, RECI, ANM-HSIC and a pairwise
+LiNGAM rule; our re-implementations, Section~\ref{sec:protocol}).
+
+\begin{table}[t]
+\caption{Held-out families, $30$ pairs of $n=800$ each. For the certificates:
+decided / wrong. Forced-choice columns: accuracy, always outputting a
+direction.}\label{tab:heldout}
+\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Family & agree & gg & ggh & IGCI & RECI & ANM & LiNGAM\\
+\midrule
+cubic ANM & 6/0 & 14/0 & 6/0 & 1.00 & 1.00 & 1.00 & 0.07\\
+exponential ANM & 28/0 & 30/0 & 28/0 & 1.00 & 1.00 & 1.00 & 1.00\\
+logistic ANM & 21/0 & 27/0 & 21/0 & 0.37 & 0.50 & 1.00 & 0.00\\
+linear, $t_3$ errors & 0/0 & 8/0 & 0/0 & 0.43 & 0.37 & 1.00 & 1.00\\
+linear, skewed errors & 0/0 & 17/0 & 12/12 & 0.10 & 0.37 & 1.00 & 1.00\\
+multiplicative noise & 6/0 & 7/0 & 17/0 & 1.00 & 1.00 & 0.00 & 0.53\\
+heteroscedastic, cosine & 17/0 & 26/0 & 20/0 & 1.00 & 1.00 & 1.00 & 0.23\\
+post-nonlinear & 0/0 & 4/4 & 14/0 & 1.00 & 0.97 & 0.00 & 0.87\\
+bimodal cause, linear & 5/5 & 6/6 & 10/10 & 0.40 & 0.83 & 1.00 & 1.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The agreement certificate made no wrong certification in eight of the nine
+families, and wrong certifications on all $5$ pairs it decided in the family with
+a bimodal cause and linear Gaussian noise ($5$ of $30$ pairs, so the overall
+error rate is $5$ of $270$ pairs, or $5$ of the $83$ pairs that it decided). In that
+family a generalised-Gaussian density cannot represent the mixture marginal of
+the cause, so the factorisation with the bimodal variable as the effect is
+fitted better; this is a misspecification of the model class, not a violation of
+validity, and both classes commit the same error. The agreement certificate
+commits less often than either class alone ($83$ of $270$ pairs), and the classes
+alone err in two further families (the constant-scale class on
+post-nonlinear pairs, the location-scale class on skewed linear errors). Of the forced-choice rules, ANM-HSIC is perfect on seven families and
+completely wrong on the two with multiplicative and post-nonlinear structure; the
+others are perfect on some families and at or below chance on others, with no rule
+dominating. The certificate trades coverage for a lower error rate on this set,
+and it does not rule out failures in model classes it cannot represent.
+
 
 \subsection{The Tübingen cause-effect pairs}\label{sec:exp-tuebingen}
 
