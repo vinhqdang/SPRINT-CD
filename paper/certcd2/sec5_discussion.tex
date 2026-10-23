@@ -27,10 +27,10 @@ was right on $11$ of the $12$ pairs on which it committed.
   for every non-adjacent pair; $k=0$ and $k=1$ produced false edges in most
   graphs (Section~\ref{sec:exp-ablation}), and nothing in the output warns of it.
 \item \emph{Real physical devices.} On the Causal Chambers every method,
-  including the first version of CERT-CD, reported edges that the graph does not
-  contain in every subsample, with precision around $0.4$. The redesign
-  (nonparametric test, $k=3$) was made after seeing these data, so its
-  result there is not an independent test; it reports no edge outside the graph
+  including CERT-CD with the linear primitive at $k=2$, reported edges that the graph
+  does not contain in every subsample, with precision around $0.4$. The choices
+  that improved the result (the nonparametric test and $k=3$) were made after seeing
+  these data, so the result there is not an independent test; it reports no edge outside the graph
   and the reference set of dependences the graph cannot explain in $9$ and $10$ of
   $10$ subsamples, but its recall of the graph edges is $0.12$ and $0.18$
   (Section~\ref{sec:exp-chamber}). The false-edge guarantee should not be read as
@@ -59,10 +59,10 @@ was right on $11$ of the $12$ pairs on which it committed.
   prefix can flag gross departures, but they are not part of the guarantee.
 \item \emph{Small evidence base for orientation.} The Tübingen result rests on
   $12$ committed pairs out of $80$ scorable, and $22$ of the $102$ pairs were
-  too short or discrete to score; the confidence interval on the accuracy is
-  wide. The method was designed after an earlier version failed on the same
-  data, without tuning on it, and Section~\ref{sec:exp-tuebingen} reports the
-  protocol that was fixed.
+  too short to score; the confidence interval on the accuracy is wide, and the
+  binomial test treats pairs as independent although some share a dataset. The
+  benchmark was known to us when the certificate was designed
+  (Section~\ref{sec:exp-tuebingen}).
 \item \emph{Domain.} The experiments use continuous data from mostly low-dimensional
   systems. The Sachs data, which are not of this kind, are reported as
   out-of-scope behaviour (Section~\ref{sec:exp-scope}).

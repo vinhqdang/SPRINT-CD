@@ -10,28 +10,14 @@ zero; it fires when the evidence against that hypothesis, minimised over
 conditioning sets, is large. The \emph{orientation certificate} for a pair
 compares two sequentially fitted forecasters of the joint law and fires when one
 factorisation predicts strictly better. The combining rule is that the graph is
-built only from fired certificates, starting from the empty graph, so that the
-output of a run is a set of edges and arrowheads each of which carries a
-stated bound on the probability that it is ever wrong. Table~\ref{tab:notation}
-collects the notation.
+built only from fired certificates, starting from the empty graph. Each certified
+edge carries a bound on the probability that a non-adjacent pair is ever
+certified (Theorem~\ref{thm:main}); the bound is exact under Gaussian regression
+errors and asymptotic otherwise. A certified direction is a statement about
+predictive fit (Section~\ref{sec:orientation}); inside the multivariate algorithm the
+orientation layer has only a conditional guarantee (Appendix~\ref{app:linear}).
 
-\begin{table}[t]
-\caption{Notation.}\label{tab:notation}
-\small
-\begin{tabular}{@{}ll@{}}
-\toprule
-$\Gstar$, $d$ & true DAG and number of variables\\
-$\Scal_k(i,j)$ & admissible conditioning sets of size at most $k$\\
-$E^{(S)}_t(i,j)$ & Bayes-factor process for $\beta_{i\leftarrow j\cdot S}=0$ after $t$ rows\\
-$A_t(i,j)$ & adjacency evidence, minimum over $S\in\Scal_k(i,j)$\\
-$g$, $G=gS_{jj}$ & prior variance factor and its data-scaled version\\
-$\alpha=\alpha_A+\alpha_D$ & total error budget split between adjacency and direction\\
-$\lambda_A$, $\lambda_D$ & fixed thresholds for the two certificate families\\
-$d_s$ & log-score difference of the two forecasters at observation $s$\\
-$m_0$ & warm-up length, excluded from every monitored process\\
-\bottomrule
-\end{tabular}
-\end{table}
+
 
 \subsection{Setting and assumptions}\label{sec:setting}
 
@@ -257,7 +243,7 @@ certified adjacent once \emph{every} $S\in\Scal_k(i,j)$ has been rejected.
 \begin{proposition}\label{prop:np}
 Let $(i,j)$ be non-adjacent in $\Gstar$ and let $S^\star\in\Scal_k(i,j)$ separate
 them. Suppose the conditional-mean estimates are predictable and the moment
-conditions of \citet{waudbysmith2024asymptotic} hold for $z_s$, and that the
+conditions of \citet{waudbysmith2024asymptotic} hold for $z_s$ (finite sixth moments of $X$ suffice for the square products), and that the
 product of the estimation errors, $\Exp[(f-\hat f_i)(g-\hat f_j)]$, has a running
 average that is $o_P(t^{-1/2})$. Then the probability that $S^\star$ is ever rejected is at most
 $\alpha_{\mathrm{pair}}$, asymptotically, and so is the probability that
@@ -275,9 +261,16 @@ probability is smaller.
 \end{proof}
 
 \noindent The guarantee is asymptotic, and it is conditional on the estimation
-error being small: no sequential test of conditional independence is valid
-uniformly over all laws \citep{shah2020hardness}. In exchange it covers nonlinear
-conditional means, which the linear primitive does not.
+error being small, uniformly enough in time that the early fits, which are poor,
+do not dominate the running average of the bias. No sequential test of conditional
+independence is valid uniformly over all laws \citep{shah2020hardness}, and we give
+no regression class and rate for which the product-rate condition holds and do not
+check it: the additive spline fit can leave a non-vanishing error product if the
+conditional means are not additive in $X_S$, in which case a separating set may be
+rejected and a non-adjacent pair certified. The false-edge rates measured in
+Section~\ref{sec:experiments} (for example $5$ of $60$ graphs at $d=16$ against a
+level of $0.05$) are the evidence on this point, not a proof. In exchange the test
+covers nonlinear conditional means, which the linear primitive does not.
 
 \paragraph{Implementation.} The regression of each $X_v$ and $X_v^2$ on $X_S$ is a
 ridge-penalised additive cubic spline (three knots at the quartiles of the
@@ -348,9 +341,11 @@ warm-up prefix, for the effect. The class \texttt{gg} has constant scale; the
 class \texttt{ggh} lets the log-scale be quadratic in the cause, which covers
 heteroscedastic noise
 \citep{xu2022heci,immer2023loci}. The \emph{agreement} certificate reports a
-direction only when both classes certify the same one. Each class is
-Ville-bounded by the same argument, so agreement cannot err more often than
-either alone; its purpose is protection against model-class mistakes: the
+direction only when both classes certify the same one. Each class has the
+asymptotic guarantee of Proposition~\ref{prop:orient}, so agreement cannot, asymptotically,
+certify the better-fitting direction wrongly more often than either class alone;
+this concerns predictive fit and not causation, and the purpose of the rule is
+protection against model-class mistakes: the
 constant-scale class alone certifies the wrong direction on every
 heteroscedastic Gaussian pair it decides in our simulations, and the location-scale class alone is too
 flexible to resolve linear non-Gaussian pairs
@@ -423,7 +418,8 @@ examined does not enter the bound.
 \begin{theorem}[Adjacency]\label{thm:main}
 Under Assumption~\ref{ass:sep}, linear structural equations with independent
 errors, and Gaussian regression errors in~\eqref{eq:safelinear} for every
-examined $(i,j,S)$, the probability that CERT-CD ever certifies an edge between
+examined $(i,j,S)$ and both roles of the pair (which holds, for example, when the
+structural model is jointly Gaussian), the probability that CERT-CD ever certifies an edge between
 a non-adjacent pair is at most $2\alpha_A$, uniformly over time and at every
 data-dependent stopping time of the run.
 \end{theorem}
@@ -435,7 +431,7 @@ most $\binom d2$ non-adjacent pairs gives $\binom d2\cdot 2/\lambda_A=2\alpha_A$
 \end{proof}
 
 \noindent Choosing $\lambda_A=2\binom d2/\alpha_A$ gives $\alpha_A$ exactly; the
-experiments use the shipped threshold, so the guaranteed bound there is
+experiments use $\lambda_A=\binom d2/\alpha_A$, so the guaranteed bound there is
 $2\alpha_A$. Under non-Gaussian errors the bound holds asymptotically
 (Remark~\ref{rem:offmodel}). With the nonparametric primitive of
 Section~\ref{sec:npprimitive} each pair has the level $\alpha_A/\binom d2$ and no
@@ -526,7 +522,7 @@ evidence for every pair in one random six-node DAG with Laplace errors (the
 first draw of a fixed seed, six true edges). The running maximum of
 $\log_{10}A_t$ is plotted against the number of observations. Evidence for the
 true edges rises past the threshold of $\lambda_A=\binom62/0.05=300$ between
-$150$ and $350$ observations and is then frozen, since certified pairs are no
+$100$ and $350$ observations and is then frozen, since certified pairs are no
 longer updated; the evidence of the nine non-adjacent pairs stays below it. The
 highest of these, at about $10^{2.4}$, lies just under the threshold, which is
 the situation the family bound is designed to cover: with $15$ pairs, a few

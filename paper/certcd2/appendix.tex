@@ -77,16 +77,55 @@ $\beta_0$.
 
 \section{Additional experimental detail}\label{app:extra}
 
-\paragraph{Hyperparameters.} Warm-up of $50$ discarded rows for the adjacency
-stream; prior standard deviation $0.5$ on the standardised scale
-($g=0.25$); $k=2$; adjacency share $\alpha_A/\alpha=0.5$; batch size $250$ in the
-graph experiments. For the pair orientation certificate: $\alpha=0.05$,
-$\rho$ tuned to $t^\ast=200$, a $60$-observation minimum, warm-up
-$\max(100,\lceil0.2n\rceil)$.
+\paragraph{Hyperparameters.} Linear primitive: warm-up of $50$ discarded rows;
+prior standard deviation $0.5$ on the standardised scale ($g=0.25$); $k=2$;
+adjacency share $\alpha_A/\alpha=0.5$; batches of $100$ rows in all monitoring
+experiments except the faithfulness experiment, which uses $250$. Nonparametric
+primitive: warm-up of $100$ discarded rows, $k=2$ ($k=3$ on the Causal Chambers),
+per-pair level $\alpha_A/\binom d2$ with $\alpha_A=0.05$, ridge penalty $1$,
+refits when the sample has grown by a factor $1.25$, batches of $100$ rows. Pair
+orientation: $\alpha=0.05$, $\rho$ tuned to $t^\ast=200$, a $60$-observation
+minimum, warm-up $\max(100,\lceil0.2n\rceil)$, refits every $50$ scored rows.
 
-\paragraph{Reproduction.} \texttt{python experiments/run\_all.py} reproduces the
-adjacency experiments. The scripts \texttt{exp13\_monitoring\_fwer.py},
-\texttt{exp14\_tuebingen\_relfit.py}, \texttt{exp15\_primitive\_offmodel.py}
-and \texttt{exp16\_pair\_orientation\_sim.py} reproduce the tables of
-Section~\ref{sec:experiments}; seeds are fixed in each script and the results
-are written to \texttt{results/} as JSON.
+\paragraph{Calibration of the linear primitive under six error laws.}
+Table~\ref{tab:primitive} reports the realised probability of ever crossing for
+the linear primitive with homoscedastic errors, $2000$ replications, monitored to
+$n=800$ after every tenth observation, prior scale $0.4$ ($g=0.16$). Every entry is
+at or below its nominal level; the largest realised-to-nominal ratio is $0.95$
+(shifted exponential, $\alpha=0.01$) and the median is $0.48$.
+
+\begin{table}[h]
+\centering
+\caption{Realised probability of ever crossing the threshold, linear primitive,
+six error laws.}\label{tab:primitive}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+error law & $\alpha=0.20$ & $\alpha=0.10$ & $\alpha=0.05$ & $\alpha=0.01$ \\
+\midrule
+Gaussian & $0.091$ & $0.046$ & $0.023$ & $0.003$ \\
+Laplace & $0.092$ & $0.047$ & $0.024$ & $0.003$ \\
+uniform & $0.107$ & $0.052$ & $0.031$ & $0.006$ \\
+Student-$t_5$ & $0.093$ & $0.044$ & $0.020$ & $0.004$ \\
+shifted exponential & $0.101$ & $0.051$ & $0.028$ & $0.010$ \\
+two-component mixture & $0.097$ & $0.049$ & $0.028$ & $0.006$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Comparison rules.} IGCI is the entropy form with a uniform reference
+(infer $x\to y$ if the spacing entropy of $y$ is smaller than that of $x$ after
+min--max scaling) \citep{daniusis2010inferring}. We re-implemented the published
+rules in a few lines each and did not tune them. RECI \citep{blobaum2018cause} compares the
+mean squared error of a cubic polynomial regression in each direction after
+min--max scaling. ANM-HSIC fits a cubic spline regression in each direction and
+prefers the direction in which the residual has the smaller HSIC with the
+regressor (Gaussian kernels, median bandwidth, at most $500$ rows). The pairwise
+LiNGAM rule is the first-order likelihood-ratio statistic of
+\citet{hyvarinen2013pairwise} with the sign set by the sample kurtosis.
+
+\paragraph{Reproduction.} The experiment scripts are in \texttt{experiments/},
+named by experiment number, and the figure and summary scripts in \texttt{scripts/};
+seeds are fixed in each script and results are written to \texttt{results/} as JSON.
+Scripts for the monitoring, Tübingen, pair-orientation, scaling, nonlinear and
+Causal Chambers experiments were committed before they were run.
