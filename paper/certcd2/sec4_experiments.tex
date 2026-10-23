@@ -316,22 +316,55 @@ ggh only & 18 & 14 & 0.778 & $[0.524,0.936]$ & 0.015\\
 The agreement certificate decided $12$ of $80$ scored pairs ($15\%$, which is
 $11.8\%$ of all $102$) and was right on $11$
 (Table~\ref{tab:tuebingen}); weighted by the official weights its accuracy is
-$0.816$. Forced to always output a direction, the constant-scale class is right on
-$72.5\%$ of the $80$ scored pairs ($0.65$ weighted) and the location-scale class on
-$70\%$ ($0.705$). Published methods report forced accuracies of roughly $63$--$83\%$
-on all pairs \citep{mooij2016distinguishing,tagasovska2020bqcd,immer2023loci},
-under their own protocols; abstaining methods in the literature report $75$--$85\%$
-at coverages of $35$--$85\%$. These numbers are not directly comparable to ours,
-which are on a subset, with abstention, at a pre-fixed $\alpha$. The evidence is
-modest: $12$ decisions, a wide interval, and a statement about predictive fit.
-Figure~\ref{fig:tuebingen} shows pair~1, where both classes certify the
-direction.
+$0.816$. Forced to always output a direction, our two classes are right on $72.5\%$
+(constant scale, $0.65$ weighted) and $70\%$ (location scale, $0.705$ weighted)
+of the $80$ scored pairs. Table~\ref{tab:tueb-base} compares them with the four
+forced-choice rules computed under the same preprocessing. On the $80$ scored
+pairs the best rule by unweighted accuracy is RECI ($66.2\%$), and RECI is
+also the best by weighted accuracy ($0.758$, against $0.65$ and $0.705$ for our
+classes). So the forced predictions of our forecasters are not uniformly better
+than a simple regression-error rule; the contribution of the certificate is the
+abstention, which turns a $70$--$72\%$ forced accuracy on this set into $11$ of $12$
+on the pairs it commits to. Published methods report forced accuracies of
+roughly $63$--$83\%$ on all pairs
+\citep{mooij2016distinguishing,tagasovska2020bqcd,immer2023loci} under their own
+protocols, and abstaining methods in the literature report $75$--$85\%$ at
+coverages of $35$--$85\%$; these are not comparable to ours, which are on a subset,
+with abstention, at a pre-fixed $\alpha$. The evidence is modest: $12$ decisions,
+a wide interval, and a statement about predictive fit.
+
+\begin{table}[t]
+\caption{Tübingen pairs: forced-choice accuracy (unweighted / weighted by the
+official weights) on the $80$ scored pairs and, for the baselines, on all $102$.}
+\label{tab:tueb-base}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Rule & $80$ scored pairs & all $102$ pairs\\
+\midrule
+CERT-CD constant scale (forced) & 0.725 / 0.65 & --\\
+CERT-CD location-scale (forced) & 0.700 / 0.705 & --\\
+IGCI & 0.537 / 0.689 & 0.559 / 0.664\\
+RECI & 0.662 / 0.758 & 0.608 / 0.709\\
+ANM-HSIC & 0.650 / 0.618 & 0.569 / 0.585\\
+pairwise LiNGAM & 0.562 / 0.565 & 0.608 / 0.620\\
+\midrule
+CERT-CD agreement, decided only & 11 of 12 correct (0.917) & --\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:tuebingen} shows two pairs: pair~5, the first on which the
+agreement certificate commits, correctly, and pair~47, the only pair on which it
+commits and is wrong; the wrong decision is made on $254$ observations, with
+$154$ scored, and the confidence sequence only just excludes zero.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.7\linewidth]{tuebingen_demo_pair0001.png}
-\caption{Tübingen pair~1: scatter plot and the confidence sequence for the
-log-score difference.}\label{fig:tuebingen}
+\includegraphics[width=0.85\linewidth]{tuebingen_demo_pairs.png}
+\caption{Tübingen pairs~5 (top) and~47 (bottom): scatter plot and confidence
+sequence for the running mean log-score difference under the constant-scale
+class; a lower end above zero certifies the true direction.}\label{fig:tuebingen}
 \end{figure}
 
 \subsection{Scope: where the certificates fail}\label{sec:exp-scope}
