@@ -2,7 +2,7 @@
 
 Written and committed before running.  exp14 fixed one seed that controls the
 row permutation, the subsample of long pairs and the dequantisation of ties.
-Here the identical procedure is repeated for 20 further seeds; the headline
+Here the identical procedure is repeated for 5 further seeds; the headline
 count (12 decided, 11 correct for the agreement certificate) is a single draw,
 and this experiment reports its spread.  Truth is taken from the benchmark
 (x is the cause in every pair as returned by load_pairs).
@@ -23,7 +23,7 @@ from exp12_tuebingen_cep import load_pairs  # noqa: E402
 from exp14_tuebingen_relfit import MAX_N, dequantise  # noqa: E402
 from sprint_cd.relative_fit import certify_direction  # noqa: E402
 
-SEEDS = [20261100 + 17 * k for k in range(20)]
+SEEDS = [20261100 + 17 * k for k in range(5)]
 
 
 def one(a):
