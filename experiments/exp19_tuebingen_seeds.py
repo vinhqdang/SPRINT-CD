@@ -37,13 +37,28 @@ def one(a):
     return {"seed": seed, "pair": pid, "weight": w, "r": r}
 
 
+
+def resumable_map(pool, fn, jobs, part_path, chunk=40):
+    """Map ``fn`` over ``jobs`` in chunks, checkpointing to ``part_path`` so a restart resumes."""
+    import json as _j
+    done = _j.loads(part_path.read_text())["records"] if part_path.exists() else []
+    for s in range(len(done), len(jobs), chunk):
+        done.extend(pool.map(fn, jobs[s:s + chunk], chunksize=2))
+        part_path.write_text(_j.dumps({"records": done}))
+        print(f"{len(done)}/{len(jobs)}", flush=True)
+    return done
+
+
 def main():
     pairs = list(load_pairs())
     jobs = [(p[0], p[1], p[2], p[3], s) for s in SEEDS for p in pairs]
     with Pool(4) as pool:
-        recs = pool.map(one, jobs, chunksize=4)
+        recs = resumable_map(pool, one, jobs, HERE.parent / 'results' / 'exp19_tuebingen_seeds.partial.json', chunk=80)
     out = {"seeds": SEEDS, "records": recs}
     (HERE.parent / "results" / "exp19_tuebingen_seeds.json").write_text(json.dumps(out))
+    pp = HERE.parent / "results" / "exp19_tuebingen_seeds.partial.json"
+    if pp.exists():
+        pp.unlink()
     print("wrote results/exp19_tuebingen_seeds.json")
 
 

@@ -82,6 +82,18 @@ def tueb_one(a):
             "base": {k: f(x, y) for k, f in BASELINES.items()}}
 
 
+
+def resumable_map(pool, fn, jobs, part_path, chunk=40):
+    """Map ``fn`` over ``jobs`` in chunks, checkpointing to ``part_path`` so a restart resumes."""
+    import json as _j
+    done = _j.loads(part_path.read_text())["records"] if part_path.exists() else []
+    for s in range(len(done), len(jobs), chunk):
+        done.extend(pool.map(fn, jobs[s:s + chunk], chunksize=2))
+        part_path.write_text(_j.dumps({"records": done}))
+        print(f"{len(done)}/{len(jobs)}", flush=True)
+    return done
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--suite", choices=["sim", "sweep", "tuebingen"], required=True)
@@ -92,17 +104,20 @@ def main():
     with Pool(a.workers) as pool:
         if a.suite == "sim":
             jobs = [(f, a.n, 1000 * k + 7) for f in FAMILIES for k in range(a.reps)]
-            recs = pool.map(sim_one, jobs, chunksize=2)
+            recs = resumable_map(pool, sim_one, jobs, HERE.parent / 'results' / f'exp18_{a.suite}.partial.json')
         elif a.suite == "sweep":
             jobs = [(f, n, 1000 * k + 7) for f in SWEEP_FAMILIES for n in SWEEP_N
                     for k in range(a.reps)]
-            recs = pool.map(sim_one, jobs, chunksize=2)
+            recs = resumable_map(pool, sim_one, jobs, HERE.parent / 'results' / f'exp18_{a.suite}.partial.json')
         else:
             from exp12_tuebingen_cep import load_pairs
-            recs = pool.map(tueb_one, list(load_pairs()), chunksize=2)
+            recs = resumable_map(pool, tueb_one, list(load_pairs()), HERE.parent / 'results' / 'exp18_tuebingen.partial.json')
     out = {"config": vars(a), "records": recs}
     path = HERE.parent / "results" / f"exp18_{a.suite}.json"
     path.write_text(json.dumps(out))
+    part = path.with_suffix(".partial.json")
+    if part.exists():
+        part.unlink()
     print("wrote", path)
 
 
