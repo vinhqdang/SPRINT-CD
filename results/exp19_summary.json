@@ -1,0 +1,67 @@
+{
+ "20261100": {
+  "scored": 80,
+  "agree": {
+   "decided": 9,
+   "correct": 9
+  },
+  "gg": {
+   "decided": 17,
+   "correct": 15
+  },
+  "ggh": {
+   "decided": 17,
+   "correct": 16
+  },
+  "forced_gg": 0.675,
+  "forced_ggh": 0.725
+ },
+ "20261117": {
+  "scored": 80,
+  "agree": {
+   "decided": 11,
+   "correct": 11
+  },
+  "gg": {
+   "decided": 24,
+   "correct": 20
+  },
+  "ggh": {
+   "decided": 20,
+   "correct": 15
+  },
+  "forced_gg": 0.7125,
+  "forced_ggh": 0.6375
+ },
+ "20261134": {
+  "scored": 80,
+  "agree": {
+   "decided": 10,
+   "correct": 10
+  },
+  "gg": {
+   "decided": 18,
+   "correct": 14
+  },
+  "ggh": {
+   "decided": 18,
+   "correct": 15
+  },
+  "forced_gg": 0.675,
+  "forced_ggh": 0.5875
+ },
+ "exp14_seed": {
+  "agree": {
+   "decided": 12,
+   "correct": 11
+  },
+  "gg": {
+   "decided": 23,
+   "correct": 19
+  },
+  "ggh": {
+   "decided": 18,
+   "correct": 14
+  }
+ }
+}

@@ -394,6 +394,16 @@ CERT-CD agreement, decided only & 11 of 12 correct (0.917) & --\\
 \end{tabular}
 \end{table}
 
+\paragraph{Sensitivity to the random draws.} The protocol uses one seed for the
+row permutation, the subsample of long pairs and the dequantisation of ties. We
+repeated it with three further seeds (\texttt{exp19}), keeping everything else
+fixed. The agreement certificate decided $9$, $11$ and $10$ pairs and was right
+on $9$, $11$ and $10$ respectively, against $11$ of $12$ for the frozen seed; the
+constant-scale class decided $17$ to $24$ pairs with $14$ to $20$ correct. The
+counts are of the same pairs under different random draws and are therefore not
+independent evidence, but they show that the headline is not an artefact of one
+lucky permutation. The one error of the frozen seed (pair~47) did not recur.
+
 Figure~\ref{fig:tuebingen} shows two pairs: pair~5, the first on which the
 agreement certificate commits, correctly, and pair~47, the only pair on which it
 commits and is wrong; the wrong decision is made on $254$ observations, with
