@@ -80,6 +80,20 @@ $d=4,8,12,16$ (the scaling data below) it gives $0/60$, $3/60$, $2/60$ and $5/60
 graphs with a false edge, with precision $\ge0.992$ and recall between $0.91$ and
 $0.95$.
 
+\paragraph{Deleting with the same test.} To separate the effect of the test from the
+effect of the architecture, we ran PC (depth $\le3$) with the same nonparametric
+conditional-independence test used as PC uses a test: at each prefix an edge is
+deleted when some conditioning set gives a $p$-value above $\alpha$ (cross-fitted
+residuals, three products, Bonferroni over the three). On the same $150$ DAGs it
+reported a false edge at some sample size in $115$ of $150$ graphs at
+$\alpha=0.05$ ($0.767$, Wilson $[0.693,0.827]$) and $58$ of $150$ at $\alpha=0.01$
+($0.387$, $[0.312,0.467]$) under Laplace errors, and in $118$ and $48$ of $150$
+under Gaussian errors ($0.787$ and $0.320$). At $n=6400$ under Laplace errors its
+precision and recall are $0.932$ and $0.963$ at $\alpha=0.05$ and $0.974$ and
+$0.954$ at $\alpha=0.01$. The monitoring failure of the comparators is therefore
+not due to the Fisher-$z$ test or to a particular score: it follows from
+re-evaluating a delete-on-non-rejection procedure at each sample size.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{exp13_monitoring_fwer.png}
@@ -105,6 +119,7 @@ sample size.
 \caption{Skeleton precision / recall by sample size, Laplace errors, $150$ DAGs
 at each sample size.}\label{tab:byn}
 \small
+\scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}lccccccc@{}}
 \toprule
 $n$ & 100 & 200 & 400 & 800 & 1600 & 3200 & 6400\\
@@ -135,14 +150,16 @@ and $94$ seconds, against under three seconds for each comparator.
 
 \begin{table}[t]
 \caption{Monitoring by graph size ($60$ DAGs per size, Laplace errors,
-$n\le3200$): probability of ever reporting a false edge, with CERT-CD's Wilson
-interval.}\label{tab:scaling}
+$n\le3200$): probability of ever reporting a false edge, with the upper end of CERT-CD's
+Wilson interval.}\label{tab:scaling}
 \small
+\scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 Method & $d=4$ & $d=8$ & $d=12$ & $d=16$\\
 \midrule
-CERT-CD & 0.000 $[0,0.06]$ & 0.050 $[0.02,0.14]$ & 0.067 $[0.03,0.16]$ & 0.083 $[0.04,0.18]$\\
+CERT-CD & 0.000 & 0.050 & 0.067 & 0.083\\
+\quad Wilson upper limit & 0.06 & 0.14 & 0.16 & 0.18\\
 PC, $\alpha=0.05$ & 0.233 & 0.667 & 0.883 & 1.000\\
 PC, $\alpha=0.01$ & 0.033 & 0.267 & 0.367 & 0.667\\
 GES-BIC & 0.317 & 0.933 & 1.000 & 1.000\\
@@ -500,6 +517,44 @@ counts are of the same pairs under different random draws and are therefore not
 independent evidence, but they show that the headline is not an artefact of one
 lucky permutation. The one error of the frozen seed (pair~47) did not recur.
 
+\paragraph{Comparison at the same coverage.} The certificate abstains, the four rules
+do not, so we also ranked the pairs by each rule's own confidence score (a margin of
+the statistic that the rule compares) and took the $k$ most confident, with $k$ equal
+to the number of pairs on which the certificate commits (Table~\ref{tab:matched}). On the Tübingen pairs
+RECI is right on $11$ of its $12$ most confident pairs, as many as the agreement
+certificate, and on $21$ of $23$ and $16$ of $18$ against $19$ of $23$ and $14$ of
+$18$ for the constant-scale and location-scale classes; on the held-out simulated
+pairs it is right on $82$ of $83$ against $78$ of $83$; on the chamber pairs RECI and
+IGCI are right on all of them, as are the classes. At matched coverage, then, the
+certificate is not more accurate than RECI ranked by confidence. What the
+certificate adds is a stopping rule: it decides how many pairs to commit to from the
+data, with an asymptotic statement about the probability of a wrong
+better-fit direction, whereas a top-$k$ list needs the coverage specified in advance and
+carries no statement about its error. The rules are our implementations
+(Appendix~\ref{app:extra}); LOCI and QCCD \citep{immer2023loci,tagasovska2020bqcd} are not
+included, since we did not obtain a trustworthy implementation.
+
+\begin{table}[t]
+\caption{Correct / committed at the coverage of the certificate: the certificate itself,
+and each rule's most confident pairs at the same number $k$. Tübingen: $80$ scored
+pairs; held-out simulated families: $270$ pairs; chamber edges: $94$ pair-runs.}
+\label{tab:matched}
+\small
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}llccccc@{}}
+\toprule
+Pairs & Coverage ($k$) & certificate & RECI & IGCI & ANM-HSIC & LiNGAM\\
+\midrule
+Tübingen & agree ($12$) & 11/12 & 11/12 & 4/12 & 9/12 & 9/12\\
+ & constant scale ($23$) & 19/23 & 21/23 & 10/23 & 16/23 & 14/23\\
+held-out & agree ($83$) & 78/83 & 82/83 & 73/83 & 67/83 & 57/83\\
+ & constant scale ($139$) & 129/139 & 130/139 & 118/139 & 109/139 & 90/139\\
+chambers & agree ($31$) & 31/31 & 31/31 & 31/31 & 29/31 & 30/31\\
+ & constant scale ($48$) & 48/48 & 48/48 & 48/48 & 43/48 & 46/48\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Figure~\ref{fig:tuebingen} shows two pairs: pair~5, the first on which the
 agreement certificate commits, correctly, and pair~47, the only pair on which it
 commits and is wrong; the wrong decision is made on $254$ observations, with
@@ -565,24 +620,24 @@ scoring is partly circular for any method that detects conditional dependence
 with large $n$, and we report both versions.
 
 \begin{table}[t]
-\caption{Causal Chambers, $10$ subsamples of $4000$ rows each. ``Adjusted'': graphs
-with a false edge at some sample size (of $10$) and false edges per subsample at
+\caption{Causal Chambers, $10$ subsamples of $4000$ rows each. Columns: ``ever'', subsamples (of $10$) with a false edge,
+adjusted for $V$, at some sample size; ``adj.'', false edges per subsample at
 $n=4000$, counting a certified pair as correct if it is a graph edge or in the
-reference set $V$; ``strict'': false edges per subsample counting graph edges only.
-Recall is of the graph edges ($8$ and $39$). Wind tunnel: $d=10$, $|V|=11$;
+reference set $V$; ``strict'', the same counting graph edges only; ``rec.'', recall of the graph edges ($8$ and $39$). Wind tunnel: $d=10$, $|V|=11$;
 light tunnel: $d=20$, $|V|=5$. The CERT-CD variants have orientation off.}
 \label{tab:chamber}
 \small
 \setlength{\tabcolsep}{3pt}
+\scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}lcccccccc@{}}
 \toprule
  & \multicolumn{4}{c}{wind tunnel} & \multicolumn{4}{c}{light tunnel}\\
-Method & adj.\ ever & adj./run & strict/run & recall & adj.\ ever & adj./run & strict/run & recall\\
+Method & ever & adj. & strict & rec. & ever & adj. & strict & rec.\\
 \midrule
-CERT-CD nonparametric, $k=3$ & 1 & 0.1 & 5.9 & 0.12 & 0 & 0.0 & 3.0 & 0.18\\
-CERT-CD linear, $k=3$ & 10 & 1.1 & 3.7 & 0.39 & 4 & 0.4 & 3.5 & 0.18\\
-CERT-CD nonparametric, $k=2$ & 1 & 0.2 & 6.2 & 0.12 & 10 & 5.6 & 9.6 & 0.19\\
-CERT-CD linear, $k=2$ & 10 & 1.1 & 4.6 & 0.39 & 10 & 5.9 & 9.9 & 0.18\\
+CERT-CD nonparam., $k=3$ & 1 & 0.1 & 5.9 & 0.12 & 0 & 0.0 & 3.0 & 0.18\\
+CERT-CD lin., $k=3$ & 10 & 1.1 & 3.7 & 0.39 & 4 & 0.4 & 3.5 & 0.18\\
+CERT-CD nonparam., $k=2$ & 1 & 0.2 & 6.2 & 0.12 & 10 & 5.6 & 9.6 & 0.19\\
+CERT-CD lin., $k=2$ & 10 & 1.1 & 4.6 & 0.39 & 10 & 5.9 & 9.9 & 0.18\\
 PC, $\alpha=0.05$ & 10 & 2.0 & 7.9 & 0.53 & 10 & 7.9 & 11.9 & 0.24\\
 PC, $\alpha=0.01$ & 10 & 1.8 & 7.2 & 0.44 & 10 & 6.4 & 10.4 & 0.22\\
 GES-BIC & 10 & 8.3 & 16.8 & 0.69 & 10 & 8.9 & 12.9 & 0.60\\
@@ -606,6 +661,55 @@ graph does not explain, but it means that against the graph alone CERT-CD still
 reports false edges. The baselines are scored on the same subsamples; PC, GES and
 DirectLiNGAM were run with their usual settings and were not given a larger
 conditioning order or a nonparametric test.
+
+\paragraph{Untouched recordings.} Because the choices above were made after seeing
+the first two recordings, we froze the algorithms and ran them on recordings that
+had not been used (a pre-specified rule: all $15$ random-walk runs of the wind
+tunnel with at least $8000$ rows, the pressure-control experiment of the wind
+tunnel, and the three light-tunnel walk experiments, $19$ recordings; the
+sizes of the graphs are $10$ to $20$ nodes and $18$ to $39$ edges). Each recording
+was shuffled and split in halves; the algorithms monitored $4000$ rows of one half
+and the reference set $V$ was built on the other half, so that $V$ does not depend on the
+monitored rows. Table~\ref{tab:fresh} and the text report what happened.
+
+\begin{table}[t]
+\caption{Untouched Causal Chamber recordings. For each group: recordings in which a false
+edge was reported at some sample size, adjusted for the reference set $V$ (strict, graph
+edges only, in parentheses), false edges per recording at $n=4000$ (adjusted) and recall of
+the graph edges. Wind tunnel walks: $15$ recordings, $16$ nodes, $26$ edges, $31$ reference
+pairs on average; pressure control: $1$, $11$ nodes, $18$ edges; light tunnel walks: $3$,
+$13$ nodes on average, $26$ edges, $14$ reference pairs.}\label{tab:fresh}
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lccccccccc@{}}
+\toprule
+ & \multicolumn{3}{c}{wind walks ($15$)} & \multicolumn{3}{c}{pressure control ($1$)} & \multicolumn{3}{c}{light walks ($3$)}\\
+Method & ever & /run & rec. & ever & /run & rec. & ever & /run & rec.\\
+\midrule
+CERT-CD nonparam., $k=3$ & 10 (14) & 1.1 & 0.25 & 1 (1) & 1.0 & 0.12 & 1 (3) & 0.3 & 0.24 \\
+CERT-CD linear, $k=3$ & 15 (15) & 2.2 & 0.26 & 1 (1) & 1.0 & 0.12 & 0 (3) & 0.0 & 0.17 \\
+PC, $\alpha=0.05$ & 15 (15) & 5.9 & 0.42 & 1 (1) & 2.0 & 0.25 & 2 (3) & 4.3 & 0.37 \\
+PC, $\alpha=0.01$ & 15 (15) & 4.9 & 0.38 & 1 (1) & 1.0 & 0.25 & 2 (3) & 3.0 & 0.36 \\
+GES-BIC & 15 (15) & 25.8 & 0.71 & 1 (1) & 3.0 & 0.62 & 3 (3) & 2.0 & 0.78 \\
+DirectLiNGAM & 15 (15) & 24.0 & 0.62 & 1 (1) & 4.0 & 0.56 & 2 (3) & 3.0 & 0.74 \\
+PC, nonparam.\ test, $\alpha=0.05$ & 15 (15) & 6.0 & 0.48 & 1 (1) & 5.0 & 0.31 & 2 (3) & 1.7 & 0.49 \\
+PC, nonparam.\ test, $\alpha=0.01$ & 15 (15) & 4.5 & 0.41 & 1 (1) & 3.0 & 0.25 & 2 (3) & 2.7 & 0.48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The guarantee did not hold on these recordings either. The nonparametric
+certificate at $k=3$ reported a false edge, adjusted for $V$, in $12$ of the $19$
+recordings (and a strict false edge in $18$ of $19$), against $18$ or $19$ of $19$ for the comparators. It
+had the fewest false edges per recording in the wind-tunnel walks ($1.1$ against $2.2$
+to $25.8$) and, with the linear variant and PC at $\alpha=0.01$, among the fewest in the
+other two groups ($1.0$ and $0.3$), but its recall of the graph edges is $0.25$, $0.12$
+and $0.24$, below that of every comparator except the linear variant. Counted by precision with
+$V$ taken as correct, it certified about $92\%$ of its $14.5$ edges per recording correctly in
+the wind-tunnel walks, against $80\%$ for PC at $\alpha=0.01$, $84\%$ for PC with the same
+test and about $60\%$ for GES and DirectLiNGAM. We conclude that, on real devices, the
+certificate behaves as a conservative edge detector with the fewest false edges among the
+methods compared, not as a procedure with a guaranteed false-edge probability.
 
 \paragraph{Direction.} Among the
 edges certified by CERT-CD that are true edges, the bivariate agreement

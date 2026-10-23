@@ -51,32 +51,30 @@ Monitoring-Valid Edges and Predictive-Fit Orientation}
 
 \abstract{Constraint-based causal discovery deletes an edge when a
 conditional-independence test fails to reject, so a lack of power is reported
-as a conclusion, and its output cannot be monitored as data arrive: an analyst
-who reruns it at each sample size and keeps any edge ever reported accumulates
-false edges. We study certificate-only discovery, which asserts a feature of
-the graph only by rejecting a null that is true whenever the feature is absent.
-The adjacency certificate is the minimum over conditioning sets of sequential
-tests, either a Bayes-factor test of a partial regression coefficient (exact
-for Gaussian regression errors, with no guarantee we can prove otherwise) or a
-nonparametric sequential generalised covariance test that allows nonlinear
-mechanisms (asymptotic); it bounds the probability that a false edge is ever
-certified, uniformly over time and without faithfulness, within those models. The orientation certificate compares sequentially fitted
-forecasters for the two factorisations of a pair and reports a direction only
-when two model classes agree; what it certifies is better predictive fit, not
-causation. In 150 random graphs monitored from $n=100$ to
-$6400$, CERT-CD reported a false edge in $2.7\%$ of graphs under Laplace noise (off the Gaussian model),
-against $27\%$ to $91\%$ for PC, GES and DirectLiNGAM, at the price of leaving
-most non-adjacent pairs undecided and a low recall at small samples. With
+as a conclusion, and rerunning it as data arrive accumulates false edges. We
+study certificate-only discovery, which asserts a feature of the graph only by
+rejecting a null that is true whenever the feature is absent. The adjacency
+certificate is the minimum over conditioning sets of sequential tests: a
+Bayes-factor test of a partial regression coefficient (exact for Gaussian
+regression errors) or a nonparametric sequential generalised covariance test that
+allows nonlinear mechanisms (asymptotic). It bounds the probability that a false
+edge is ever certified, uniformly over time and without faithfulness, within those
+models. The orientation certificate compares sequentially fitted forecasters for
+the two factorisations of a pair and reports a direction only when two model
+classes agree; it certifies better predictive fit, not causation. In 150 random
+graphs monitored from $n=100$ to $6400$, CERT-CD reported a false edge in $2.7\%$
+of graphs under Laplace noise (off the Gaussian model), against $27\%$ to $91\%$ for
+PC, GES and DirectLiNGAM and $32\%$ to $79\%$ for PC with the same nonparametric test;
+its recall is low at small samples and most non-adjacent pairs stay undecided. With
 nonlinear mechanisms the linear test reported a false edge in about half of the
-graphs and the nonparametric test in $1$ to $2$ of $60$. On the Tübingen
-cause-effect pairs, under a protocol fixed before the run, the orientation
-certificate committed on $12$ of $80$ scorable pairs and was right on $11$. On two physical devices with known graphs (Causal Chambers), every method,
-including CERT-CD with the linear test, reported edges the graph does not
-contain; with the nonparametric test and a larger conditioning order, chosen after
-seeing these data, CERT-CD reported no edge outside the graph and the pairs the
-graph cannot explain in $9$ and $10$ of $10$ subsamples, with recall of graph
-edges of $0.12$ and $0.18$. Both certificates fail outside
-their models, and we report where.}
+graphs and the nonparametric test in $1$ to $2$ of $60$. On the Tübingen pairs the
+orientation certificate committed on $12$ of $80$ scorable pairs and was right on
+$11$, as often as the twelve most confident pairs of RECI. On $19$ untouched
+recordings of physical devices with known graphs (Causal Chambers) the guarantee
+did not hold: CERT-CD still reported a false edge, adjusted for dependences the
+graph cannot explain, in $12$ recordings, though with the fewest false edges per
+recording of the methods compared and a recall of $0.12$ to $0.25$. Both
+certificates fail outside their models, and we report where.}
 
 \keywords{causal discovery, anytime-valid inference, e-values, sequential
 testing, additive noise models, family-wise error control}
