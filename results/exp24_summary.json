@@ -1,0 +1,106 @@
+{
+ "dataset0": {
+  "graph_edges": 8,
+  "reference_pairs": 11,
+  "nonparam_k3": {
+   "strict": {
+    "ever_false": 10,
+    "runs": 10,
+    "ci": [
+     0.722,
+     1
+    ],
+    "false_per_run": 5.9,
+    "certified_per_run": 6.9
+   },
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 10,
+    "ci": [
+     0.018,
+     0.404
+    ],
+    "false_per_run": 0.1,
+    "certified_per_run": 6.9
+   },
+   "recall_of_graph_edges": 0.125,
+   "reference_pairs_certified_per_run": 5.8
+  },
+  "linear_k3": {
+   "strict": {
+    "ever_false": 10,
+    "runs": 10,
+    "ci": [
+     0.722,
+     1
+    ],
+    "false_per_run": 3.7,
+    "certified_per_run": 6.8
+   },
+   "adjusted": {
+    "ever_false": 10,
+    "runs": 10,
+    "ci": [
+     0.722,
+     1
+    ],
+    "false_per_run": 1.1,
+    "certified_per_run": 6.8
+   },
+   "recall_of_graph_edges": 0.3875,
+   "reference_pairs_certified_per_run": 2.6
+  }
+ },
+ "dataset1": {
+  "graph_edges": 39,
+  "reference_pairs": 5,
+  "nonparam_k3": {
+   "strict": {
+    "ever_false": 10,
+    "runs": 10,
+    "ci": [
+     0.722,
+     1
+    ],
+    "false_per_run": 3.0,
+    "certified_per_run": 10.1
+   },
+   "adjusted": {
+    "ever_false": 0,
+    "runs": 10,
+    "ci": [
+     0,
+     0.278
+    ],
+    "false_per_run": 0.0,
+    "certified_per_run": 10.1
+   },
+   "recall_of_graph_edges": 0.18205128205128207,
+   "reference_pairs_certified_per_run": 3.0
+  },
+  "linear_k3": {
+   "strict": {
+    "ever_false": 10,
+    "runs": 10,
+    "ci": [
+     0.722,
+     1
+    ],
+    "false_per_run": 3.5,
+    "certified_per_run": 10.5
+   },
+   "adjusted": {
+    "ever_false": 4,
+    "runs": 10,
+    "ci": [
+     0.168,
+     0.687
+    ],
+    "false_per_run": 0.4,
+    "certified_per_run": 10.5
+   },
+   "recall_of_graph_edges": 0.1794871794871795,
+   "reference_pairs_certified_per_run": 3.1
+  }
+ }
+}
