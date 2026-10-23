@@ -230,3 +230,8 @@ paper/*.bbl
 paper/*.blg
 paper/build*.log
 data/
+paper/*/*.aux
+paper/*/*.bbl
+paper/*/*.blg
+paper/*/*.log
+paper/*/*.out
