@@ -65,6 +65,71 @@ splits the budget; edges, not arrowheads, are scored.
 each method (Laplace and Gaussian errors).}\label{fig:monitoring}
 \end{figure}
 
+\subsection{Sample size and graph size}\label{sec:exp-scaling}
+
+\paragraph{Power by sample size.} The same runs give precision and recall of the
+skeleton at each prefix (Table~\ref{tab:byn}, Laplace errors; Gaussian errors
+are similar). CERT-CD's precision is at least $0.99$ at every $n$, but its recall
+is low where the sample is small: $0.21$ at $n=100$ and $0.65$ at $n=200$,
+rising to $0.94$ at $n=6400$. The comparators recover most edges from $n=100$
+and pay with false edges. At a fixed large sample DirectLiNGAM is better
+than CERT-CD on this model (precision and recall $1.00$ at $n=6400$ against
+$0.99$ and $0.94$), because it uses the non-Gaussianity of every variable at
+once; the claim of CERT-CD is about monitoring, not about accuracy at a single
+sample size.
+
+\begin{table}[t]
+\caption{Skeleton precision / recall by sample size, Laplace errors, $150$ DAGs
+(\texttt{results/exp13\_by\_n.json}).}\label{tab:byn}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+$n$ & 100 & 200 & 400 & 800 & 1600 & 6400\\
+\midrule
+CERT-CD & 1.00/0.21 & 1.00/0.65 & 1.00/0.82 & 1.00/0.87 & 0.99/0.91 & 0.99/0.94\\
+PC $\alpha=0.01$ & 0.99/0.78 & 0.98/0.85 & 0.98/0.89 & 0.99/0.92 & 0.99/0.94 & 0.99/0.96\\
+PC $\alpha=0.05$ & 0.94/0.83 & 0.95/0.87 & 0.96/0.90 & 0.96/0.93 & 0.96/0.94 & 0.95/0.96\\
+GES-BIC & 0.83/0.93 & 0.84/0.94 & 0.87/0.96 & 0.88/0.97 & 0.92/0.98 & 0.94/0.99\\
+DirectLiNGAM & 0.85/0.98 & 0.91/0.99 & 0.97/1.00 & 0.98/1.00 & 0.99/1.00 & 1.00/1.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Graph size.} We repeated the monitoring experiment for
+$d=4,8,12,16$ with $60$ DAGs per size, Laplace errors, expected degree about
+$1.75$ and the grid $n=100,\dots,3200$ (Table~\ref{tab:scaling}). The
+probability that CERT-CD ever reports a false edge is $0$, $0.050$, $0.067$ and
+$0.083$, rising with $d$ but inside the guaranteed bound of $0.1$ (which is exact
+only for Gaussian regression errors); the Wilson upper limit at $d=16$ is
+$0.18$, so $60$ graphs cannot separate this from the bound. For PC at
+$\alpha=0.05$, GES and DirectLiNGAM the probability rises to between $0.88$ and
+$1.00$ at $d=12$ to $16$, and for PC at $\alpha=0.01$ to $0.67$. CERT-CD's recall
+stays between $0.92$ and $0.96$, its precision above $0.99$, and the fraction
+of pairs left undecided grows with $d$ ($0.56$ at $d=4$, $0.89$ at $d=16$),
+because the share of non-adjacent pairs grows and none of them is ever
+certified absent. The median runtime of one run at $n=3200$ is $17$, $45$, $67$
+and $94$ seconds, against under three seconds for each comparator.
+
+\begin{table}[t]
+\caption{Monitoring by graph size ($60$ DAGs per size, Laplace errors,
+$n\le3200$): probability of ever reporting a false edge, with CERT-CD's Wilson
+interval (\texttt{results/exp17\_summary.json}).}\label{tab:scaling}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & $d=4$ & $d=8$ & $d=12$ & $d=16$\\
+\midrule
+CERT-CD & 0.000 $[0,0.06]$ & 0.050 $[0.02,0.14]$ & 0.067 $[0.03,0.16]$ & 0.083 $[0.04,0.18]$\\
+PC, $\alpha=0.05$ & 0.233 & 0.667 & 0.883 & 1.000\\
+PC, $\alpha=0.01$ & 0.033 & 0.267 & 0.367 & 0.667\\
+GES-BIC & 0.317 & 0.933 & 1.000 & 1.000\\
+DirectLiNGAM & 0.217 & 0.867 & 0.967 & 1.000\\
+\midrule
+CERT-CD recall at $n=3200$ & 0.964 & 0.930 & 0.922 & 0.919\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{The adjacency primitive: cost of anytime validity and calibration off-model}
 \label{sec:exp-primitive}
 
