@@ -1,0 +1,572 @@
+{
+ "wind tunnel, random walks": {
+  "recordings": 15,
+  "mean_vars": 16.0,
+  "mean_graph_edges": 26.0,
+  "mean_reference_pairs": 31.466666666666665,
+  "CERT-CD nonparametric k=3": {
+   "strict": {
+    "ever_false": 14,
+    "runs": 15,
+    "ci": [
+     0.702,
+     0.988
+    ],
+    "false_per_run": 7.933333333333334,
+    "certified_per_run": 14.466666666666667
+   },
+   "recall": 0.25128205128205133,
+   "adjusted": {
+    "ever_false": 10,
+    "runs": 15,
+    "ci": [
+     0.417,
+     0.848
+    ],
+    "false_per_run": 1.1333333333333333,
+    "certified_per_run": 14.466666666666667
+   }
+  },
+  "CERT-CD linear k=3": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 7.333333333333333,
+    "certified_per_run": 14.133333333333333
+   },
+   "recall": 0.26153846153846155,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 2.2,
+    "certified_per_run": 14.133333333333333
+   }
+  },
+  "PC a=0.05": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 16.8,
+    "certified_per_run": 27.733333333333334
+   },
+   "recall": 0.4205128205128206,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 5.866666666666666,
+    "certified_per_run": 27.733333333333334
+   }
+  },
+  "PC a=0.01": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 14.6,
+    "certified_per_run": 24.533333333333335
+   },
+   "recall": 0.3820512820512821,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 4.866666666666666,
+    "certified_per_run": 24.533333333333335
+   }
+  },
+  "GES-BIC": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 47.13333333333333,
+    "certified_per_run": 65.46666666666667
+   },
+   "recall": 0.7051282051282051,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 25.8,
+    "certified_per_run": 65.46666666666667
+   }
+  },
+  "DirectLiNGAM": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 43.666666666666664,
+    "certified_per_run": 59.86666666666667
+   },
+   "recall": 0.6230769230769231,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 24.0,
+    "certified_per_run": 59.86666666666667
+   }
+  },
+  "PC-GCM a=0.05": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 21.066666666666666,
+    "certified_per_run": 33.6
+   },
+   "recall": 0.482051282051282,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 6.0,
+    "certified_per_run": 33.6
+   }
+  },
+  "PC-GCM a=0.01": {
+   "strict": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 17.733333333333334,
+    "certified_per_run": 28.266666666666666
+   },
+   "recall": 0.4051282051282052,
+   "adjusted": {
+    "ever_false": 15,
+    "runs": 15,
+    "ci": [
+     0.796,
+     1
+    ],
+    "false_per_run": 4.466666666666667,
+    "certified_per_run": 28.266666666666666
+   }
+  }
+ },
+ "wind tunnel, pressure control": {
+  "recordings": 1,
+  "mean_vars": 11.0,
+  "mean_graph_edges": 18.0,
+  "mean_reference_pairs": 31.0,
+  "CERT-CD nonparametric k=3": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 8.0,
+    "certified_per_run": 10.0
+   },
+   "recall": 0.125,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 1.0,
+    "certified_per_run": 10.0
+   }
+  },
+  "CERT-CD linear k=3": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 9.0,
+    "certified_per_run": 11.0
+   },
+   "recall": 0.125,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 1.0,
+    "certified_per_run": 11.0
+   }
+  },
+  "PC a=0.05": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 16.0,
+    "certified_per_run": 20.0
+   },
+   "recall": 0.25,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 2.0,
+    "certified_per_run": 20.0
+   }
+  },
+  "PC a=0.01": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 12.0,
+    "certified_per_run": 16.0
+   },
+   "recall": 0.25,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 1.0,
+    "certified_per_run": 16.0
+   }
+  },
+  "GES-BIC": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 27.0,
+    "certified_per_run": 37.0
+   },
+   "recall": 0.625,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 3.0,
+    "certified_per_run": 37.0
+   }
+  },
+  "DirectLiNGAM": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 28.0,
+    "certified_per_run": 37.0
+   },
+   "recall": 0.5625,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 4.0,
+    "certified_per_run": 37.0
+   }
+  },
+  "PC-GCM a=0.05": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 20.0,
+    "certified_per_run": 25.0
+   },
+   "recall": 0.3125,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 5.0,
+    "certified_per_run": 25.0
+   }
+  },
+  "PC-GCM a=0.01": {
+   "strict": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 18.0,
+    "certified_per_run": 22.0
+   },
+   "recall": 0.25,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 1,
+    "ci": [
+     0.207,
+     1
+    ],
+    "false_per_run": 3.0,
+    "certified_per_run": 22.0
+   }
+  }
+ },
+ "light tunnel, walks": {
+  "recordings": 3,
+  "mean_vars": 13.333333333333334,
+  "mean_graph_edges": 26.0,
+  "mean_reference_pairs": 14.0,
+  "CERT-CD nonparametric k=3": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 4.666666666666667,
+    "certified_per_run": 9.666666666666666
+   },
+   "recall": 0.24395824395824395,
+   "adjusted": {
+    "ever_false": 1,
+    "runs": 3,
+    "ci": [
+     0.061,
+     0.792
+    ],
+    "false_per_run": 0.3333333333333333,
+    "certified_per_run": 9.666666666666666
+   }
+  },
+  "CERT-CD linear k=3": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 3.3333333333333335,
+    "certified_per_run": 7.0
+   },
+   "recall": 0.17164783831450495,
+   "adjusted": {
+    "ever_false": 0,
+    "runs": 3,
+    "ci": [
+     0,
+     0.562
+    ],
+    "false_per_run": 0.0,
+    "certified_per_run": 7.0
+   }
+  },
+  "PC a=0.05": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 10.666666666666666,
+    "certified_per_run": 19.0
+   },
+   "recall": 0.36553219886553223,
+   "adjusted": {
+    "ever_false": 2,
+    "runs": 3,
+    "ci": [
+     0.208,
+     0.939
+    ],
+    "false_per_run": 4.333333333333333,
+    "certified_per_run": 19.0
+   }
+  },
+  "PC a=0.01": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 7.666666666666667,
+    "certified_per_run": 16.0
+   },
+   "recall": 0.36219552886219547,
+   "adjusted": {
+    "ever_false": 2,
+    "runs": 3,
+    "ci": [
+     0.208,
+     0.939
+    ],
+    "false_per_run": 3.0,
+    "certified_per_run": 16.0
+   }
+  },
+  "GES-BIC": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 11.666666666666666,
+    "certified_per_run": 30.0
+   },
+   "recall": 0.779446112779446,
+   "adjusted": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 2.0,
+    "certified_per_run": 30.0
+   }
+  },
+  "DirectLiNGAM": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 11.666666666666666,
+    "certified_per_run": 29.333333333333332
+   },
+   "recall": 0.7399542399542399,
+   "adjusted": {
+    "ever_false": 2,
+    "runs": 3,
+    "ci": [
+     0.208,
+     0.939
+    ],
+    "false_per_run": 3.0,
+    "certified_per_run": 29.333333333333332
+   }
+  },
+  "PC-GCM a=0.05": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 9.666666666666666,
+    "certified_per_run": 20.333333333333332
+   },
+   "recall": 0.49447066113732774,
+   "adjusted": {
+    "ever_false": 2,
+    "runs": 3,
+    "ci": [
+     0.208,
+     0.939
+    ],
+    "false_per_run": 1.6666666666666667,
+    "certified_per_run": 20.333333333333332
+   }
+  },
+  "PC-GCM a=0.01": {
+   "strict": {
+    "ever_false": 3,
+    "runs": 3,
+    "ci": [
+     0.438,
+     1
+    ],
+    "false_per_run": 9.666666666666666,
+    "certified_per_run": 20.0
+   },
+   "recall": 0.4754516421183088,
+   "adjusted": {
+    "ever_false": 2,
+    "runs": 3,
+    "ci": [
+     0.208,
+     0.939
+    ],
+    "false_per_run": 2.6666666666666665,
+    "certified_per_run": 20.0
+   }
+  }
+ }
+}
