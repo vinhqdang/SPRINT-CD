@@ -1,0 +1,60 @@
+
+\section{Discussion}\label{sec:discussion}
+
+\paragraph{What is established.} Under monitoring, the adjacency certificate
+kept the probability of ever reporting a false edge near $3$--$4\%$ in
+random eight-node graphs, where the comparators reached $27\%$ to $100\%$, and
+its stated bound is exact in the Gaussian regression model. The orientation
+certificate commits rarely and, on the Tübingen pairs under a frozen protocol,
+was right on $11$ of the $12$ pairs on which it committed.
+
+\paragraph{Limitations.}
+\begin{itemize}
+\item \emph{The adjacency bound is asymptotic off the Gaussian model.} The
+  null that a partial regression coefficient is zero follows from
+  d-separation in a linear model with independent errors, but the primitive is
+  exact only for Gaussian regression errors. Section~\ref{sec:exp-primitive}
+  measures how far from nominal it is under skewed, heavy-tailed and
+  heteroscedastic errors; we have no finite-sample correction. Conditional
+  independence testing without a model restriction is impossible
+  \citep{shah2020hardness}, so none is to be expected without further
+  assumptions.
+\item \emph{Most pairs stay undecided.} About three quarters of the pairs in the
+  eight-node experiments are undecided at $n=6400$ because the algorithm
+  never certifies absence, and the orientation certificate decided $15\%$ of
+  the scorable Tübingen pairs. Certificate-only output trades coverage for
+  validity, and a user who needs a complete graph needs a different method.
+\item \emph{Predictive fit is not causation.} The orientation certificate
+  certifies a better expected log score. It coincides with the causal direction
+  under additive-noise or linear non-Gaussian identifiability and under causal
+  sufficiency; under confounding it need not, and the multivariate algorithm
+  assumes causal sufficiency.
+\item \emph{The orientation layer inside the multivariate algorithm is the old
+  linear certificate.} Its guarantee is conditional on a linear
+  generalised-Gaussian model and fails outside it (Section~\ref{sec:exp-scope}).
+  Conditioning the relative-fit forecasters on the frozen block would remove
+  this, and is not done here.
+\item \emph{Assumed, not checked.} The linear structural model with
+  independent errors is an assumption. Residual diagnostics on the warm-up
+  prefix can flag gross departures, but they are not part of the guarantee.
+\item \emph{Small evidence base for orientation.} The Tübingen result rests on
+  $12$ committed pairs out of $80$ scorable, and $22$ of the $102$ pairs were
+  too short or discrete to score; the confidence interval on the accuracy is
+  wide. The method was designed after an earlier version failed on the same
+  data, without tuning on it, and Section~\ref{sec:exp-tuebingen} reports the
+  protocol that was fixed.
+\item \emph{Domain.} The experiments use continuous data from mostly low-dimensional
+  systems. The Sachs data, which are not of this kind, are reported as
+  out-of-scope behaviour (Section~\ref{sec:exp-scope}).
+\end{itemize}
+
+\section{Conclusion}\label{sec:conclusion}
+
+Asserting a feature of a causal graph only by rejecting a null that is true when
+the feature is absent removes the dependence of the false-edge guarantee on
+faithfulness and makes the guarantee survive monitoring. In simulation, this
+holds at a few percent where deletion-based methods reach most of the graphs,
+with the cost that most pairs are left undecided. A predictive-fit orientation
+certificate extends the same discipline to direction and committed rarely but
+mostly correctly on a standard benchmark. Both certificates are valid only
+within their models, and the paper reports where they fail.

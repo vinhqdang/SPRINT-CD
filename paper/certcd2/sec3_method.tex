@@ -1,0 +1,281 @@
+
+\section{Method}\label{sec:method}
+
+\subsection{Setting and assumptions}\label{sec:setting}
+
+Let $\Gstar$ be a directed acyclic graph on $V=\{1,\dots,d\}$ and let
+$X=(X_1,\dots,X_d)$ follow a linear structural equation model
+$X = B^\top X + e$, where $B$ is supported on the edges of $\Gstar$ and the
+errors $e_1,\dots,e_d$ are mutually independent with finite fourth moments.
+Observations $o_1,o_2,\dots$ are i.i.d.\ draws of $X$ and arrive in batches;
+$\Fcal_t$ is the $\sigma$-field of the first $t$ observations. We write
+$\pa(i)$ and $\de(i)$ for the parents and descendants of $i$ and
+$\Scal_k(i,j)=\{S\subseteq V\setminus\{i,j\}: |S|\le k\}$ for the admissible
+conditioning sets, a family fixed before any data are seen.
+
+\begin{assumption}[Separator size]\label{ass:sep}
+Every non-adjacent pair of $\Gstar$ has a d-separating set of size at most $k$.
+\end{assumption}
+
+Assumption~\ref{ass:sep} is structural. It holds whenever $k$ is at least the
+maximum in-degree of $\Gstar$, because for non-adjacent $i,j$ either
+$\pa(i)$ or $\pa(j)$ d-separates them; $k=d-2$ makes it vacuous at an
+exponential computational cost.
+
+For a pair $(i,j)$ and a set $S$ let $\beta_{i\leftarrow j\cdot S}$ denote the
+coefficient of $X_j$ in the population regression of $X_i$ on
+$(1,X_j,X_S)$.
+
+\begin{lemma}\label{lem:partial}
+If $S$ d-separates $i$ and $j$ in $\Gstar$, then
+$\beta_{i\leftarrow j\cdot S}=0$.
+\end{lemma}
+
+\noindent This is the standard fact that d-separation implies a vanishing
+partial covariance in a linear structural equation model
+\citep{spirtes2000causation}. It is a moment condition, weaker than
+conditional independence, and it does not require Gaussian errors. Faithfulness
+is the converse and is not assumed.
+
+\subsection{Certificates}\label{sec:principle}
+
+\begin{definition}\label{def:cert}
+Let $\phi$ be a feature of $\Gstar$. A \emph{certifying null} for $\phi$ is a
+hypothesis $H_\phi$ that holds whenever $\phi$ is false. A process
+$(E_t)_{t\ge 0}$ is \emph{Ville-valid} for $H$ if $E_t\ge 0$ and
+$\Prob(\exists t: E_t\ge\lambda)\le 1/\lambda$ for every $\lambda\ge 1$ and every
+$P\in H$. A \emph{certificate for $\phi$ at level $\alpha$} is the event that a
+Ville-valid process for $H_\phi$ reaches $1/\alpha$.
+\end{definition}
+
+\begin{proposition}[Soundness]\label{prop:single}
+If $\phi$ is false, the probability that it is ever certified at level
+$\alpha$ is at most $\alpha$.
+\end{proposition}
+
+\noindent The proof is the definition: if $\phi$ is false then $P\in H_\phi$.
+The implication runs one way. $H_\phi$ may also hold when $\phi$ is true, and
+the certificate then never fires; this is what buys validity without
+faithfulness and what costs power. Three consequences follow. There is no
+certifying null for ``$i$ and $j$ are non-adjacent'', so the algorithm cannot
+delete and must start from the empty graph. Its output is three-valued
+(certified adjacent, certified with a direction, undecided). And power is
+descriptive: nothing guarantees that a true edge is ever certified.
+
+\emph{Ville-valid} is weaker than \emph{e-process}, which requires
+$\Exp[E_\tau]\le 1$ at every stopping time of a single filtration. All our
+bounds use only the event that a process ever reaches a level, so they hold at
+every data-dependent stopping time of the run, but we do not claim the
+stronger property. Section~\ref{sec:primitive} shows why.
+
+\subsection{The adjacency certificate}\label{sec:adjacency}
+
+For a pair $(i,j)$ consider
+\begin{equation}\label{eq:sepnull}
+H^{\mathrm{sep}}_{ij}:\quad \exists S\in\Scal_k(i,j)\ \text{ with }\
+\beta_{i\leftarrow j\cdot S}=0 .
+\end{equation}
+By Lemma~\ref{lem:partial} and Assumption~\ref{ass:sep}, $H^{\mathrm{sep}}_{ij}$
+holds for every non-adjacent pair, so it is a certifying null for adjacency.
+Let $E^{(S)}_t$ be a Ville-valid process for the point null
+$\beta_{i\leftarrow j\cdot S}=0$ and define
+\begin{equation}\label{eq:adjacency}
+A_t(i,j)=\min_{S\in\Scal_k(i,j)} E^{(S)}_t(i,j).
+\end{equation}
+
+\begin{proposition}\label{prop:adjacency}
+Let $\lambda\ge 1$ and let $(i,j)$ be non-adjacent. Then
+$\Prob(\exists t: A_t(i,j)\ge\lambda)\le 1/\lambda$.
+\end{proposition}
+
+\begin{proof}
+Choose $S^\star\in\Scal_k(i,j)$ with $\beta_{i\leftarrow j\cdot S^\star}=0$.
+Since $A_t\le E^{(S^\star)}_t$ pointwise, the event $\{\exists t:A_t\ge\lambda\}$
+is contained in $\{\exists t:E^{(S^\star)}_t\ge\lambda\}$, which has probability
+at most $1/\lambda$.
+\end{proof}
+
+\noindent That the minimum of e-values is an e-value for a union null is
+standard \citep{vovk2021evalues}; the proof above needs only the inclusion of
+events, so the processes $E^{(S)}$ may live in different filtrations. Faithfulness enters only through power: adjacency-faithfulness makes every
+$E^{(S)}$ grow for a genuinely adjacent pair, and an instance where it fails
+leaves the pair undecided instead of producing a wrong edge.
+
+\subsubsection{The per-set primitive}\label{sec:primitive}
+
+For $S$ with $|S|=q-1$ write the regression
+$X_i=\alpha^\top(1,X_S)+\beta X_j+\varepsilon$ and let $S_{ii},S_{ij},S_{jj}$
+be the cross-products of the residuals of $X_i$ and $X_j$ after regression on
+$(1,X_S)$, computed from the running Gram matrix of the centred data, with
+$p=|S|+1$. With a right-Haar prior on the nuisance parameters and
+$\beta\mid\sigma\sim N(0,\sigma^2 g)$ for a fixed $g>0$, the Bayes factor is
+\begin{equation}\label{eq:safelinear}
+E_n=(1+G)^{-1/2}\bigl(1-\kappa\,\hat r_n^2\bigr)^{-(n-p)/2},\qquad
+G=g\,S_{jj},\quad \kappa=\tfrac{G}{1+G},\quad
+\hat r_n^2=\tfrac{S_{ij}^2}{S_{ii}S_{jj}}.
+\end{equation}
+It depends on the data only through Schur complements of the Gram matrix, so a
+single $O(d^2)$ statistic serves every hypothesis $(i,j,S)$. The prior scale
+$g$ must be fixed before the data: a $g$ that adapts to the running sample size
+destroys the martingale property. We fix it in advance and use a warm-up prefix,
+discarded from every process, only to standardise the variables.
+
+\begin{proposition}\label{prop:safelinear}
+Suppose $\varepsilon\sim N(0,\sigma^2)$ is independent of $(X_j,X_S)$ and
+$\beta=0$. Then $(E_n)$ is a non-negative martingale with mean one in the
+filtration generated by the sequence of maximal invariants of the nuisance group
+(translations in the span of $(1,X_S)$ and rescaling of $X_i$), and therefore
+$\Prob(\exists n: E_n\ge\lambda)\le 1/\lambda$ for every $\lambda\ge1$.
+\end{proposition}
+
+\noindent The proof is the right-Haar argument of
+\citet{hendriksen2021optional} and \citet{grunwald2024safe} and is given in
+Appendix~\ref{app:safelinear}. The regressors may have any distribution;
+Gaussianity is required of the regression error $\varepsilon$, which for
+$S\supseteq\pa(i)$ with no descendant of $i$ is the structural error $e_i$.
+
+\begin{remark}[The raw-observation filtration]\label{rem:raw}
+$(E_n)$ is \emph{not} a martingale in the filtration generated by the raw
+observations. With $S=\emptyset$, $g=0.25$ and
+$X_{1:2}=Y_{1:2}=(-1,1)$, Eq.~\eqref{eq:safelinear} gives $E_2=1$ while
+$\Exp[E_3\mid\Fcal_2]=1.083>1$ under an i.i.d.\ standard Gaussian null (numerical
+integration). Amenability of the nuisance group does not repair this. The
+guarantee used here, a bound on the probability of ever crossing, does not need
+the raw filtration, which is why Proposition~\ref{prop:adjacency} was stated for
+events.
+\end{remark}
+
+\begin{remark}[Role averaging]\label{rem:avg}
+Eq.~\eqref{eq:safelinear} treats $X_i$ as the response, and the roles of $i$
+and $j$ are interchangeable under the null. The implementation averages the two
+role-swapped Bayes factors to remove the arbitrary choice. A crossing of the
+average implies a crossing of one of the two, each of probability at most
+$1/\lambda$, so the guaranteed bound for the averaged process is $2/\lambda$.
+\end{remark}
+
+\begin{remark}[Beyond Gaussian errors]\label{rem:offmodel}
+When the regression error is not Gaussian, or its variance depends on the
+regressors, Eq.~\eqref{eq:safelinear} is the $d=1$ case of the model-based
+test of \citet{lindon2026anytime}, whose guarantee under the moment null
+$E[W\varepsilon]=0$ is asymptotic and holds when the model variance equals the
+heteroscedasticity-robust variance. A robust sandwich version exists
+\citep[Theorem~5.4 of the arXiv version]{lindon2026anytime}. Finite-sample
+validity over all finite-variance laws is impossible without tail control
+\citep{shah2020hardness}. We therefore state the adjacency guarantee as
+\emph{exact for Gaussian regression errors and asymptotic otherwise}, and
+Section~\ref{sec:exp-primitive} measures the finite-sample departure under
+heavy tails and heteroscedasticity for both versions.
+\end{remark}
+
+\begin{remark}[One model for both certificates]\label{rem:common}
+Both certificates live in the linear structural equation model with
+independent errors. Adjacency uses only second moments, through
+Lemma~\ref{lem:partial}; orientation uses the shape of the error laws and, in
+the additive-noise extension, nonlinear mechanisms, for identifiability only.
+The validity statement of the orientation certificate
+(Section~\ref{sec:orientation}) does not depend on either error law.
+\end{remark}
+
+\subsection{The orientation certificate}\label{sec:orientation}
+
+Fix a pair $(x,y)$. For each direction we fit a forecaster of the joint law on
+the past and score it on the next observation. Let
+$p^{x\to y}_s$ be the density of the forecaster for the factorisation
+$p(x)\,p(y\mid x)$ fitted on observations $1,\dots,s-1$ and $p^{y\to x}_s$ the
+mirror forecaster, and set
+\begin{equation}\label{eq:increment}
+d_s=\log p^{x\to y}_s(x_s,y_s)-\log p^{y\to x}_s(x_s,y_s).
+\end{equation}
+Both forecasters are $\Fcal_{s-1}$-measurable, and both are densities on the
+same space, so $d_s$ is a legitimate score difference whether or not either
+model is correct. Let $\bar\mu_t=t^{-1}\sum_{s\le t}\Exp[d_s\mid\Fcal_{s-1}]$
+and let $\hat\mu_t$ and $\hat\sigma_t$ be the running mean and standard
+deviation of $(d_s)$. The confidence sequence of
+\citet[Theorem~2.2]{waudbysmith2024asymptotic} is
+\begin{equation}\label{eq:csd}
+\hat\mu_t\pm\hat\sigma_t\sqrt{\frac{2(t\rho^2+1)}{t^2\rho^2}
+\log\frac{\sqrt{t\rho^2+1}}{\alpha}},
+\end{equation}
+with $\rho$ tuned to a reference time $t^\ast=200$. We certify $x\to y$ at the
+first $t$ at which the lower end exceeds zero and $y\to x$ when the upper end
+falls below zero; both are decided only after $60$ scored observations.
+
+\begin{proposition}\label{prop:orient}
+Let $\Fcal_{s-1}$ be the past, let the forecasters be $\Fcal_{s-1}$-measurable,
+and suppose the martingale differences $d_s-\Exp[d_s\mid\Fcal_{s-1}]$ satisfy
+the moment conditions of \citet[Theorem~2.2]{waudbysmith2024asymptotic}. Then
+\eqref{eq:csd} is an asymptotic confidence sequence for $\bar\mu_t$ at level
+$1-\alpha$. In particular, if $y\to x$ predicts at least as well as $x\to y$
+on average ($\bar\mu_t\le 0$ for all $t$), the probability of ever certifying
+$x\to y$ is at most $\alpha$ asymptotically.
+\end{proposition}
+
+\noindent What is certified is therefore that one factorisation has a
+strictly better expected log score, and this is valid without either
+forecaster being correct. It corresponds to the causal direction under the
+identifiability results for additive-noise models
+\citep{hoyer2009nonlinear,peters2014identifiability} and for linear
+non-Gaussian models \citep{shimizu2006linear}: if the data come from
+$x\to y$, the true class is contained in the forecaster family and the
+estimates are consistent, the expected score of the correct factorisation
+exceeds that of the reversed one by a positive Kullback--Leibler gap, because
+for generic mechanisms or non-Gaussian errors the reversed factorisation cannot
+represent the joint law. Under confounding or selection the better predictor
+need not be the cause, and the certificate then says nothing about causation.
+The conclusion of Proposition~\ref{prop:orient} is asymptotic, and
+Section~\ref{sec:exp-pairs} reports its finite-sample behaviour.
+
+\paragraph{Forecasters.} Both use a generalised-Gaussian density
+$g(u)\propto\exp(-|u/s|^\kappa)$ with shape $\kappa\in[0.9,8]$ fitted by
+maximum likelihood, a generalised-Gaussian marginal for the cause, and a
+cubic truncated-power spline mean with four quantile knots, set from the
+warm-up prefix, for the effect. The class \texttt{gg} has constant scale; the
+class \texttt{ggh} lets the log-scale be quadratic in the cause, which covers
+heteroscedastic noise
+\citep{xu2022heci,immer2023loci}. The \emph{agreement} certificate reports a
+direction only when both classes certify the same one. Each class is
+Ville-bounded by the same argument, so agreement cannot err more often than
+either alone; its purpose is protection against model-class mistakes: the
+constant-scale class alone certifies the wrong direction on every
+heteroscedastic Gaussian pair it decides in our simulations, and the location-scale class alone is too
+flexible to resolve linear non-Gaussian pairs
+(Section~\ref{sec:exp-pairs}). Preprocessing is fixed in advance: tied values
+are dequantised, the order is randomly permuted, and $\max(100,\lceil0.2n\rceil)$
+observations form a warm-up prefix used for standardisation and knots.
+
+\subsection{The algorithm and its guarantee}\label{sec:algorithm}
+
+CERT-CD maintains a three-valued state for every pair. It streams data in
+batches, updates the running Gram matrix, recomputes $A_t(i,j)$ for every
+undecided pair, and certifies adjacency when $A_t(i,j)$ crosses its threshold.
+The total budget is split as $\alpha=\alpha_A+\alpha_D$, with $\alpha_A$ spread
+over the $\binom d2$ adjacency nulls and $\alpha_D$ over the direction nulls,
+and the thresholds are $\lambda_A=\binom d2/\alpha_A$ and
+$\lambda_D=d(d-1)/\alpha_D$, fixed before the data arrive. Which pairs are
+examined does not enter the bound.
+
+\begin{theorem}[Adjacency]\label{thm:main}
+Under Assumption~\ref{ass:sep}, linear structural equations with independent
+errors, and Gaussian regression errors in~\eqref{eq:safelinear} for every
+examined $(i,j,S)$, the probability that CERT-CD ever certifies an edge between
+a non-adjacent pair is at most $2\alpha_A$, uniformly over time and at every
+data-dependent stopping time of the run.
+\end{theorem}
+
+\begin{proof}
+By Remark~\ref{rem:avg} each pair's averaged minimum has crossing probability at
+most $2/\lambda_A$ by Proposition~\ref{prop:adjacency}. A union bound over at
+most $\binom d2$ non-adjacent pairs gives $\binom d2\cdot 2/\lambda_A=2\alpha_A$.
+\end{proof}
+
+\noindent Choosing $\lambda_A=2\binom d2/\alpha_A$ gives $\alpha_A$ exactly; the
+experiments use the shipped threshold, so the guaranteed bound there is
+$2\alpha_A$. Under non-Gaussian errors the bound holds asymptotically
+(Remark~\ref{rem:offmodel}). The orientation layer inside the multivariate
+algorithm uses a linear generalised-Gaussian universal-inference certificate
+whose validity is conditional on the model describing each pair given a block
+of conditioning variables frozen when the edge is certified
+(Appendix~\ref{app:linear}); the relative-fit certificate of
+Section~\ref{sec:orientation} is bivariate and is evaluated on pairs. An
+extension that conditions the relative-fit forecasters on the frozen block is
+possible but not evaluated here.

@@ -1,0 +1,72 @@
+
+\section{Introduction}\label{sec:intro}
+
+A causal discovery algorithm returns a graph, and a practitioner reading it
+wants to know which of its features the data support. Constraint-based methods
+such as PC and FCI
+\citep{spirtes2000causation,spirtes1995causal,colombo2012learning} start from
+the complete graph and delete an edge whenever a conditional-independence test
+fails to reject. Failure to reject is compatible with independence, with a
+dependence too weak to see at the current sample size, and with a test that had
+little power; the deletion happens regardless. Two consequences follow.
+Finite-sample correctness requires faithfulness or a quantitative strengthening
+of it \citep{robins2003uniform,uhler2013geometry}, because only such an
+assumption turns ``the test did not reject'' into ``the variables are
+independent''. And the output is two-valued where the evidence is three-valued:
+a missing edge means either ``the data indicate no edge'' or ``nothing was
+established about this pair''.
+
+There is a third consequence that matters in practice. Data accumulate, and an
+analyst who inspects the estimate as they do, and keeps any edge that has ever
+appeared, is performing optional stopping. A fixed-sample guarantee does not
+cover this. Section~\ref{sec:exp-monitoring} measures the effect on eight-node
+graphs: when PC, GES and DirectLiNGAM are rerun at each sample size from $100$
+to $6400$, between a quarter and nine tenths of the graphs have at least one
+false edge in the union of the estimates.
+
+This paper studies the opposite discipline, which we call \emph{certificate-only}
+discovery: assert a feature of the graph only by rejecting a null hypothesis
+that is true whenever the feature is absent, and never assert anything by
+failing to reject. An algorithm that obeys the rule starts from the empty graph
+and adds; it cannot report an edge as absent, only as undecided; and what it
+controls is the probability of asserting something false. If each test is an
+anytime-valid process, the guarantee holds at every sample size at once and
+survives continuous monitoring.
+
+\paragraph{Contributions.}
+
+\begin{enumerate}
+\item \emph{Adjacency certificates under monitoring.} For a linear structural
+  equation model with independent errors, d-separation implies that a partial
+  regression coefficient is zero, so adjacency has a certifying null that
+  needs no faithfulness and no Gaussian errors. The minimum over conditioning
+  sets of per-set sequential tests bounds the probability that a false edge is
+  \emph{ever} certified (Section~\ref{sec:adjacency}). The bound is exact for
+  Gaussian errors and asymptotic otherwise, and we measure how far from
+  nominal it is off-model (Section~\ref{sec:exp-primitive}).
+\item \emph{An orientation certificate based on predictive fit.} For a pair of
+  variables we fit forecasters for the factorisations $x\to y$ and $y\to x$
+  sequentially, and certify a direction when the running mean of the
+  log-score difference has a confidence sequence that excludes zero under two
+  model classes at once (Section~\ref{sec:orientation}). The claim is about
+  predictive fit and is valid whether or not either model is correct; it
+  identifies the causal direction under additive-noise models.
+\item \emph{Evidence under pre-specified protocols.} We compare against PC,
+  GES and DirectLiNGAM under monitoring (Section~\ref{sec:exp-monitoring}),
+  evaluate the orientation certificate on simulated pairs and on the
+  Tübingen cause-effect pairs with a protocol committed before the run
+  (Sections~\ref{sec:exp-pairs} and~\ref{sec:exp-tuebingen}), and report the
+  regimes where the certificates fail (Section~\ref{sec:exp-scope}).
+\end{enumerate}
+
+\paragraph{Scope.} The method targets continuous, observational data from a
+causally sufficient system whose mechanisms are linear or additive-noise, at
+sample sizes of a few hundred or more. We chose the benchmarks to match this
+domain and fixed the selection criteria before running; data outside it are
+reported as a limitation, not dropped.
+
+\paragraph{Outline.} Section~\ref{sec:related} places the work in the literature.
+Section~\ref{sec:method} develops the certificates and the algorithm.
+Section~\ref{sec:experiments} reports the experiments and
+Section~\ref{sec:discussion} discusses limitations. Proofs and further results
+are in the appendices.

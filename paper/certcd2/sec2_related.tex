@@ -1,0 +1,50 @@
+
+\section{Related work}\label{sec:related}
+
+\paragraph{Error control in constraint-based discovery.} PC-p
+\citep{strobl2019estimating} bounds an edge's p-value by the maximum p-value
+over conditioning sets and controls the false discovery rate of edge and
+orientation decisions with Benjamini--Yekutieli; it is finite-sample but
+valid at a fixed sample size, and its orientation rules operate within the
+Markov equivalence class. The conservative PC algorithm of
+\citet{ramsey2006adjacency} marks ambiguous triples instead of resolving them.
+Faithfulness-based guarantees break down when parameters are near a
+cancellation \citep{robins2003uniform,uhler2013geometry,zhang2008detection}.
+$\epsilon$-CUT \citep{shaska2025causal} gives one-sided false-edge control
+without faithfulness at each fixed sample size; \citet{csillag2025prediction}
+calibrate batched Fisher-$z$ statistics into per-test e-values inside PC.
+The certificate-only discipline here is the same one-sided logic made
+time-uniform and extended to orientation.
+
+\paragraph{Anytime-valid inference.} Ville's inequality \citep{ville1939etude}
+underlies confidence sequences \citep{darling1967confidence,robbins1970statistical,
+howard2021timeuniform} and the e-value literature
+\citep{vovk2021evalues,ramdas2023gametheoretic,grunwald2024safe}.
+Asymptotic confidence sequences \citep{waudbysmith2024asymptotic} and
+anytime-valid linear models \citep{lindon2026anytime} extend the approach to
+regression coefficients under weak moment conditions. Conditional-independence
+testing is intrinsically hard: no test with uniform level over all
+conditional-independence nulls has power against any alternative
+\citep{shah2020hardness}. Sequential tests therefore either assume a known
+conditional law \citep{shaer2023model,grunwald2024modelx} or restrict the null,
+as we do by testing a partial regression coefficient.
+
+\paragraph{Orientation.} Linear non-Gaussian models identify the full graph
+\citep{shimizu2006linear} and DirectLiNGAM \citep{shimizu2011directlingam} and
+the pairwise likelihood ratios of \citet{hyvarinen2013pairwise} estimate it;
+\citet{shimizu2008use} test direction using non-normality. Additive-noise models
+\citep{hoyer2009nonlinear,peters2014identifiability} identify direction for
+nonlinear mechanisms, and location-scale models extend this to heteroscedastic
+noise \citep{xu2022heci,immer2023loci}. Compression- and quantile-based scores
+\citep{marx2017slope,tagasovska2020bqcd} perform well on the Tübingen pairs
+\citep{mooij2016distinguishing}. Linear methods fit those pairs poorly
+\citep{schkoda2025goodness}, and a test that is valid against a misspecified
+model does not control direction error. Methods that abstain exist:
+\citet{prakash2024diagnostic} and \citet{ding2025gaussdetect} return an
+inconclusive outcome, \citet{prakash2026power} gate on a linearity check, and
+\citet{uehara2026iterative} attach per-edge resolved or impossible codes in an
+interactive protocol. None of these gives a time-uniform error statement; ours
+is a statement about predictive fit that holds without either model being
+correct (Section~\ref{sec:orientation}), a comparison in the spirit of
+\citet{vuong1989likelihood} and of sequential forecaster comparison
+\citep{choe2024comparing}.

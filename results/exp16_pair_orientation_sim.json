@@ -1,0 +1,315 @@
+{
+  "config": {
+    "reps": 50,
+    "n": 800,
+    "workers": 4
+  },
+  "families": {
+    "lin_laplace": {
+      "agree": {
+        "decided": 3,
+        "correct": 3,
+        "wrong": 0,
+        "coverage": 0.06,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 27,
+        "correct": 27,
+        "wrong": 0,
+        "coverage": 0.54,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 3,
+        "correct": 3,
+        "wrong": 0,
+        "coverage": 0.06,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 0.96,
+      "forced_ggh": 0.46
+    },
+    "lin_unif": {
+      "agree": {
+        "decided": 0,
+        "correct": 0,
+        "wrong": 0,
+        "coverage": 0.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 49,
+        "correct": 49,
+        "wrong": 0,
+        "coverage": 0.98,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 7,
+        "correct": 0,
+        "wrong": 7,
+        "coverage": 0.14,
+        "wrong_rate_ci": [
+          0.06950745262022862,
+          0.2618645719852809
+        ]
+      },
+      "forced_gg": 1.0,
+      "forced_ggh": 0.34
+    },
+    "lin_gauss": {
+      "agree": {
+        "decided": 0,
+        "correct": 0,
+        "wrong": 0,
+        "coverage": 0.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 0,
+        "correct": 0,
+        "wrong": 0,
+        "coverage": 0.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 0,
+        "correct": 0,
+        "wrong": 0,
+        "coverage": 0.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 0.44,
+      "forced_ggh": 0.44
+    },
+    "anm_tanh": {
+      "agree": {
+        "decided": 41,
+        "correct": 41,
+        "wrong": 0,
+        "coverage": 0.82,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 46,
+        "correct": 46,
+        "wrong": 0,
+        "coverage": 0.92,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 44,
+        "correct": 44,
+        "wrong": 0,
+        "coverage": 0.88,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 1.0,
+      "forced_ggh": 1.0
+    },
+    "anm_sq": {
+      "agree": {
+        "decided": 18,
+        "correct": 18,
+        "wrong": 0,
+        "coverage": 0.36,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 46,
+        "correct": 46,
+        "wrong": 0,
+        "coverage": 0.92,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 18,
+        "correct": 18,
+        "wrong": 0,
+        "coverage": 0.36,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 1.0,
+      "forced_ggh": 1.0
+    },
+    "anm_sin": {
+      "agree": {
+        "decided": 43,
+        "correct": 43,
+        "wrong": 0,
+        "coverage": 0.86,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 50,
+        "correct": 50,
+        "wrong": 0,
+        "coverage": 1.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 43,
+        "correct": 43,
+        "wrong": 0,
+        "coverage": 0.86,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 1.0,
+      "forced_ggh": 1.0
+    },
+    "het": {
+      "agree": {
+        "decided": 0,
+        "correct": 0,
+        "wrong": 0,
+        "coverage": 0.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 32,
+        "correct": 0,
+        "wrong": 32,
+        "coverage": 0.64,
+        "wrong_rate_ci": [
+          0.5014076201030195,
+          0.7586143703281711
+        ]
+      },
+      "ggh": {
+        "decided": 4,
+        "correct": 4,
+        "wrong": 0,
+        "coverage": 0.08,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 0.06,
+      "forced_ggh": 1.0
+    },
+    "het_strong": {
+      "agree": {
+        "decided": 0,
+        "correct": 0,
+        "wrong": 0,
+        "coverage": 0.0,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 9,
+        "correct": 0,
+        "wrong": 9,
+        "coverage": 0.18,
+        "wrong_rate_ci": [
+          0.0977008273245379,
+          0.3079631945470261
+        ]
+      },
+      "ggh": {
+        "decided": 25,
+        "correct": 25,
+        "wrong": 0,
+        "coverage": 0.5,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 0.64,
+      "forced_ggh": 0.98
+    },
+    "het_lap": {
+      "agree": {
+        "decided": 39,
+        "correct": 39,
+        "wrong": 0,
+        "coverage": 0.78,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "gg": {
+        "decided": 45,
+        "correct": 45,
+        "wrong": 0,
+        "coverage": 0.9,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "ggh": {
+        "decided": 40,
+        "correct": 40,
+        "wrong": 0,
+        "coverage": 0.8,
+        "wrong_rate_ci": [
+          0.0,
+          0.07135003417431873
+        ]
+      },
+      "forced_gg": 1.0,
+      "forced_ggh": 1.0
+    }
+  }
+}

@@ -1,0 +1,256 @@
+
+\section{Experiments}\label{sec:experiments}
+
+\subsection{Protocol}\label{sec:protocol}
+
+The benchmarks were chosen to match the scope of the method: continuous data,
+linear or additive-noise mechanisms, a few hundred observations or more. The
+monitoring experiment (\texttt{exp13}) and the Tübingen evaluation (\texttt{exp14})
+were committed to the repository with their protocols before they were run; the
+simulations of the pair orientation certificate (\texttt{exp16}) and of the
+primitive off the Gaussian model (\texttt{exp15}) were likewise written
+before running. Data outside the scope are reported in
+Section~\ref{sec:exp-scope}. Every number below comes from a JSON file in
+\texttt{results/}.
+
+\subsection{Monitoring: how often is a false edge ever reported?}
+\label{sec:exp-monitoring}
+
+We drew $150$ random DAGs on $d=8$ nodes (edge probability $0.25$,
+coefficients with absolute value in $[0.5,1.2]$) with Laplace and with Gaussian
+errors, and ran each method on nested prefixes of $n=100,200,400,\dots,6400$
+observations. A graph counts as a failure if any prefix's estimate contains an
+edge that is absent from the true skeleton, which is what an analyst who keeps
+every edge ever seen would report. CERT-CD ran as one stream with
+$\alpha=0.1$ (so $\alpha_A=0.05$ and a guaranteed bound of $0.1$ in the
+Gaussian model), $k=2$, warm-up of $50$ rows and batches of $100$. The
+comparators were PC (Fisher-$z$, $\alpha=0.05$ and $0.01$, \texttt{causal-learn}
+defaults), GES with the BIC score, and DirectLiNGAM with edges thresholded at
+$|B|>0.05$, each rerun at every $n$.
+
+\begin{table}[t]
+\caption{Probability that a false edge is ever reported over the grid
+$n=100,\dots,6400$ in $150$ random eight-node graphs (Wilson $95\%$ interval for
+CERT-CD, and for the others where shown in the results file).}\label{tab:monitoring}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Method & Laplace errors & Gaussian errors\\
+\midrule
+CERT-CD & $0.027$ $[0.010,0.067]$ & $0.040$ $[0.018,0.085]$\\
+PC, $\alpha=0.05$ & $0.747$ & $0.773$\\
+PC, $\alpha=0.01$ & $0.267$ & $0.320$\\
+GES-BIC & $0.913$ & $0.960$\\
+DirectLiNGAM & $0.760$ & $1.000$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+CERT-CD reported a false edge in $4$ of $150$ graphs under Laplace errors and in
+$6$ of $150$ under Gaussian errors, against between $27\%$ and $100\%$ for the
+comparators (Table~\ref{tab:monitoring}). The comparison is deliberately about
+monitoring: at a single sample size the comparators' false-edge rates are much
+lower, for example $42$ of $150$ graphs for PC at $\alpha=0.05$ and $n=6400$ under
+Laplace errors, so the gap is largely the cost of re-looking, which CERT-CD's
+guarantee absorbs. The price is coverage. At $n=6400$ under Laplace errors
+CERT-CD's precision is $0.994$ and its recall $0.938$ ($F_1=0.965$), and it
+leaves $76.8\%$ of the pairs undecided because it never certifies absence
+(Gaussian: $76.9\%$). By comparison, PC at $\alpha=0.01$ has $F_1=0.970$ at the
+final sample size. CERT-CD's orientation is switched on by default here, which
+splits the budget; edges, not arrowheads, are scored.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{exp13_monitoring_fwer.png}
+\caption{Cumulative fraction of graphs with a false edge, by sample size, for
+each method (Laplace and Gaussian errors).}\label{fig:monitoring}
+\end{figure}
+
+\subsection{The adjacency primitive: cost of anytime validity and calibration off-model}
+\label{sec:exp-primitive}
+
+\paragraph{Cost and benefit of the sequential test.} With $2000$ replications
+under the independence null and monitoring up to $n=1000$, a Fisher-$z$ test
+inspected at every sample size falsely rejects in $34.6\%$ of runs at nominal
+$\alpha=0.05$ ($56.5\%$ at $0.10$, $81.6\%$ at $0.20$; $10.0\%$ at $0.01$). The
+same test at one fixed $n$ rejects $5.6\%$ ($0.01$: $1.0\%$), and the e-process
+$2.4\%$ ($0.01$: $0.7\%$). The e-process is conservative by about a factor of two
+in this setting, which is the price of the time-uniform guarantee.
+
+\paragraph{Off the Gaussian model.} The primitive is exact only for Gaussian
+regression errors. Table~\ref{tab:offmodel} reports the realised probability
+of ever crossing $1/\alpha$ over $n=50,\dots,1000$ (monitored at every
+observation), with $1000$ replications per cell, for a null pair with no
+covariate effect (S0), a chain $i\leftarrow k\leftarrow j$ tested given $k$, and
+a heteroscedastic null, under four error laws. A robust $t$-statistic
+confidence sequence \citep{lindon2026anytime} is shown for comparison. For
+Gaussian and Laplace errors without heteroscedasticity the primitive stays
+below nominal. For skewed or heavy-tailed errors it is up to $2.5$ times
+nominal at $\alpha=0.01$ ($0.025$ for lognormal errors), and under
+heteroscedastic errors it exceeds nominal at $\alpha=0.05$ even for Gaussian
+errors ($0.069$). The robust version is not uniformly better: it is closer to
+nominal under heteroscedasticity but wider of the mark in the heavy-tailed cells
+($0.098$ at $\alpha=0.05$ for lognormal errors in S0). In the six-noise-law
+calibration of the earlier experiment (\texttt{exp8}, $2000$ replications, $n\le800$)
+every cell is below nominal, the largest realised-to-nominal ratio being $0.95$ and
+the median about $0.48$. We therefore treat the adjacency bound as exact in the
+Gaussian model and as an approximation otherwise; in the stated experiments the
+approximation is worse under heteroscedasticity and heavy tails than the
+earlier calibration suggested.
+
+\begin{table}[t]
+\caption{Realised probability of ever crossing, $n=50,\dots,1000$ monitored every
+observation (primitive, $g=0.25$) versus a robust-$t$ sequence checked every five
+observations, $1000$ replications per cell.}\label{tab:offmodel}
+\small
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+Scenario & Errors & BF $.05$ & BF $.01$ & robust-$t$ $.05$ & robust-$t$ $.01$\\
+\midrule
+S0 & Gaussian & 0.023 & 0.006 & 0.044 & 0.009\\
+S0 & Laplace & 0.016 & 0.004 & 0.032 & 0.009\\
+S0 & $t_{2.5}$ & 0.035 & 0.019 & 0.067 & 0.021\\
+S0 & lognormal & 0.043 & 0.025 & 0.098 & 0.035\\
+Chain & Gaussian & 0.021 & 0.008 & 0.042 & 0.012\\
+Chain & Laplace & 0.018 & 0.006 & 0.040 & 0.011\\
+Chain & $t_{2.5}$ & 0.026 & 0.013 & 0.076 & 0.035\\
+Chain & lognormal & 0.039 & 0.019 & 0.086 & 0.026\\
+Het. & Gaussian & 0.069 & 0.025 & 0.066 & 0.022\\
+Het. & Laplace & 0.065 & 0.028 & 0.053 & 0.017\\
+Het. & $t_{2.5}$ & 0.042 & 0.025 & 0.077 & 0.035\\
+Het. & lognormal & 0.061 & 0.032 & 0.089 & 0.037\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Graphs that violate strong faithfulness}\label{sec:exp-faith}
+
+We generated $1780$ random linear-Gaussian DAGs, of which $56.2\%$ satisfy the
+separator-size premise, and stratified them by whether $\delta$-strong
+faithfulness ($\delta=0.15$) holds ($1000$ graphs) or fails ($500$ graphs). In the
+strata where it holds CERT-CD certified no false edge ($0$ of $1000$) and made $8$
+wrong-arrow certifications (rate $0.008$); where it fails it certified $6$ false
+edges in $500$ graphs ($0.012$, Wilson $[0.006,0.026]$) and $29$ wrong arrows
+($0.058$, $[0.041,0.082]$; one-sided binomial test against $0.05$,
+$p=0.23$). PC lost a true edge in $8$ of $1000$ and $241$ of $500$ graphs
+($0.482$ $[0.439,0.526]$) and our earlier delete-based algorithm, SPRINT-CD, in $0$ and $169$
+($0.338$ $[0.298,0.381]$). These are different error types and are not
+commensurable: a lost edge is an omission, a false edge a commission, and
+CERT-CD pays for its few commissions with undecided pairs ($75\%$ undecided in
+this experiment; $97\%$ of true edges certified and $94\%$ oriented, against a
+CPDAG ceiling of $28\%$ of edges orientable).
+
+\subsection{Orientation of pairs}\label{sec:exp-pairs}
+
+\paragraph{Simulated pairs.} We simulated $50$ pairs of $n=800$ for each of nine
+families, and ran the relative-fit certificate at $\alpha=0.05$
+(Table~\ref{tab:pairs}). The agreement certificate committed to a wrong direction
+in none of the $450$ pairs. The two classes alone fail in the way the
+design anticipated: the constant-scale class certifies the wrong direction on
+all $32$ and $9$ pairs it decides in the two heteroscedastic Gaussian families,
+and the location-scale class is wrong on all $7$ it decides for uniform linear
+errors. Agreement commits on all the additive-noise families (for example
+$41$ of $50$ for the $\tanh$ mechanism) and on Laplace heteroscedastic pairs ($39$ of $50$),
+declines the strongly heteroscedastic Gaussian pairs, and, as it should,
+declines linear Gaussian pairs, which are not identifiable.
+
+\begin{table}[t]
+\caption{Pair orientation, $50$ simulated pairs per family, $n=800$. Entries are
+(decided, wrong). Forced is the accuracy when a direction is always output.}
+\label{tab:pairs}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Family & agree & gg & ggh & forced gg & forced ggh\\
+\midrule
+linear, Laplace & (3,0) & (27,0) & (3,0) & 0.96 & 0.46\\
+linear, uniform & (0,0) & (49,0) & (7,7) & 1.00 & 0.34\\
+linear, Gaussian & (0,0) & (0,0) & (0,0) & 0.44 & 0.44\\
+ANM, tanh & (41,0) & (46,0) & (44,0) & 1.00 & 1.00\\
+ANM, square & (18,0) & (46,0) & (18,0) & 1.00 & 1.00\\
+ANM, sine & (43,0) & (50,0) & (43,0) & 1.00 & 1.00\\
+heteroscedastic Gaussian & (0,0) & (32,32) & (4,0) & 0.06 & 1.00\\
+strongly heteroscedastic & (0,0) & (9,9) & (25,0) & 0.64 & 0.98\\
+heteroscedastic Laplace & (39,0) & (45,0) & (40,0) & 1.00 & 1.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The Tübingen cause-effect pairs}\label{sec:exp-tuebingen}
+
+The protocol was fixed before the run: all $102$ scalar-scalar pairs, official
+weights, tied values dequantised, a random permutation, at most $2000$ rows per
+pair, $\alpha=0.05$, seed $20261023$. Pairs with fewer than $100$ post-warm-up
+rows ($22$ of $102$) cannot be scored and count as abstentions; $80$ pairs are
+scored. This protocol was written after an earlier linear certificate decided
+$14$ pairs and was right on $6$; no parameter of the relative-fit certificate was
+tuned on these data.
+
+\begin{table}[t]
+\caption{Tübingen pairs ($80$ scored of $102$). Accuracy is among decided pairs;
+interval is Clopper--Pearson $95\%$; $p$ is the one-sided binomial test of accuracy
+$>1/2$.}\label{tab:tuebingen}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Certificate & decided & correct & accuracy & $95\%$ interval & $p$\\
+\midrule
+agree (primary) & 12 & 11 & 0.917 & $[0.615,0.998]$ & 0.003\\
+gg only & 23 & 19 & 0.826 & $[0.612,0.950]$ & 0.001\\
+ggh only & 18 & 14 & 0.778 & $[0.524,0.936]$ & 0.015\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The agreement certificate decided $12$ of $80$ scored pairs ($15\%$, which is
+$11.8\%$ of all $102$) and was right on $11$
+(Table~\ref{tab:tuebingen}); weighted by the official weights its accuracy is
+$0.816$. Forced to always output a direction, the constant-scale class is right on
+$72.5\%$ of the $80$ scored pairs ($0.65$ weighted) and the location-scale class on
+$70\%$ ($0.705$). Published methods report forced accuracies of roughly $63$--$83\%$
+on all pairs \citep{mooij2016distinguishing,tagasovska2020bqcd,immer2023loci},
+under their own protocols; abstaining methods in the literature report $75$--$85\%$
+at coverages of $35$--$85\%$. These numbers are not directly comparable to ours,
+which are on a subset, with abstention, at a pre-fixed $\alpha$. The evidence is
+modest: $12$ decisions, a wide interval, and a statement about predictive fit.
+Figure~\ref{fig:tuebingen} shows pair~1, where both classes certify the
+direction.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.7\linewidth]{tuebingen_demo_pair0001.png}
+\caption{Tübingen pair~1: scatter plot and the confidence sequence for the
+log-score difference.}\label{fig:tuebingen}
+\end{figure}
+
+\subsection{Scope: where the certificates fail}\label{sec:exp-scope}
+
+\paragraph{Assumption violations.} We simulated $200$ datasets of $n=3000$ for each
+of four violations at $\alpha=0.05$. In-model there were no false edges and no
+wrong arrows. Violating the separator-size premise gave a false edge in
+$200/200$ runs and false arrows in $26$; a latent common cause gave a certified
+edge in $200/200$ runs, which is a MAG adjacency and not an error in that
+sense, with $38$ wrong arrows; nonlinear mechanisms gave false edges in $200/200$
+runs and $142$ wrong arrows; Poisson counts gave false edges in $200/200$ runs and
+$28$ wrong arrows. The adjacency certificate is valid only for the linear model
+with independent errors, and the orientation certificate inside the multivariate
+algorithm fails badly under nonlinearity.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\linewidth]{sachs_network_demo.png}
+\caption{Sachs data: certified edges and arrows against the consensus
+network.}\label{fig:sachs}
+\end{figure}
+
+\paragraph{Sachs protein-signalling data.} The data \citep{sachs2005causal} are
+discrete-like, nonlinear and heavy-tailed and sit outside the method's scope,
+which is why we report them here. On $853$ cells ($753$ after a $100$-cell
+warm-up) CERT-CD certified $6$ edges among $55$ pairs, all in the consensus
+skeleton, left $49$ pairs undecided, and certified $4$ arrowheads, all reversed
+relative to the consensus network. PC found $7$ edges, all in the consensus
+skeleton. DirectLiNGAM's causal order contradicts the consensus direction on all
+six pairs CERT-CD certified. Consensus directions are themselves contested
+\citep{mooij2020joint}, but the certified arrows are confidently
+unreliable, and nothing in the output says so. A comparison with the iterative
+protocol of \citet{uehara2026iterative} (precision $0.933$, recall $0.700$ with
+$21$ queries) is not like for like: the protocol, the ground truth and the
+interaction model differ.

@@ -1,0 +1,96 @@
+\documentclass[pdflatex,sn-apa]{sn-jnl}
+
+\usepackage{graphicx}%
+\graphicspath{{figs/}}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+\newtheorem{proposition}[theorem]{Proposition}%
+\newtheorem{lemma}[theorem]{Lemma}%
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+\newtheorem{assumption}{Assumption}%
+
+\newcommand{\indep}{\perp\!\!\!\perp}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Gstar}{\mathcal{G}^{\star}}
+\newcommand{\pa}{\mathrm{pa}}
+\newcommand{\de}{\mathrm{de}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Exp}{\mathbb{E}}
+\newcommand{\Real}{\mathbb{R}}
+
+\raggedbottom
+
+\begin{document}
+
+\title[Certificate-Only Causal Discovery]{Certificate-Only Causal Discovery:
+Monitoring-Valid Edges and Predictive-Fit Orientation}
+
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen},
+\country{Vietnam}}}
+
+\abstract{Constraint-based causal discovery deletes an edge when a
+conditional-independence test fails to reject, so a lack of power is reported
+as a conclusion, and its output cannot be monitored as data arrive: an analyst
+who reruns it at each sample size and keeps any edge ever reported accumulates
+false edges. We study certificate-only discovery, which asserts a feature of
+the graph only by rejecting a null that is true whenever the feature is absent.
+The adjacency certificate is the minimum over conditioning sets of sequential
+tests that a partial regression coefficient is zero. It bounds the probability
+that a false edge is ever certified, uniformly over time and without
+faithfulness; the bound is exact under Gaussian errors and asymptotic
+otherwise. The orientation certificate compares sequentially fitted
+forecasters for the two factorisations of a pair and certifies a direction only
+when two model classes agree, so what it certifies is better predictive fit,
+which identifies the causal direction in additive-noise models. In 150 random
+graphs monitored from $n = 100$ to $6400$, CERT-CD reported a false edge in
+$2.7\%$ of graphs under Laplace noise, against $27\%$ to $91\%$ for PC, GES and
+DirectLiNGAM, at the price of leaving most non-adjacent pairs undecided. On the
+Tübingen cause-effect pairs, under a protocol fixed before the run, the
+orientation certificate committed on $12$ of $80$ scorable pairs and was right
+on $11$. Both certificates fail outside their models, and we report where.}
+
+\keywords{causal discovery, anytime-valid inference, e-values, sequential
+testing, additive noise models, family-wise error control}
+
+\pacs[MSC Classification]{62L12, 62H22, 62F03}
+
+\maketitle
+
+\input{sec1_intro}
+\input{sec2_related}
+\input{sec3_method}
+\input{sec4_experiments}
+\input{sec5_discussion}
+
+\backmatter
+
+\input{declarations}
+
+\begin{appendices}
+\input{appendix}
+\end{appendices}
+
+\bibliography{refs}
+
+\end{document}
