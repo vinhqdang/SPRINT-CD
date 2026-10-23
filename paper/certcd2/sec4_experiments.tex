@@ -130,6 +130,46 @@ CERT-CD recall at $n=3200$ & 0.964 & 0.930 & 0.922 & 0.919\\
 \end{tabular}
 \end{table}
 
+\subsection{Ablation of CERT-CD}\label{sec:exp-ablation}
+
+We varied one constant at a time on $20$ eight-node DAGs with Laplace errors
+($n\le3200$, same monitoring criterion; Table~\ref{tab:ablation}).
+
+\begin{table}[t]
+\caption{Ablation, $20$ DAGs, $d=8$, Laplace errors, monitored to
+$n=3200$. Default: $k=2$, prior scale $0.5$, $\alpha=0.1$, orientation on.
+Precision and recall are of the skeleton at $n=3200$
+(\texttt{results/exp17\_summary.json}).}\label{tab:ablation}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Variant & ever false edge & precision & recall & median seconds\\
+\midrule
+default & 0/20 & 1.000 & 0.934 & 53\\
+$k=0$ & 20/20 & 0.526 & 1.000 & 145\\
+$k=1$ & 15/20 & 0.873 & 0.960 & 70\\
+$k=3$ & 0/20 & 1.000 & 0.921 & 53\\
+no orientation & 0/20 & 1.000 & 0.934 & 0.1\\
+prior scale $0.25$ & 0/20 & 1.000 & 0.934 & 52\\
+prior scale $1.0$ & 0/20 & 1.000 & 0.927 & 52\\
+$\alpha=0.05$ & 0/20 & 1.000 & 0.927 & 53\\
+$\alpha=0.2$ & 1/20 & 0.993 & 0.934 & 56\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The order $k$ is the only constant that matters for validity. With $k=0$ and
+$k=1$, below the maximal in-degree of many of these graphs, the separator-size
+assumption is violated and false edges appear in every graph ($20/20$) and in
+$15/20$ respectively, with precision $0.53$ and $0.87$; with $k=3$ nothing
+changes relative to $k=2$ except a slightly lower recall. The prior scale and the
+total level change recall by less than $0.01$ and leave the number of graphs
+with a false edge at zero, except that $\alpha=0.2$ gave one. Switching off
+orientation leaves the skeleton unchanged, as it should, since the adjacency
+certificates do not depend on it, and removes nearly all of the computing time:
+the adjacency certificates alone take about a tenth of a second per run, and the
+orientation processes dominate the cost.
+
 \subsection{The adjacency primitive: cost of anytime validity and calibration off-model}
 \label{sec:exp-primitive}
 

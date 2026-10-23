@@ -409,9 +409,10 @@ sets, so one pass over a batch costs $O\bigl(d^2\,d^{k}\,k^3\bigr)$ for the
 Schur complements, independently of $n$, and the adjacency state is $O(d^2)$.
 The direction processes keep the rows since the pair was certified and refit on
 them, so their cost grows with the time since certification. In our
-implementation a run on $3200$ rows takes about $43$ seconds at $d=8$ and $87$
-seconds at $d=16$ with $k=2$ on one core (Section~\ref{sec:exp-scaling} reports
-it across sizes). Certified pairs are skipped, and the evaluation of $A_t$ stops
+implementation the adjacency certificates alone take about $0.1$ second for a run
+on $3200$ rows at $d=8$, and the full algorithm with orientation about $53$
+seconds, so the orientation processes dominate the cost
+(Sections~\ref{sec:exp-scaling} and~\ref{sec:exp-ablation}). Certified pairs are skipped, and the evaluation of $A_t$ stops
 as soon as one conditioning set has evidence below the threshold, since the
 minimum is then known not to cross.
 
