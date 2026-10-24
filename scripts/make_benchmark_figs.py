@@ -13,7 +13,7 @@ D = json.load(open(ROOT / "results" / "serial_diagnostic.json"))
 
 # Fig 1: pair accuracy
 P2 = json.load(open(ROOT / "results" / "exp38_summary.json"))
-names = {"tuebingen": "Tübingen (102)", "chamber_iid": "Chambers, i.i.d. (94)", "chamber_walk": "Chambers, walks (122)", "sachs": "Sachs consensus (17)", "heldout": "held-out simulated (270)"}
+names = {"tuebingen": "Tübingen (102)", "chamber_iid": "Chambers, i.i.d. (94)", "chamber_walk": "Chambers, further recordings (122)", "sachs": "Sachs consensus (17)", "heldout": "held-out simulated (270)"}
 rules = ["PDM", "LOCI", "ANM", "IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair"]
 colors = ["C3", "C2", "0.6", "0.6", "C0", "0.6", "0.6"]
 fig, axes = plt.subplots(1, 5, figsize=(13, 3.2), sharey=True)

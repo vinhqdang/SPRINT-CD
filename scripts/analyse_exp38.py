@@ -18,10 +18,10 @@ for s in ("tuebingen", "chamber_iid", "chamber_walk", "sachs"):
     row = {"pairs": len(rs)}
     w = np.array([r.get("weight", 1.0) for r in rs])
     for m in ("LOCI", "ANM"):
-        ok = [(None if r["m"][m] is None else ((r["m"][m] > 0) == (r["truth"] == "x->y"))) for r in rs]
+        ok = [(None if r["m"][m] is None else (0.5 if r["m"][m] == 0.0 else float((r["m"][m] > 0) == (r["truth"] == "x->y")))) for r in rs]  # exact ties count half
         valid = [o for o in ok if o is not None]
-        v = np.array([bool(o) if o is not None else False for o in ok])
-        row[m] = {"acc": float(np.mean(valid)), "n_valid": len(valid), "ci": cp(int(sum(valid)), len(valid)),
+        v = np.array([float(o) if o is not None else 0.0 for o in ok])
+        row[m] = {"acc": float(np.mean(valid)), "n_valid": len(valid), "ci": cp(int(round(sum(valid))), len(valid)),
                   "w_acc": float((w * v).sum() / w[[o is not None for o in ok]].sum())}
     if s == "sachs":
         for rule in ("IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair"):

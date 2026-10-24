@@ -41,34 +41,35 @@
 
 \begin{document}
 
-\title[Transfer of causal discovery to real measurements]{Does causal discovery transfer to real measurements? A multi-dataset evaluation on cause--effect pairs, protein signalling and physical devices}
+\title[Causal discovery on real measurements]{Evaluating causal discovery methods on real measurements: cause--effect pairs, protein signalling and physical devices}
 
 \author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
 
 \affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
 
-\abstract{Causal discovery methods are usually validated on simulated data. We evaluate
-eighteen methods on four families of real data with a known or consensus structure: the
-Tübingen cause--effect pairs, the protein-signalling data of Sachs et al., and
-two kinds of recordings from the Causal Chambers, physical devices with a known graph.
-Besides twelve established methods (PC, GES, DirectLiNGAM, NOTEARS, DAGMA and PCMCI+ for
-graphs; IGCI, RECI, ANM-HSIC, a pairwise LiNGAM rule, a Gaussian-process ANM and LOCI for pairs),
-we include six methods we developed for this study and froze
-before the evaluation: sequential certificates for edges and directions, PC with a
-nonparametric test, a block-replicated additive method (BTAD), and two classifiers
-trained on simulated data. The results are mixed and often unfavourable to the new
-methods. On pairs, a regression-error rule (RECI) is the best method on both chamber sets
-($98\%$ and $94\%$), LOCI is nominally best on Tübingen ($65\%$ against $61\%$ for RECI,
-within sampling error), all methods are at chance on the $17$ Sachs pairs, and a classifier
-that reaches $95\%$ on simulated pairs is at chance on Tübingen. On graphs,
-DirectLiNGAM and GES are best on the chamber recordings with independent rows (skeleton
-$F_1$ $0.55$ on the first two, $0.70$ on two others), while the methods using nonparametric tests are better on the
-Sachs data ($F_1$ $0.62$ to $0.67$ against $0.52$ to $0.58$, with $17$ reference edges).
-Seventeen of the nineteen new chamber recordings are random walks with an effective
-sample size of a few observations out of $4000$, which makes tests that assume independent
-rows reject roughly five times more graph-implied independences than a block test, and no
-method exceeds $F_1=0.42$ there. We report where each method helps, where it does not,
-and which of our design choices were fixed before and after seeing the data.}
+\abstract{Causal discovery methods are usually validated on simulated data. We evaluate eighteen
+methods on real data with a known or consensus structure: the Tübingen cause--effect pairs, the
+protein-signalling data of Sachs et al., and recordings from the Causal Chambers, physical devices
+with a known graph. Twelve methods are established (PC, GES, DirectLiNGAM, NOTEARS, DAGMA and
+PCMCI+ for graphs; IGCI, RECI, ANM-HSIC, a pairwise LiNGAM rule, a Gaussian-process ANM and LOCI
+for pairs) and six were developed for this study and frozen before evaluation: sequential
+certificates for edges and directions, PC with a nonparametric test, a block-replicated additive
+method (BTAD) and two classifiers trained on simulated data. On the Causal Chambers pairs RECI has the
+highest accuracy ($97.9\%$ and $94.3\%$ on two sets), not distinguishable from IGCI; on Tübingen
+no method is distinguishable from RECI ($60.8\%$) except the classifier PDM, which is below chance
+($40.2\%$, $p=0.059$) although it reaches $95\%$ on simulated pairs; all methods are
+within the sampling error of chance on $17$ Sachs pairs. For graphs, the strict skeleton $F_1$ of
+DirectLiNGAM and GES is highest on the chamber recordings with independent rows ($0.55$ on two
+recordings, $0.70$ on two others), the methods we developed are ahead on the Sachs data
+($F_1$ $0.62$ to $0.67$ against $0.58$ for PC and GES, a difference of one to two of $17$ reference
+edges) and on the walk recordings ($0.42$ against $0.38$), and no method exceeds a strict $F_1$ of
+$0.42$ on the seventeen random-walk recordings. Fifteen wind-tunnel recordings are random walks
+with an effective sample size of about three observations out of $4000$, and a test that assumes
+independent rows rejects $4.8$ times as many graph-implied independences as a block test there.
+The sequential certificates keep false edges rare in simulation under repeated inspection and
+nonlinear mechanisms, but not on the chambers. We state which choices were fixed before and after
+seeing the data, and the limits of the evidence: few reference edges, few recordings per group,
+and several methods not evaluated.}
 
 \keywords{causal discovery, benchmark, real data, cause--effect pairs, Causal Chambers, serial dependence}
 

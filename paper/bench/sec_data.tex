@@ -18,12 +18,27 @@ ten subsamples each). In the \emph{walk} recordings the actuators follow random 
 $15$ runs of the wind tunnel, the pressure-control experiment, and three light-tunnel
 experiments, of which one (\texttt{color\_mix}) is a walk and two have nearly independent rows
 (Section~\ref{sec:serial}). The graphs have $8$ to $39$ edges among $10$ to $20$ variables
-and are bipartite: settings point to measurements.
+and are bipartite: settings point to measurements. The pair sets are the directed edges of these
+graphs: $47$ distinct edges of the two i.i.d.\ recordings, each analysed on two subsamples ($94$
+pair-runs, of which about $47$ are independent), and $122$ edges of five further recordings (the first
+recording of each configuration: $26$ from one wind-tunnel walk, $18$ from the pressure-control
+experiment, $37$ and $27$ from the two light-tunnel recordings with nearly independent rows, $14$ from
+the light-tunnel walk). Because causes are actuators with simple marginals, these pair sets are
+structurally easy.
 
 \paragraph{Sachs.} The $853$ observational cells with $11$ phosphoproteins, log-transformed;
 the reference network is the $17$-arc consensus of \citet{sachs2005causal}, which is
 contested \citep{mooij2020joint}. For the graph benchmark we use all cells; for pairs we use
 its $17$ directed arcs as a pair set.
+
+\subsection{Row order}\label{sec:order}
+
+Rows are shuffled at random in the analyses of the recordings with independent actuators, of the Sachs
+cells, and of all pair sets, so that serial dependence of the sensors (dynamics, hysteresis) is broken
+by construction; the label ``i.i.d.'' for these recordings means that the actuators are redrawn
+independently, not that independence of rows was verified. The graph benchmarks on the nineteen new
+recordings (Section~\ref{sec:graphs}) use the first $4000$ rows in time order, and the earlier
+false-edge counts for the sequential certificate on the new recordings used shuffled rows.
 
 \subsection{Scores}
 
@@ -40,7 +55,10 @@ independence is rejected on held-out rows (``adjusted''); the strict score is th
 \subsection{Effective sample size}\label{sec:ess}
 
 For each recording we measure the lag-1 autocorrelation $\rho$ of the exogenous
-variables and the implied effective sample size $n(1-\rho)/(1+\rho)$ of the first $4000$ rows.
+variables and the implied effective sample size $n(1-\rho)/(1+\rho)$ of the first $4000$ rows. This
+is the stationary AR(1) formula, a heuristic for random walks, and it is not a test; the effective sample
+size also coincides with the device (fifteen of the seventeen low values are wind-tunnel recordings and the
+two high values are light-tunnel recordings).
 The result (Section~\ref{sec:serial}) splits the nineteen new recordings into two with an
 effective sample size above $1000$ and seventeen below $20$.
 

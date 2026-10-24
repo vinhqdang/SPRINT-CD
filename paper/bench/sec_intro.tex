@@ -30,17 +30,18 @@ baselines, and the comparison tells whether the design worked on measurements.
   pairs, $216$ pair analyses of edges of the Causal Chambers, $17$ Sachs pairs, the Sachs data, and
   $21$ chamber recordings with a known graph, and it reports a strict score against the
   reference graph and a score adjusted for dependences the graph cannot explain.
-\item The result that, on pairs, a regression-error rule (RECI) is the best method on the Causal
-  Chambers pairs and within sampling error of the best on Tübingen, where LOCI is nominally ahead, and
-  that a classifier trained on simulated pairs, accurate on its simulated test set, is at chance on
-  Tübingen (Section~\ref{sec:pairs}).
+\item The result that, on pairs, a regression-error rule (RECI) has the highest accuracy on the Causal
+  Chambers pairs (not distinguishable from IGCI), that on Tübingen no method is distinguishable from
+  RECI except a classifier trained on simulated pairs, which is accurate on its simulated test set and
+  below chance on Tübingen (Section~\ref{sec:pairs}).
 \item The result that, on graphs, the ranking of methods depends on the data family: DirectLiNGAM
-  and GES on chamber recordings with independent rows, methods with nonparametric tests on the
-  Sachs data, and no method on the random-walk recordings (Section~\ref{sec:graphs}).
+  and GES on chamber recordings with independent rows, some of our methods by a margin of one or two
+  edges on the Sachs data, and no method above a strict $F_1$ of $0.42$ on the random-walk recordings
+  (Section~\ref{sec:graphs}).
 \item A diagnosis of why the walk recordings defeat every method: their exogenous variables are
-  random walks with an effective sample size of a few observations, so tests that assume
-  independent rows reject graph-implied independences about five times more often than a block
-  test, and a reference set built with them is contaminated (Section~\ref{sec:serial}).
+  random walks with an effective sample size of a few observations, so a test that assumes
+  independent rows rejects $4.8$ times as many graph-implied independences as a block test on the
+  wind-tunnel walks, and a reference set built with it is contaminated (Section~\ref{sec:serial}).
 \item The places where our own methods do help: control of false edges under repeated
   inspection and under nonlinear mechanisms in simulation (Section~\ref{sec:monitoring}).
 \end{enumerate}

@@ -2,27 +2,26 @@
 \section{Discussion}\label{sec:discussion}
 
 \paragraph{What the evidence supports.} On the real data we examined, simple methods are hard
-to beat. On pairs the best method on the chambers is RECI, which compares two regression errors, and on
-Tübingen no method is distinguishable from RECI, with LOCI nominally ahead; on graphs the
-best methods on recordings with independent rows are DirectLiNGAM and GES, and on the Sachs
-data a mix of methods that use nonparametric tests, with differences smaller than the sampling
-error of a $17$-edge reference. The methods we developed to address specific failures show their
-intended benefit in simulation and some of it on measurements: lower false-edge rates under
-repeated inspection and nonlinear mechanisms in simulation, and the highest precision on the
-chamber recordings, BTAD, at the price of recall. None of them has the best $F_1$ on the
-chambers. The two classifiers trained on simulated data are the clearest negative results, and
-we think they are informative: a model that is nearly perfect on a broad simulator can be at
-chance on real pairs.
+to beat. On the chamber pairs RECI, which compares two regression errors, has the highest accuracy,
+not distinguishable from IGCI; on Tübingen no method is distinguishable from RECI except PDM, which is
+worse. On graphs the highest $F_1$ on recordings with independent rows is DirectLiNGAM and GES. Two of
+the four best-$F_1$ cells belong to methods we developed (LRG on Sachs, $0.67$, and PC with the
+nonparametric test on the walk recordings, $0.42$), by margins of one or two edges and of $0.04$ that are
+within sampling error. The methods we developed show their intended benefit in simulation and some
+of it on measurements: lower false-edge rates under repeated inspection and nonlinear mechanisms in
+simulation, and the highest precision on the chamber recordings, BTAD, at the price of recall. The
+two classifiers trained on simulated data are the clearest negative results: a model that is nearly
+perfect on a broad simulator can be below chance on real pairs.
 
 \paragraph{Implications for evaluation.} First, the effective sample size of a recording
 should be reported: seventeen of nineteen new chamber recordings had fewer than twenty
 effective observations, which no test that assumes independent rows can cope with, and which
-also contaminates reference sets built with such tests. Second, adjusting the score for
-dependences the reference graph cannot explain changes conclusions and should be shown next to the
-strict score, with the construction of the adjustment disclosed and made independent of the methods.
-Third, the protocol matters: several of our early positive results were produced by
-choices made after seeing the data, and the frozen evaluation reversed them. We report which
-numbers are frozen and which are not (Section~\ref{sec:provenance}).
+also contaminates reference sets built with such tests. Second, a score adjusted for
+dependences the reference graph cannot explain, if used, should be shown next to the strict score,
+with the construction of the adjustment disclosed and independent of the methods; ours was not
+independent of the test families used by some methods. Third, the protocol matters: some of our early
+results came from choices made after seeing the data, and we report which numbers are frozen and which
+are not (Section~\ref{sec:provenance}).
 
 \paragraph{Limitations.} The reference networks are small, the Sachs consensus is contested,
 and the chamber graphs are bipartite, so recovery of the skeleton is mostly feature selection
@@ -30,7 +29,11 @@ from actuators to measurements. Most differences between graph methods are withi
 error, and the effective sample size of the walk recordings limits what any method can show.
 We did not evaluate amortised methods (AVICI), CAM or QCCD, and several baselines
 are re-implementations or default runs (LOCI on at most $1000$ rows); a better-tuned baseline could change a ranking.
-The Causal Chambers also contain interventional experiments, where a simple shift test already
-recovers the descendants with perfect precision, and we did not use them. The new methods were
+The Causal Chambers also contain interventional experiments, where a two-sample shift test recovers the
+descendants of an intervened variable with no false positives on $58$ experiments ($88$ found, $20$
+missed; \texttt{scripts/audit\_followups.py}), and we did not use them for the evaluation. The pair
+sets are structurally easy (actuator causes with simple marginals) and the chamber pair-runs are not independent.
+We did not evaluate RCC or NCC, Slope, CAM, nonlinear continuous-optimisation methods, GIES or ICP,
+and we applied no multiplicity control except in the BTAD comparison. The new methods were
 developed by the author of this paper, which is a source of bias; the frozen protocol and the
 public code are the mitigation.
