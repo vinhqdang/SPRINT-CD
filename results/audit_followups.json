@@ -1,0 +1,258 @@
+{
+ "lrg_auc_wind_walks": {
+  "mean": 0.5464675395526459,
+  "n": 15,
+  "min": 0.5130932896890343,
+  "max": 0.5961538461538461
+ },
+ "ccf_load_in_rpm_in_wind_walks": {
+  "lags": [
+   -6,
+   -5,
+   -4,
+   -3,
+   -2,
+   -1,
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "mean": [
+   0.9735969544482098,
+   0.9752927214412506,
+   0.9768703482750758,
+   0.9783771490741466,
+   0.9797990436994056,
+   0.9811342241158872,
+   0.9823925142481037,
+   0.9837023547660585,
+   0.9845402279318194,
+   0.9851078013213452,
+   0.9853456932466838,
+   0.9853177043330151,
+   0.9850568090584406
+  ],
+  "range_over_lags_mean": 0.011748738798473934
+ },
+ "interventional_shift_test": {
+  "experiments": 58,
+  "tp": 88,
+  "fp": 0,
+  "fn": 20
+ },
+ "wilcoxon_BTAD_vs_others_wind_walks": {
+  "PC a=0.05": {
+   "p": 6.103515625e-05,
+   "BTAD_minus_other": -0.11638626951021469,
+   "holm_p": 0.00067138671875
+  },
+  "PC a=0.01": {
+   "p": 6.103515625e-05,
+   "BTAD_minus_other": -0.1037824900534537,
+   "holm_p": 0.00067138671875
+  },
+  "GES-BIC": {
+   "p": 6.103515625e-05,
+   "BTAD_minus_other": -0.10564802067232534,
+   "holm_p": 0.00067138671875
+  },
+  "DirectLiNGAM": {
+   "p": 6.103515625e-05,
+   "BTAD_minus_other": -0.10044370478525089,
+   "holm_p": 0.00067138671875
+  },
+  "PC-GCM a=0.05": {
+   "p": 0.00018310546875,
+   "BTAD_minus_other": -0.1524039751920398,
+   "holm_p": 0.00091552734375
+  },
+  "PC-GCM a=0.01": {
+   "p": 0.0008544921875,
+   "BTAD_minus_other": -0.1232473477670805,
+   "holm_p": 0.00341796875
+  },
+  "CERT-CD nonparametric k=3": {
+   "p": 6.103515625e-05,
+   "BTAD_minus_other": -0.10456027816014467,
+   "holm_p": 0.00067138671875
+  },
+  "LRG": {
+   "p": 0.0001220703125,
+   "BTAD_minus_other": -0.10470807268205023,
+   "holm_p": 0.000732421875
+  },
+  "NOTEARS": {
+   "p": 0.00836181640625,
+   "BTAD_minus_other": -0.0695092599903503,
+   "holm_p": 0.018955564661047496
+  },
+  "DAGMA": {
+   "p": 0.01025390625,
+   "BTAD_minus_other": -0.0721832047382828,
+   "holm_p": 0.018955564661047496
+  },
+  "PCMCI+": {
+   "p": 0.006318521553682498,
+   "BTAD_minus_other": 0.07048416854595538,
+   "holm_p": 0.018955564661047496
+  }
+ },
+ "mcnemar_RECI_vs": {
+  "tuebingen": {
+   "PDM": {
+    "RECI_only": 32,
+    "other_only": 11,
+    "p": 0.001913961001264397
+   },
+   "IGCI": {
+    "RECI_only": 21,
+    "other_only": 16,
+    "p": 0.5113757815852296
+   },
+   "ANM-HSIC": {
+    "RECI_only": 23,
+    "other_only": 23,
+    "p": 1.0
+   },
+   "LiNGAM-pair": {
+    "RECI_only": 21,
+    "other_only": 21,
+    "p": 1.0
+   },
+   "LOCI": {
+    "RECI_only": 18,
+    "other_only": 22,
+    "p": 0.6358280026288412
+   },
+   "ANM": {
+    "RECI_only": 27,
+    "other_only": 18,
+    "p": 0.23269319190831084
+   }
+  },
+  "chamber_iid": {
+   "PDM": {
+    "RECI_only": 7,
+    "other_only": 2,
+    "p": 0.1796875
+   },
+   "IGCI": {
+    "RECI_only": 6,
+    "other_only": 2,
+    "p": 0.2890625
+   },
+   "ANM-HSIC": {
+    "RECI_only": 26,
+    "other_only": 2,
+    "p": 3.032386302947998e-06
+   },
+   "LiNGAM-pair": {
+    "RECI_only": 21,
+    "other_only": 2,
+    "p": 6.604194641113281e-05
+   },
+   "LOCI": {
+    "RECI_only": 21,
+    "other_only": 1,
+    "p": 1.0967254638671875e-05
+   },
+   "ANM": {
+    "RECI_only": 22,
+    "other_only": 2,
+    "p": 3.5881996154785156e-05
+   }
+  },
+  "chamber_walk": {
+   "PDM": {
+    "RECI_only": 18,
+    "other_only": 5,
+    "p": 0.010622024536132812
+   },
+   "IGCI": {
+    "RECI_only": 13,
+    "other_only": 6,
+    "p": 0.1670684814453125
+   },
+   "ANM-HSIC": {
+    "RECI_only": 38,
+    "other_only": 0,
+    "p": 7.275957614183426e-12
+   },
+   "LiNGAM-pair": {
+    "RECI_only": 34,
+    "other_only": 6,
+    "p": 8.364584573428147e-06
+   },
+   "LOCI": {
+    "RECI_only": 32,
+    "other_only": 0,
+    "p": 4.656612873077393e-10
+   },
+   "ANM": {
+    "RECI_only": 35,
+    "other_only": 0,
+    "p": 5.820766091346741e-11
+   }
+  }
+ },
+ "anm_gp_ties": {
+  "tuebingen": {
+   "ties": 7,
+   "acc_ties_half": 0.553921568627451,
+   "n": 102
+  },
+  "chamber_iid": {
+   "ties": 3,
+   "acc_ties_half": 0.7712765957446809,
+   "n": 94
+  },
+  "chamber_walk": {
+   "ties": 12,
+   "acc_ties_half": 0.6721311475409836,
+   "n": 122
+  },
+  "sachs": {
+   "ties": 1,
+   "acc_ties_half": 0.5588235294117647,
+   "n": 17
+  }
+ },
+ "V_ratio": {
+  "wind_walks_15": {
+   "n": 15,
+   "V_iid": 40.8,
+   "V_block": 8.466666666666667
+  },
+  "ess_lt20_17": {
+   "n": 17,
+   "V_iid": 38.94117647058823,
+   "V_block": 9.529411764705882
+  },
+  "all_19": {
+   "n": 19,
+   "V_iid": 36.0,
+   "V_block": 9.842105263157896
+  },
+  "hatch_0": {
+   "n": 1,
+   "V_iid": 29.0,
+   "V_block": 14.0
+  },
+  "color_mix": {
+   "n": 1,
+   "V_iid": 21.0,
+   "V_block": 21.0
+  }
+ },
+ "chamber_walk_pair_composition": {
+  "actuators_random_walk_10": 26,
+  "hatch_0": 18,
+  "actuators_white": 37,
+  "color_mix": 14,
+  "smooth_polarizers": 27
+ }
+}
