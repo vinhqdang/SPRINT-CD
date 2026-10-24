@@ -17,11 +17,13 @@ def agg(v):
     v = np.array(v); return {"P": float(v[:, 0].mean()), "R": float(v[:, 1].mean()), "F1": float(v[:, 2].mean()), "fp": float(v[:, 3].mean()), "n": len(v)}
 
 
-M = ["PC a=0.05", "PC a=0.01", "GES-BIC", "DirectLiNGAM", "NOTEARS", "PC-GCM a=0.05", "PC-GCM a=0.01", "BTAD", "LRG", "CERT-CD nonparametric"]
+e39 = L("exp39_graphs_modern.json")
+M = ["PC a=0.05", "PC a=0.01", "GES-BIC", "DirectLiNGAM", "NOTEARS", "DAGMA", "PCMCI+", "PC-GCM a=0.05", "PC-GCM a=0.01", "BTAD", "LRG", "CERT-CD nonparametric"]
 out = {}
 # Sachs
 s = e36["sachs"]; T = {tuple(sorted(e)) for e in s["truth"]}
-out["Sachs"] = {m: agg([sc(s["edges"][k], T)]) for m in M for k in [m if m != "CERT-CD nonparametric" else "CERT-CD nonparametric k=3"] if s["edges"].get(k) is not None}
+se = dict(s["edges"]); se.update(e39["sachs"]["edges"])
+out["Sachs"] = {m: agg([sc(se[k], T)]) for m in M for k in [m if m != "CERT-CD nonparametric" else "CERT-CD nonparametric k=3"] if se.get(k) is not None}
 # iid chambers (2 recordings, 10 subsamples each; pooled over both)
 iid = {m: [] for m in M}
 for di in (0, 1):
@@ -38,6 +40,11 @@ for di in (0, 1):
         if r["ds"] == di: iid["PC-GCM a=0.05"].append(sc(r["a05"], T)); iid["PC-GCM a=0.01"].append(sc(r["a01"], T))
     for r in e36["notears_chambers"]:
         if r["kind"] == "iid" and r["ds"] == di and r["edges"] is not None: iid["NOTEARS"].append(sc(r["edges"], T))
+for r in e39["chambers"]:
+    if r["kind"] == "iid":
+        recs_ = [x for x in e20["records"] if x["ds"] == r["ds"]]; T_ = {tuple(sorted(e)) for e in recs_[0]["truth"]}
+        for m in ("DAGMA", "PCMCI+"):
+            if r["edges"][m] is not None: iid[m].append(sc(r["edges"][m], T_))
 out["Chambers iid (2 recordings x 10 subsamples)"] = {m: agg(v) for m, v in iid.items() if v}
 # fresh recordings, stratified by effective sample size (ESS from serial diagnostic)
 ess = {tuple(r["spec"][:2]): r["ess"] for r in diag if r["ess"] is not None}
@@ -53,6 +60,9 @@ for g, f in groups.items():
             est = r["m"][key]["edges"]
             if est is not None: acc[m].append(sc(est, T))
         l = [x for x in e32 if tuple(x["spec"][:2]) == tuple(r["spec"][:2])][0]; acc["LRG"].append(sc(l["edges"], T))
+        for m in ("DAGMA", "PCMCI+"):
+            q = [x for x in e39["chambers"] if x["kind"] == "walk" and tuple(x["spec"][:2]) == tuple(r["spec"][:2])][0]
+            if q["edges"][m] is not None: acc[m].append(sc(q["edges"][m], T))
         n_ = [x for x in e36["notears_chambers"] if x["kind"] == "walk" and tuple(x["spec"][:2]) == tuple(r["spec"][:2])][0]
         if n_["edges"] is not None: acc["NOTEARS"].append(sc(n_["edges"], T))
     out[g] = {m: agg(v) for m, v in acc.items() if v}
