@@ -1,0 +1,195 @@
+
+\section{Results}\label{sec:results}
+
+\subsection{Cause--effect pairs}\label{sec:pairs}
+
+Figure~\ref{fig:pairs} and Table~\ref{tab:pairs} give the forced-choice accuracy of the
+learned model PDM and the four rules on the four pair sets. RECI is the best or tied-best
+method on every real set: $60.8\%$ on Tübingen ($70.9\%$ weighted), $97.9\%$ on the i.i.d.
+chamber pairs and $94.3\%$ on the walk pairs. The other rules are lower, and ANM-HSIC and the
+pairwise LiNGAM rule fall to $63$--$78\%$ on the chambers. PDM, which reaches $95\%$ on its
+held-out simulated test set and $83\%$ on nine unseen simulated families, is at chance on
+the Tübingen pairs ($40.2\%$, interval $[30.6,50.4]$) and below RECI and IGCI on both
+chamber sets. The only set on which it is best is the simulated one, which is its own
+prior. Published methods reach roughly $63$--$83\%$ forced accuracy on Tübingen
+\citep{mooij2016distinguishing,tagasovska2020bqcd,immer2023loci}; our RECI is in the lower
+part of that range.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{pairs_accuracy.png}
+\caption{Forced-choice accuracy with Clopper--Pearson intervals on four pair sets (pairs or
+pair-runs in parentheses). Red: PDM; blue: RECI; grey: the other rules. Dotted: chance.}
+\label{fig:pairs}
+\end{figure}
+
+\begin{table}[t]
+\caption{Forced-choice accuracy (unweighted; weighted by the official weights for Tübingen).}
+\label{tab:pairs}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & Tübingen & chambers i.i.d. & chambers walks & simulated\\
+ & ($102$) & ($94$) & ($122$) & ($270$)\\
+\midrule
+PDM & 0.402 (0.511) & 0.926 & 0.836 & 0.830\\
+IGCI & 0.559 (0.664) & 0.936 & 0.885 & 0.700\\
+RECI & 0.608 (0.709) & 0.979 & 0.943 & 0.781\\
+ANM-HSIC & 0.608 (0.609) & 0.723 & 0.631 & 0.778\\
+pairwise LiNGAM & 0.608 (0.620) & 0.777 & 0.713 & 0.633\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Abstention.} The direction certificate commits on $12$ of the $80$ scorable
+Tübingen pairs and is right on $11$. Ranked by its own confidence, RECI is right on $11$ of
+its $12$ most confident pairs, and on $21$ of $23$ against $19$ of $23$ at the coverage of the
+constant-scale class. On the chamber pairs the certificate is right on all $31$ pairs it
+commits to ($94$ pair-runs), as are the RECI and IGCI rankings at that coverage; on the
+simulated pairs it is right on $78$ of $83$ against $82$ of $83$ for RECI. At matched coverage the
+certificate is therefore not more accurate than RECI; what it adds is that it chooses its
+own coverage from the data. The Tübingen result of the certificate is stable over random
+draws of the preprocessing ($9/9$, $11/11$, $10/10$ for three further seeds), and its one
+error occurred on a pair with $254$ rows.
+
+\subsection{Graphs}\label{sec:graphs}
+
+Table~\ref{tab:graphs} and Figure~\ref{fig:graphs} give the skeleton score on the graph
+benchmarks. The ranking of methods depends on the data family.
+
+\begin{table}[t]
+\caption{Skeleton precision / recall / $F_1$ against the reference graph (strict); mean over
+recordings or subsamples. Sachs: one data set, $17$ reference edges. Chambers i.i.d.: two
+recordings, ten subsamples of $4000$ rows each. Chambers with an effective sample size above
+$1000$ (two recordings) and below $20$ (seventeen recordings): the first $4000$ rows in time
+order. Best $F_1$ in bold.}
+\label{tab:graphs}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & Sachs & Chambers iid & ESS $>1000$ & ESS $<20$\\
+\midrule
+PC, $\alpha=0.05$ & 1.00/0.41/0.58 & 0.40/0.38/0.37 & 0.48/0.28/0.35 & 0.36/0.39/0.37\\
+GES-BIC & 1.00/0.41/0.58 & 0.45/0.64/0.49 & 0.74/0.67/\textbf{0.70} & 0.26/0.71/0.38\\
+DirectLiNGAM & 1.00/0.35/0.52 & 0.55/0.60/\textbf{0.55} & 0.71/0.63/0.66 & 0.26/0.63/0.37\\
+NOTEARS & 1.00/0.18/0.30 & 0.41/0.21/0.27 & 0.33/0.24/0.26 & 0.26/0.45/0.33\\
+PC, nonparam.\ test & 0.89/0.47/0.62 & 0.38/0.33/0.34 & 0.54/0.34/0.41 & 0.35/0.54/\textbf{0.42}\\
+BTAD & 0.89/0.47/0.62 & 0.56/0.36/0.41 & 0.82/0.46/0.58 & 0.60/0.16/0.25\\
+LRG & 0.90/0.53/\textbf{0.67} & 0.39/0.48/0.43 & 0.52/0.55/0.53 & 0.51/0.28/0.36\\
+CERT-CD, nonparametric & 1.00/0.29/0.45 & 0.29/0.16/0.20 & 0.60/0.18/0.28 & 0.24/0.87/0.37\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\linewidth]{graph_f1.png}
+\caption{Strict skeleton $F_1$ by data family and method.}
+\label{fig:graphs}
+\end{figure}
+
+\paragraph{Sachs.} The methods with nonparametric components have the highest $F_1$
+(LRG $0.67$, PC with the nonparametric test $0.62$--$0.64$, BTAD $0.62$), against $0.58$
+for PC and GES, $0.52$ for DirectLiNGAM and $0.30$ for the linear NOTEARS. The reference network
+has $17$ edges, so one edge changes recall by $0.06$ and the differences are not statistically
+distinguishable; the classical methods have the highest precision ($1.00$) and the new ones
+find a few more edges.
+
+\paragraph{Chambers with independent rows.} DirectLiNGAM and GES are best. On the two
+recordings with i.i.d.\ actuators DirectLiNGAM has $F_1=0.55$ and GES $0.49$, against
+$0.32$ to $0.43$ for PC with either test, BTAD and LRG; on the two further recordings with
+a large effective sample size GES has $0.70$ and DirectLiNGAM $0.66$. The actuators there
+are uniform and the mechanisms nearly additive, which suits DirectLiNGAM. BTAD has the highest
+precision ($0.56$ and $0.82$) at lower recall. The sequential certificate has the lowest $F_1$.
+
+\paragraph{Random-walk recordings.} On the seventeen recordings with an effective sample size
+below $20$ every method is between $0.25$ and $0.42$; the best, PC with the nonparametric test,
+has precision $0.35$. BTAD has the highest precision ($0.60$, with $2.5$ false edges per
+recording against $17$ to $51$ for PC, GES and DirectLiNGAM) and recall $0.16$. Paired comparisons over the $15$
+wind-tunnel recordings show that BTAD's $F_1$ is lower than that of every other method
+(Wilcoxon $p<0.001$), and that LRG is not distinguishable from PC, GES or DirectLiNGAM.
+
+\subsection{The walk recordings carry a few independent observations}\label{sec:serial}
+
+Figure~\ref{fig:serial} shows why the walk recordings defeat every method. In the fifteen
+wind-tunnel walks the mean lag-1 autocorrelation of the exogenous variables is $0.998$ and
+the implied effective sample size is $3$ of $4000$ rows (the cross-correlation between a load
+and the rotation speed it drives is flat for lags from $-6$ to $+6$, so there is also no usable
+lag structure). An i.i.d.\ test of the independences implied by the graph rejects $40.8$
+non-adjacent pairs per recording; a test on $40$ contiguous blocks rejects $8.5$. The
+reference set built with the i.i.d.\ test, which we used in an earlier analysis, therefore
+contains many pairs of independent random walks whose dependence changes sign from one
+recording to the next, and a method scored against it is scored against artefacts. Two
+recordings of the new set (\texttt{actuators\_white}, \texttt{smooth\_polarizers}) have an
+effective sample size above $1000$, and these are the ones on which the classical methods are best.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\linewidth]{serial_dependence.png}
+\caption{Left: effective sample size (log scale) of the exogenous variables in each of the
+nineteen new recordings. Right: number of non-adjacent pairs whose graph-implied independence
+is rejected by an i.i.d.\ test and by a block test.}
+\label{fig:serial}
+\end{figure}
+
+\subsection{Where the new methods help: monitoring and nonlinear mechanisms}\label{sec:monitoring}
+
+On simulated graphs the sequential certificate does what it was designed for
+(Table~\ref{tab:monitoring}). When each method is rerun at every sample size from $100$ to
+$6400$ on $150$ random eight-node graphs and a graph counts as a failure if any estimate
+contains a false edge, CERT-CD fails in $2.7\%$ of the graphs under Laplace errors, against
+$27\%$ to $91\%$ for PC, GES and DirectLiNGAM and $39\%$ to $77\%$ for PC with the same
+nonparametric test, so the effect is due to the delete-on-non-rejection architecture and
+not to the test. With nonlinear mechanisms the linear test of the certificate fails in $33$
+of $60$ graphs under Laplace errors and $28$ of $60$ under Gaussian errors, and the nonparametric
+version in $1$ and $2$ of $60$. The guarantee of the linear version is exact only for
+Gaussian regression errors, and that of the nonparametric version is asymptotic.
+These are simulations within the models; on the chambers the false-edge control did not hold
+(a false edge adjusted for a reference set built with an i.i.d.\ test in $12$ of $19$ recordings, a strict false edge in $18$).
+
+\begin{table}[t]
+\caption{Probability that a false edge is ever reported over $n=100,\dots,6400$ ($150$ graphs,
+$d=8$), and graphs with a false edge under nonlinear mechanisms ($60$ graphs).}
+\label{tab:monitoring}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Method & Laplace errors & Gaussian errors\\
+\midrule
+CERT-CD, linear test & 0.027 & 0.040\\
+CERT-CD, nonparametric test & 0.060 & 0.047\\
+PC, $\alpha=0.05$ / $0.01$ & 0.747 / 0.267 & 0.773 / 0.320\\
+PC, nonparametric test, $\alpha=0.05$ / $0.01$ & 0.767 / 0.387 & 0.787 / 0.320\\
+GES-BIC & 0.913 & 0.960\\
+DirectLiNGAM & 0.760 & 1.000\\
+\midrule
+nonlinear mechanisms: linear test (of $60$) & 33 & 28\\
+nonlinear mechanisms: nonparametric test (of $60$) & 1 & 2\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The gap between simulation and measurement}\label{sec:gap}
+
+The two learned models are accurate on data from their training distribution and lose that
+on real data (Table~\ref{tab:gap}). PDM falls from $0.95$ to $0.40$ on Tübingen; LRG falls
+from an $F_1$ of $0.86$ on simulated graphs to $0.36$--$0.43$ on the chambers, and its
+within-recording ranking of pairs on the walk recordings is close to chance (mean AUC $0.55$).
+We cannot say which feature of the real data is responsible; the simulators contain serial
+dependence, latent drift, duplicated sensors and several mechanism families and still do not
+cover them.
+
+\begin{table}[t]
+\caption{Learned models: simulated test against real data.}
+\label{tab:gap}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & simulated test & real data & measure\\
+\midrule
+PDM & 0.95 / 0.83 & 0.40 Tübingen; 0.93, 0.84 chambers & forced accuracy\\
+LRG & 0.86 & 0.67 Sachs; 0.43, 0.53, 0.36 chambers & skeleton $F_1$\\
+\bottomrule
+\end{tabular}
+\end{table}

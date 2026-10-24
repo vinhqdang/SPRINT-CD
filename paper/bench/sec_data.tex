@@ -1,0 +1,59 @@
+
+\section{Data and protocol}\label{sec:data}
+
+\subsection{Data}
+
+\paragraph{Tübingen pairs.} The $102$ scalar-scalar pairs of the cause--effect benchmark
+\citep{mooij2016distinguishing}, with the official weights. Tied values are dequantised by
+adding uniform noise of the width of the smallest gap, long pairs are subsampled to $2000$
+rows, and the preprocessing seed is fixed.
+
+\paragraph{Causal Chambers.} The wind tunnel and the light tunnel \citep{gamella2025chamber}
+are physical devices with a graph given by their construction. We use recorded experiments
+in which the actuators vary, and the nodes of the chamber graph with at least $20$ distinct
+values. Three kinds of recordings occur. In the \emph{i.i.d.} recordings the actuators are
+redrawn independently at random: the wind tunnel with random intake loads and the light
+tunnel with uniform inputs, used for the pair and graph evaluations (two recordings with
+ten subsamples each). In the \emph{walk} recordings the actuators follow random walks:
+$15$ runs of the wind tunnel, the pressure-control experiment, and three light-tunnel
+experiments, of which one (\texttt{color\_mix}) is a walk and two have nearly independent rows
+(Section~\ref{sec:serial}). The graphs have $8$ to $39$ edges among $10$ to $20$ variables
+and are bipartite: settings point to measurements.
+
+\paragraph{Sachs.} The $853$ observational cells with $11$ phosphoproteins, log-transformed;
+the reference network is the $17$-arc consensus of \citet{sachs2005causal}, which is
+contested \citep{mooij2020joint}.
+
+\subsection{Scores}
+
+\emph{Pairs.} Forced-choice accuracy of the direction (unweighted, and weighted by the
+Tübingen weights), with Clopper--Pearson intervals; and accuracy at a given coverage when
+pairs are ranked by a method's confidence.
+
+\emph{Graphs.} Precision, recall and $F_1$ of the skeleton against the reference graph
+(``strict''). Because the chamber graphs do not explain all dependence among the sensors
+(for instance four barometers share an ambient pressure), we also report precision against
+the graph plus a reference set $V$ of non-adjacent pairs whose graph-implied conditional
+independence is rejected on held-out rows (``adjusted''); the strict score is the headline.
+
+\subsection{Effective sample size}\label{sec:ess}
+
+For each recording we measure the lag-1 autocorrelation $\rho$ of the exogenous
+variables and the implied effective sample size $n(1-\rho)/(1+\rho)$ of the first $4000$ rows.
+The result (Section~\ref{sec:serial}) splits the nineteen new recordings into two with an
+effective sample size above $1000$ and seventeen below $20$.
+
+\subsection{Protocol and provenance}\label{sec:provenance}
+
+Methods, settings and the scripts that score them were committed to the repository
+before the run in every case except the following, which are post hoc and flagged where they
+occur. First, the Causal Chambers recordings with independent rows and the Sachs data were
+inspected while we were developing the sequential certificates, so those certificates
+were adjusted after seeing them (a nonparametric test, a larger conditioning order). Second,
+the nine simulated pair families used to choose the agreement rule of the direction
+certificate are design data. Third, the reference set $V$ was introduced after seeing
+false edges. Every other number is from a frozen run: the new chamber recordings, the
+Tübingen pairs for all methods, the learned models (trained only on simulated data and
+frozen before evaluation), the baselines, and the Sachs run of all methods. The six
+methods of the study and their settings are described in Section~\ref{sec:methods} and the
+appendix.

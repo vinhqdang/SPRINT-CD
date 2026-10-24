@@ -1,0 +1,38 @@
+
+\section{Method details}\label{app:methods}
+
+\paragraph{Pair features.} The direction hypothesis $c\to e$ is described by the log
+cross-validated mean squared error of additive cubic spline regressions of $e$ on $c$ with
+$2$, $4$ and $8$ knots, the log HSIC between the residual and the cause, the share of
+$\log r^2$ explained by $c$, the skewness and kurtosis of the residual, the correlation of
+$r^2$ with $c^2$, held-out Gaussian and location-scale log-likelihoods, and the spacing
+entropy, skewness and kurtosis of $c$; the feature vector is the difference between the two
+directions plus their sum and symmetric nuisance features (sample size, correlation, share of
+distinct values). The classifier has depth $6$, $500$ trees and learning rate $0.05$.
+
+\paragraph{Graph features (LRG).} For every pair, the held-out gain of adding one variable to
+a model of the other with $40$ contiguous blocks (mean, $t$ statistic, share of positive
+blocks), in both directions, with an empty conditioning set, the three strongest other
+predictors, and the single conditioner that most explains the pair away; the absolute
+correlation; the smaller and larger lag-1 autocorrelation of the two variables; the log
+number of variables; and within-data-set ranks of the three $t$ statistics. Depth $4$, $300$
+trees. The decision threshold ($0.4$) maximises validation $F_1$.
+
+\paragraph{BTAD.} Spline ridge models with three knots at the quartiles, inputs clipped at
+the $1\%$ and $99\%$ quantiles, pairwise products when the conditioning set has two or more
+members; gap of $5\%$ of the block length between blocks; $60$ blocks; Bonferroni over the
+candidates of each step; blanket of at most $8$ variables; spouse removal over subsets of
+size at most $2$ of the union of the blankets.
+
+\paragraph{PC with a nonparametric test.} Residuals of $X_v$ and $X_v^2$ on an additive spline
+of $X_S$ with two-fold cross-fitting; the three products $r_ir_j$, $r_ir_j^{(2)}$ and
+$r_jr_i^{(2)}$; $p$-value $=\min(1,3\min_k p_k)$.
+
+\paragraph{Sequential certificates.} The adjacency certificate and the direction certificate
+are described, with their assumptions, in the companion paper (\texttt{paper/certcd2} in the
+repository); here only their outputs are used.
+
+\paragraph{Reproduction.} Each experiment is a script in \texttt{experiments/}, committed
+before it was run, with a summary script in \texttt{scripts/}; the figures are made by
+\texttt{scripts/make\_benchmark\_figs.py}. All results are in \texttt{results/} as JSON.
+Seeds are fixed. The Chamber data and the Tübingen pairs are downloaded on first use.

@@ -1,0 +1,60 @@
+
+\section{Methods compared}\label{sec:methods}
+
+\subsection{Established baselines}
+
+\emph{Graphs.} PC with Fisher-$z$ tests at $\alpha=0.05$ and $0.01$ \citep{spirtes2000causation},
+GES with the BIC score \citep{chickering2002optimal}, DirectLiNGAM
+\citep{shimizu2011directlingam} with edges thresholded at $|B|>0.05$, all from
+\texttt{causal-learn}, and NOTEARS with a linear model \citep{zheng2018dags} (our compact
+re-implementation, $\ell_1$ penalty $0.1$, threshold $0.3$). We score skeletons only.
+
+\emph{Pairs.} IGCI in its entropy form with a uniform reference \citep{daniusis2010inferring},
+RECI, which prefers the direction with the smaller regression error after min--max scaling
+\citep{blobaum2018cause}, an additive noise model with a spline regression and an HSIC
+independence criterion (ANM-HSIC; \citealt{hoyer2009nonlinear}), and the first-order pairwise
+LiNGAM likelihood-ratio statistic \citep{hyvarinen2013pairwise}. These are short
+re-implementations of the published rules and were not tuned.
+
+\subsection{Methods developed for this study}
+
+All six were frozen before their evaluation on the data in which they are scored, except
+where Section~\ref{sec:provenance} says otherwise. Details are in the appendix.
+
+\paragraph{Direction certificate (relative fit).} For a pair, two forecasters of the joint
+law, one per factorisation, are fitted sequentially on past rows; the running mean of the
+log-score difference has an asymptotic confidence sequence
+\citep{waudbysmith2024asymptotic}; a direction is reported only when two model classes
+(constant scale and location-scale generalised Gaussian) agree. It abstains on most pairs.
+It certifies better predictive fit, not causation.
+
+\paragraph{CERT-CD (sequential adjacency certificates).} An edge is asserted only when,
+for every conditioning set of size at most $k$, a sequential test of conditional dependence
+has rejected. We use the nonparametric version, a sequential generalised covariance test
+\citep{shah2020hardness} with spline regressions, at $k=3$ on the chambers.
+
+\paragraph{PC with a nonparametric test (PC-GCM).} PC (depth at most $3$) with the same
+test used as PC uses a test: cross-fitted residuals, three residual products, an edge is
+deleted when some conditioning set yields a $p$-value above $\alpha$. It separates the effect of the
+test from the effect of the sequential architecture.
+
+\paragraph{BTAD (block-replicated additive discovery).} Time-ordered rows are cut into
+$60$ contiguous blocks. A variable is added to a node's Markov blanket when its held-out
+gain in an additive spline model replicates across blocks (one-sided $t$ test, Bonferroni
+over candidates), blankets are grown and shrunk, and edges that a small subset of the union
+of two blankets can explain away are removed. Its settings were fixed on simulated data
+($\alpha=0.2$, blanket at most $8$).
+
+\paragraph{LRG (learned replicated-gain model).} A gradient-boosting classifier on $25$
+features per pair (block gains with several conditioning sets, correlation,
+autocorrelation, within-data-set ranks), trained on $600$ simulated data sets with
+nonlinear mechanisms, serial dependence, latent drift and duplicated sensors. The decision
+threshold is set on a validation split of the simulations.
+
+\paragraph{PDM (pair-direction model).} A gradient-boosting classifier on $32$ features
+(spline regression errors at three flexibilities, residual dependence, residual shape,
+IGCI entropies, Gaussian and location-scale log-likelihoods, the pairwise LiNGAM
+statistic, discreteness) trained on $40000$ simulated pairs with $12$ mechanism families,
+$6$ noise laws, additive, multiplicative, location-scale and post-nonlinear structure,
+quantisation and serial dependence. This is the learned approach of
+\citet{lopezpaz2015towards} with different features and simulator.

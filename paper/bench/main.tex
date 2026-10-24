@@ -1,0 +1,93 @@
+\documentclass[pdflatex,sn-apa]{sn-jnl}
+
+\usepackage{graphicx}%
+\graphicspath{{figs/}}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+\newtheorem{proposition}[theorem]{Proposition}%
+\newtheorem{lemma}[theorem]{Lemma}%
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+\newtheorem{assumption}{Assumption}%
+
+\newcommand{\indep}{\perp\!\!\!\perp}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Gstar}{\mathcal{G}^{\star}}
+\newcommand{\pa}{\mathrm{pa}}
+\newcommand{\de}{\mathrm{de}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Exp}{\mathbb{E}}
+\newcommand{\Real}{\mathbb{R}}
+
+\raggedbottom
+
+\begin{document}
+
+\title[Transfer of causal discovery to real measurements]{Does causal discovery transfer to real measurements? A multi-dataset evaluation on cause--effect pairs, protein signalling and physical devices}
+
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
+
+\abstract{Causal discovery methods are usually validated on simulated data. We evaluate
+fourteen methods on four families of real data with a known or consensus structure: the
+Tübingen cause--effect pairs, the protein-signalling data of Sachs et al., and
+two kinds of recordings from the Causal Chambers, physical devices with a known graph.
+Besides established baselines (PC, GES, DirectLiNGAM, NOTEARS, IGCI, RECI, ANM-HSIC and a
+pairwise LiNGAM rule), we include six methods we developed for this study and froze
+before the evaluation: sequential certificates for edges and directions, PC with a
+nonparametric test, a block-replicated additive method (BTAD), and two classifiers
+trained on simulated data. The results are mixed and often unfavourable to the new
+methods. On pairs, a regression-error rule (RECI) is the best or tied best method on
+every real data set ($61\%$ on Tübingen, $94\%$ to $98\%$ on the chambers), and a
+classifier that reaches $95\%$ on simulated pairs is at chance on Tübingen. On graphs,
+DirectLiNGAM and GES are best on the chamber recordings with independent rows (skeleton
+$F_1$ $0.55$ on the first two, $0.70$ on two others), while the methods using nonparametric tests are better on the
+Sachs data ($F_1$ $0.62$ to $0.67$ against $0.52$ to $0.58$, with $17$ reference edges).
+Seventeen of the nineteen new chamber recordings are random walks with an effective
+sample size of a few observations out of $4000$, which makes tests that assume independent
+rows reject roughly five times more graph-implied independences than a block test, and no
+method exceeds $F_1=0.42$ there. We report where each method helps, where it does not,
+and which of our design choices were fixed before and after seeing the data.}
+
+\keywords{causal discovery, benchmark, real data, cause--effect pairs, Causal Chambers, serial dependence}
+
+\pacs[MSC Classification]{62H22, 62G10, 68T05}
+
+\maketitle
+
+\input{sec_intro}
+\input{sec_data}
+\input{sec_methods}
+\input{sec_results}
+\input{sec_discussion}
+
+\backmatter
+
+\input{declarations}
+
+\begin{appendices}
+\input{appendix}
+\end{appendices}
+
+\bibliography{refs}
+
+\end{document}
