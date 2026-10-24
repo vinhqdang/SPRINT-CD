@@ -1,0 +1,7 @@
+{
+ "val_acc": 0.9474,
+ "test_acc": 0.9494,
+ "test_acc_top25": 1.0,
+ "test_acc_top50": 1.0,
+ "test_acc_top75": 0.9957333333333334
+}
