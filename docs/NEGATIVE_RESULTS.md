@@ -12,6 +12,7 @@ new recordings), Sachs, Tuebingen pairs.
 | PDM | learned pair-direction classifier trained on 40000 simulated pairs | 95% on simulated pairs, 40.2% on Tuebingen |
 | Block-ICP | invariant causal prediction with time blocks as environments | empty graphs, F1 <= 0.07 on development recordings |
 | LOCI, ANM, DAGMA, PCMCI+ | modern baselines | no better than RECI / DirectLiNGAM / GES |
+| Sorted-conditional compression, TRA, BF-BIC+BOSS (2025-2026, exp42-43) | re-implemented published methods, settings frozen before running | Tuebingen 60.8-64.7% (RECI 60.8%, LOCI 64.7%); chamber i.i.d. pairs TRA 86.2% vs RECI 97.9%; compression 29.8%; Sachs F1 0.67 (ties LRG, PC-GCM 0.62-0.64); chambers F1 0.49 i.i.d., 0.44 on walks with 36 false edges per run |
 
 The recordings with random-walk actuators have an effective sample size of about three observations
 out of 4000; no method exceeds strict F1 0.42 on them.

@@ -1,0 +1,15 @@
+== pairs: accuracy (None -> excluded, ties half) ==
+tuebingen    SC     n= 102/102 acc=0.608 weighted=0.680
+tuebingen    SCraw  n= 102/102 acc=0.647 weighted=0.659
+tuebingen    TRA    n=  82/102 acc=0.646 weighted=0.654
+chamber_iid  SC     n=  94/94 acc=0.298
+chamber_iid  SCraw  n=   0/94 acc=0.000
+chamber_iid  TRA    n=  94/94 acc=0.862
+chamber_walk SC     n= 122/122 acc=0.615
+chamber_walk SCraw  n=   0/122 acc=0.000
+chamber_walk TRA    n= 122/122 acc=0.615
+sachs        SC     n=  17/17 acc=0.765
+sachs        SCraw  n=  17/17 acc=0.765
+sachs        TRA    n=  17/17 acc=0.588
+Sachs BF-BIC+BOSS F1,|E|,TP: (0.6666666666666667, 10, 9) truth 17
+Chambers iid mean F1 0.4907021648600596 20 walks mean strict F1 0.43530518803670687 19
