@@ -41,9 +41,6 @@ def sachs():
     d = Z.shape[1]
     idx = {n: k for k, n in enumerate(names)}
     truth = sorted({tuple(sorted((idx[a], idx[b]))) for a, b in e10.CONSENSUS})
-    mdl = joblib.load(HERE.parent / "results" / "lrg_model.joblib")
-    pairs, F = pair_features(Z)
-    p = mdl["model"].predict_proba(F)[:, 1]
 
     def npc():
         a = NPAdjacency(d, 0.05 / (d * (d - 1) / 2), k=3, warm=100)
