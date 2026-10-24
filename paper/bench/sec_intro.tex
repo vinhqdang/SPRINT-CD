@@ -14,11 +14,11 @@ graph is known from their construction \citep{gamella2025chamber}.
 
 This paper asks a plain question: when methods are applied unchanged to several real
 data families, which ones work, and do recent ideas beat simple baselines? We evaluate
-fourteen methods on four families of real data, under a protocol in which every method and
+eighteen methods on four families of real data, under a protocol in which every method and
 every setting was fixed and recorded before the data it is scored on were run, with the
-exceptions listed in Section~\ref{sec:provenance}. The methods are eight established
-baselines (PC, GES, DirectLiNGAM, NOTEARS for graphs; IGCI, RECI, ANM-HSIC and a pairwise
-LiNGAM rule for pairs) and six methods that we developed during the project that produced
+exceptions listed in Section~\ref{sec:provenance}. The methods are twelve established
+methods (PC, GES, DirectLiNGAM, NOTEARS, DAGMA and PCMCI+ for graphs; IGCI, RECI, ANM-HSIC, a
+pairwise LiNGAM rule, a Gaussian-process ANM and LOCI for pairs) and six methods that we developed during the project that produced
 this study: sequential certificates for adjacency and direction, PC with a nonparametric
 test, a block-replicated additive method, and two classifiers trained on simulated data.
 Including our own methods is deliberate. Several were designed to address failures of the
@@ -27,12 +27,13 @@ baselines, and the comparison tells whether the design worked on measurements.
 \paragraph{Contributions.}
 \begin{enumerate}
 \item A multi-dataset evaluation with a recorded protocol. It covers $102$ Tübingen
-  pairs, $216$ pair analyses of edges of the Causal Chambers, the Sachs data, and
+  pairs, $216$ pair analyses of edges of the Causal Chambers, $17$ Sachs pairs, the Sachs data, and
   $21$ chamber recordings with a known graph, and it reports a strict score against the
   reference graph and a score adjusted for dependences the graph cannot explain.
-\item The result that, on pairs, a regression-error rule is the best or tied-best method on
-  every real data set, and a classifier trained on simulated pairs, accurate on its
-  simulated test set, is at chance on Tübingen (Section~\ref{sec:pairs}).
+\item The result that, on pairs, a regression-error rule (RECI) is the best method on the Causal
+  Chambers pairs and within sampling error of the best on Tübingen, where LOCI is nominally ahead, and
+  that a classifier trained on simulated pairs, accurate on its simulated test set, is at chance on
+  Tübingen (Section~\ref{sec:pairs}).
 \item The result that, on graphs, the ranking of methods depends on the data family: DirectLiNGAM
   and GES on chamber recordings with independent rows, methods with nonparametric tests on the
   Sachs data, and no method on the random-walk recordings (Section~\ref{sec:graphs}).
@@ -45,8 +46,8 @@ baselines, and the comparison tells whether the design worked on measurements.
 \end{enumerate}
 
 \paragraph{What the paper does not claim.} It does not claim that the methods we did not
-evaluate (LOCI, QCCD, CAM, DAGMA, PCMCI+ and amortised methods such as AVICI
-\citep{lorch2022amortized}) fail on these data, and it does not claim that the data
+evaluate (QCCD, CAM and amortised methods such as AVICI \citep{lorch2022amortized}, whose
+package we could not run with a compatible version of JAX) fail on these data, and it does not claim that the data
 sets are representative of causal discovery in general. Several data sets have few
 reference edges, so most differences between methods are within sampling error, and we
 give intervals where we can.

@@ -2,7 +2,8 @@
 \section{Discussion}\label{sec:discussion}
 
 \paragraph{What the evidence supports.} On the real data we examined, simple methods are hard
-to beat. On pairs the best method is RECI, which compares two regression errors; on graphs the
+to beat. On pairs the best method on the chambers is RECI, which compares two regression errors, and on
+Tübingen no method is distinguishable from RECI, with LOCI nominally ahead; on graphs the
 best methods on recordings with independent rows are DirectLiNGAM and GES, and on the Sachs
 data a mix of methods that use nonparametric tests, with differences smaller than the sampling
 error of a $17$-edge reference. The methods we developed to address specific failures show their
@@ -27,8 +28,8 @@ numbers are frozen and which are not (Section~\ref{sec:provenance}).
 and the chamber graphs are bipartite, so recovery of the skeleton is mostly feature selection
 from actuators to measurements. Most differences between graph methods are within sampling
 error, and the effective sample size of the walk recordings limits what any method can show.
-We did not evaluate the amortised methods, CAM, DAGMA, LOCI, QCCD or PCMCI+, and our baselines
-are re-implementations with default settings; a better-tuned baseline could change a ranking.
+We did not evaluate amortised methods (AVICI), CAM or QCCD, and several baselines
+are re-implementations or default runs (LOCI on at most $1000$ rows); a better-tuned baseline could change a ranking.
 The Causal Chambers also contain interventional experiments, where a simple shift test already
 recovers the descendants with perfect precision, and we did not use them. The new methods were
 developed by the author of this paper, which is a source of bias; the frozen protocol and the

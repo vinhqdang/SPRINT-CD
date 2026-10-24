@@ -6,15 +6,21 @@
 \emph{Graphs.} PC with Fisher-$z$ tests at $\alpha=0.05$ and $0.01$ \citep{spirtes2000causation},
 GES with the BIC score \citep{chickering2002optimal}, DirectLiNGAM
 \citep{shimizu2011directlingam} with edges thresholded at $|B|>0.05$, all from
-\texttt{causal-learn}, and NOTEARS with a linear model \citep{zheng2018dags} (our compact
-re-implementation, $\ell_1$ penalty $0.1$, threshold $0.3$). We score skeletons only.
+\texttt{causal-learn}; NOTEARS with a linear model \citep{zheng2018dags} (our compact
+re-implementation, $\ell_1$ penalty $0.1$, threshold $0.3$); DAGMA, linear with the $\ell_2$ loss
+(package \texttt{dagma}, $\lambda_1=0.03$, threshold $0.3$); and PCMCI+ \citep{runge2020discovering} from
+\texttt{tigramite} with partial-correlation tests, lags $0$ and $1$, $\alpha=0.01$, taking the
+contemporaneous links as the skeleton. We score skeletons only.
 
 \emph{Pairs.} IGCI in its entropy form with a uniform reference \citep{daniusis2010inferring},
 RECI, which prefers the direction with the smaller regression error after min--max scaling
 \citep{blobaum2018cause}, an additive noise model with a spline regression and an HSIC
 independence criterion (ANM-HSIC; \citealt{hoyer2009nonlinear}), and the first-order pairwise
 LiNGAM likelihood-ratio statistic \citep{hyvarinen2013pairwise}. These are short
-re-implementations of the published rules and were not tuned.
+re-implementations of the published rules and were not tuned. We add a Gaussian-process additive
+noise model (\texttt{causal-learn}, direction with the larger independence $p$-value, $400$ rows)
+and LOCI \citep{immer2023loci}, run with the authors' public code in its default setting (neural
+network, $5000$ steps, HSIC independence test, at most $1000$ rows per pair).
 
 \subsection{Methods developed for this study}
 

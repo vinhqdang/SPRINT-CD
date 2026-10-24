@@ -12,31 +12,36 @@ P = json.load(open(ROOT / "results" / "exp35_summary.json"))
 D = json.load(open(ROOT / "results" / "serial_diagnostic.json"))
 
 # Fig 1: pair accuracy
-fig, axes = plt.subplots(1, 4, figsize=(11, 3.2), sharey=True)
-names = {"tuebingen": "Tübingen (102)", "chamber_iid": "Chambers, i.i.d. (94)", "chamber_walk": "Chambers, walks (122)", "heldout": "held-out simulated (270)"}
-rules = ["PDM", "IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair"]
+P2 = json.load(open(ROOT / "results" / "exp38_summary.json"))
+names = {"tuebingen": "Tübingen (102)", "chamber_iid": "Chambers, i.i.d. (94)", "chamber_walk": "Chambers, walks (122)", "sachs": "Sachs consensus (17)", "heldout": "held-out simulated (270)"}
+rules = ["PDM", "LOCI", "ANM", "IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair"]
+colors = ["C3", "C2", "0.6", "0.6", "C0", "0.6", "0.6"]
+fig, axes = plt.subplots(1, 5, figsize=(13, 3.2), sharey=True)
 for ax, (k, t) in zip(axes, names.items()):
-    v = [P[k][r]["acc"] for r in rules]
-    ci = np.array([P[k][r]["ci"] for r in rules])
-    ax.bar(range(len(rules)), v, color=["C3", "0.6", "C0", "0.6", "0.6"], yerr=[np.array(v) - ci[:, 0], ci[:, 1] - np.array(v)], capsize=2)
+    v, lo, hi = [], [], []
+    for r in rules:
+        d = P.get(k, {}).get(r) or P2.get(k, {}).get(r)
+        if d is None: v.append(np.nan); lo.append(0); hi.append(0)
+        else: v.append(d["acc"]); lo.append(d["acc"] - d["ci"][0]); hi.append(d["ci"][1] - d["acc"])
+    ax.bar(range(len(rules)), np.nan_to_num(v), color=colors, yerr=[lo, hi], capsize=2)
     ax.axhline(0.5, color="k", lw=0.6, ls=":")
-    ax.set_xticks(range(len(rules))); ax.set_xticklabels(rules, rotation=40, ha="right", fontsize=7)
+    ax.set_xticks(range(len(rules))); ax.set_xticklabels(rules, rotation=45, ha="right", fontsize=7)
     ax.set_title(t, fontsize=8.5)
 axes[0].set_ylabel("forced-choice accuracy")
 fig.tight_layout(); fig.savefig(OUT / "pairs_accuracy.png", dpi=180)
 
 # Fig 2: graph F1
 groups = list(G.keys())
-meths = ["PC a=0.05", "GES-BIC", "DirectLiNGAM", "NOTEARS", "PC-GCM a=0.05", "BTAD", "LRG", "CERT-CD nonparametric"]
-lab = ["PC", "GES", "LiNGAM", "NOTEARS", "PC-GCM", "BTAD", "LRG", "CERT-CD"]
+meths = ["PC a=0.05", "GES-BIC", "DirectLiNGAM", "NOTEARS", "DAGMA", "PCMCI+", "PC-GCM a=0.05", "BTAD", "LRG", "CERT-CD nonparametric"]
+lab = ["PC", "GES", "LiNGAM", "NOTEARS", "DAGMA", "PCMCI+", "PC-GCM", "BTAD", "LRG", "CERT-CD"]
 fig, ax = plt.subplots(figsize=(8.5, 3.4))
-w = 0.1
+w = 0.085
 for i, (m, l) in enumerate(zip(meths, lab)):
     v = [G[g].get(m, {"F1": np.nan})["F1"] for g in groups]
-    ax.bar(np.arange(len(groups)) + (i - 3.5) * w, v, w, label=l)
+    ax.bar(np.arange(len(groups)) + (i - 4.5) * w, v, w, label=l)
 ax.set_xticks(range(len(groups)))
 ax.set_xticklabels(["Sachs\n(1)", "Chambers i.i.d.\n(2 rec. x 10)", "Chambers\nESS > 1000 (2)", "Chambers\nESS < 20 (17)"], fontsize=8)
-ax.set_ylabel("skeleton F1 (strict)"); ax.legend(fontsize=7, ncol=4, loc="upper center", bbox_to_anchor=(0.5, 1.18))
+ax.set_ylabel("skeleton F1 (strict)"); ax.legend(fontsize=7, ncol=5, loc="upper center", bbox_to_anchor=(0.5, 1.18))
 fig.tight_layout(); fig.savefig(OUT / "graph_f1.png", dpi=180)
 
 # Fig 3: effective sample size and reference set
