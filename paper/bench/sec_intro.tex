@@ -14,11 +14,13 @@ graph is known from their construction \citep{gamella2025chamber}.
 
 This paper asks a plain question: when methods are applied unchanged to several real
 data families, which ones work, and do recent ideas beat simple baselines? We evaluate
-eighteen methods on four families of real data, under a protocol in which every method and
+twenty-two methods on four families of real data, under a protocol in which every method and
 every setting was fixed and recorded before the data it is scored on were run, with the
 exceptions listed in Section~\ref{sec:provenance}. The methods are twelve established
 methods (PC, GES, DirectLiNGAM, NOTEARS, DAGMA and PCMCI+ for graphs; IGCI, RECI, ANM-HSIC, a
-pairwise LiNGAM rule, a Gaussian-process ANM and LOCI for pairs) and six methods that we developed during the project that produced
+pairwise LiNGAM rule, a Gaussian-process ANM and LOCI for pairs), four recent ones that we re-implemented from 2025--2026 preprints (a
+sorted-conditional compression rule, topological residual asymmetry, BF-BIC with BOSS, and an
+edge-orientation rule in the style of SNOE) and six methods that we developed during the project that produced
 this study: sequential certificates for adjacency and direction, PC with a nonparametric
 test, a block-replicated additive method, and two classifiers trained on simulated data.
 Including our own methods is deliberate. Several were designed to address failures of the

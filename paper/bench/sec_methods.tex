@@ -22,6 +22,23 @@ noise model (\texttt{causal-learn}, direction with the larger independence $p$-v
 and LOCI \citep{immer2023loci}, run with the authors' public code in its default setting (neural
 network, $5000$ steps, HSIC independence test, at most $1000$ rows per pair).
 
+\paragraph{Recent methods (2025--2026), re-implemented.} Four preprints were implemented from their
+descriptions, with settings fixed before the evaluation (experiments 42--44); none has public code.
+\emph{Sorted-conditional compression} \citep{stienstra2026oneruler}: both variables are quantised to
+$256$ levels, the rows are sorted by the candidate cause, the other variable is differenced and compressed
+with bzip2, and the direction with the smaller normalised length wins; we run it on the rows as given
+and on our dequantised rows. \emph{Topological residual asymmetry} (TRA; \citealt{elbouchattaoui2026tra}):
+cross-fitted smoothing-spline residuals, a rank-uniform point cloud, and the total zero-dimensional
+persistence in a window; the constants ($\kappa=1$, $c_\beta=4$, $K=5$ folds, at most $1000$ rows) are
+our choices because the preprint does not fix them, and $20$ Tübingen pairs gave no value.
+\emph{BF-BIC with BOSS} \citep{ramsey2025bfbic}: each variable is expanded in Legendre polynomials of
+degree $3$, the local BIC is summed over the child's basis columns (standard Gaussian likelihood, since
+the preprint's formula has an inconsistency), and a permutation search of the best-order type (one random start)
+returns the skeleton. \emph{SNOE-style orientation} \citep{huang2025snoe}: every true edge of the
+reference graph is oriented by the larger additive-noise log-likelihood of (child $\mid$ cause, other
+neighbours) plus (cause $\mid$ its neighbours), with spline regression; the neighbours come from the
+reference graph, which favours the rule, and the sequential ranking of the preprint is not implemented.
+
 \subsection{Methods developed for this study}
 
 All six were frozen before their evaluation on the data in which they are scored, except

@@ -34,7 +34,7 @@ chance. LOCI and the Gaussian-process ANM were not run on the simulated families
 \begin{table}[t]
 \caption{Forced-choice accuracy (unweighted; weighted by the official weights for Tübingen).
 LOCI and ANM were not run on the simulated families. $^{\dagger}$Exact ties (a score of zero; $23$
-pairs) are counted as half correct.}
+pairs) are counted as half correct. $^{\ddagger}$On the $82$ of $102$ Tübingen pairs for which TRA returned a value. Compression and TRA are the 2025--2026 rules; compression on raw rows was run only on Tübingen and Sachs.}
 \label{tab:pairs}
 \small
 \setlength{\tabcolsep}{2.5pt}
@@ -50,9 +50,24 @@ IGCI & 0.559 (0.664) & 0.936 & 0.885 & 0.647 & 0.700\\
 RECI & 0.608 (0.709) & 0.979 & 0.943 & 0.529 & 0.781\\
 ANM-HSIC & 0.608 (0.609) & 0.723 & 0.631 & 0.588 & 0.778\\
 pairwise LiNGAM & 0.608 (0.620) & 0.777 & 0.713 & 0.529 & 0.633\\
+\midrule
+Compression, raw rows & 0.647 (0.659) & -- & -- & 0.765 & --\\
+Compression, dequantised & 0.608 (0.680) & 0.298 & 0.615 & 0.765 & --\\
+TRA$^{\ddagger}$ & 0.646 (0.654) & 0.862 & 0.615 & 0.588 & --\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Recent pair rules.} None of the 2025--2026 pair rules is the best on the chamber sets, and on Tübingen and Sachs the differences are within sampling error. On Tübingen
+compression on the raw rows ($64.7\%$) equals LOCI and the unweighted RECI ($60.8\%$) is within sampling error;
+dequantising the rows leaves the unweighted value at $60.8\%$ and raises the weighted one to $68.0\%$ (RECI: $70.9\%$). On the $17$ Sachs pairs compression is right on $13$ ($76.5\%$, the highest of all rules, with an interval
+that includes chance).
+TRA reaches $64.6\%$ on the pairs it scores. On the chamber pairs with independent rows RECI
+($97.9\%$) is far ahead of TRA ($86.2\%$), and compression is at $29.8\%$, below chance, so
+the quantisation that helps on raw Tübingen rows turns the rule around on these measurements (we did not
+investigate why). SNOE-style orientation with the reference neighbours is right on $47.1\%$ of the $17$
+Sachs arcs, $72.3\%$ of the $47$ i.i.d.\ chamber arcs and $76.2\%$ of the $122$ further chamber arcs, below the
+marginal RECI and IGCI on the same arcs.
 
 \paragraph{LOCI with more rows.}\label{sec:loci-check} Raising the row cap from $1000$ to $2000$ (the preprocessing of the other
 methods) gives $65.7\%$ on Tübingen (interval $[55.6,74.8]$, weighted $66.4\%$) and $97\%$ of the directions agree
@@ -97,6 +112,7 @@ PCMCI+ & 1.00/0.35/0.52 & 0.39/0.33/0.34 & 0.53/0.29/0.37 & 0.27/0.17/0.20\\
 PC, nonparam.\ test & 0.89/0.47/0.62 & 0.38/0.33/0.34 & 0.54/0.34/0.41 & 0.35/0.54/\textbf{0.42}\\
 BTAD & 0.89/0.47/0.62 & 0.56/0.36/0.41 & 0.82/0.46/0.58 & 0.60/0.16/0.25\\
 LRG & 0.90/0.53/\textbf{0.67} & 0.39/0.48/0.43 & 0.52/0.55/0.53 & 0.51/0.28/0.36\\
+BF-BIC + BOSS & 0.90/0.53/\textbf{0.67} & 0.43/0.63/0.49 & 0.57/0.61/0.58 & 0.30/0.68/\textbf{0.42}\\
 CERT-CD, nonparametric & 1.00/0.29/0.45 & 0.29/0.16/0.20 & 0.60/0.18/0.28 & 0.24/0.87/0.37\\
 \bottomrule
 \end{tabular}
@@ -108,6 +124,11 @@ CERT-CD, nonparametric & 1.00/0.29/0.45 & 0.29/0.16/0.20 & 0.60/0.18/0.28 & 0.24
 \caption{Strict skeleton $F_1$ by data family and method.}
 \label{fig:graphs}
 \end{figure}
+
+\paragraph{BF-BIC with BOSS.} The 2025 nonlinear score is the strongest of the recent methods on graphs. It
+ties LRG on Sachs ($0.67$: $9$ of its $10$ edges are in the $17$-edge reference) and PC with the nonparametric test on the
+random-walk recordings ($0.42$, at $39$ false edges per recording), and it is below DirectLiNGAM and GES on the i.i.d.\ and the larger recordings ($0.49$ against $0.55$ and $0.58$ against $0.66$--$0.70$). A tie on
+one data set of $17$ edges is not evidence of superiority.
 
 \paragraph{Sachs.} The methods we developed that use nonparametric components have the
 highest $F_1$ (LRG $0.67$, PC with the nonparametric test $0.62$--$0.64$, BTAD $0.62$), against $0.58$
