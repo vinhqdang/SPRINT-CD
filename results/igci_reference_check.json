@@ -1,0 +1,79 @@
+{
+ "tuebingen": {
+  "acc": {
+   "cdt_gauss": 0.4215686274509804,
+   "cdt_unif": 0.5588235294117647,
+   "ours": 0.5588235294117647
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 0.803921568627451
+  }
+ },
+ "chamber_iid": {
+  "acc": {
+   "cdt_gauss": 0.06382978723404255,
+   "cdt_unif": 0.06382978723404255,
+   "ours": 0.06382978723404255
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 1.0
+  }
+ },
+ "chamber_walk": {
+  "acc": {
+   "cdt_gauss": 0.12295081967213115,
+   "cdt_unif": 0.13114754098360656,
+   "ours": 0.13114754098360656
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 0.9754098360655737
+  }
+ },
+ "sachs": {
+  "acc": {
+   "cdt_gauss": 0.5294117647058824,
+   "cdt_unif": 0.47058823529411764,
+   "ours": 0.47058823529411764
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 0.9411764705882353
+  }
+ },
+ "bernoulli": {
+  "acc": {
+   "cdt_gauss": 0.0,
+   "cdt_unif": 0.0,
+   "ours": 0.0
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 1.0
+  }
+ },
+ "changepoints": {
+  "acc": {
+   "cdt_gauss": 0.0,
+   "cdt_unif": 0.0,
+   "ours": 0.0
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 1.0
+  }
+ },
+ "malus": {
+  "acc": {
+   "cdt_gauss": 0.9375,
+   "cdt_unif": 0.9375,
+   "ours": 0.9375
+  },
+  "agree": {
+   "unif_vs_ours": 1.0,
+   "gauss_vs_ours": 1.0
+  }
+ }
+}

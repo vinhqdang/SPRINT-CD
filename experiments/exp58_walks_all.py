@@ -7,6 +7,7 @@ contributes every directed edge of its documented graph as a pair (cause first),
 LiNGAM (scored), compression (faithful), TRA, RESIT, AVICI, cdt IGCI/RECI/CDS.  The cluster is the recording; the analysis
 reports accuracy per rule with a cluster bootstrap over recordings and the between-recording sd of the per-recording accuracy.
 Stored: per-pair scores.  No setting is tuned.
+Tie handling (revision after a check of exp53/55): all rules see the raw arrays, as in exp35/38 for the chambers; only TRA, whose spline fit is ill-posed on tied values, receives a copy with 1e-6 range jitter on tied values.  (A first start of this script jittered every rule, which reverses IGCI on tied data; it was stopped before finishing and nothing from it is used.)
 """
 import os
 os.environ.setdefault("OMP_NUM_THREADS", "1")
@@ -41,9 +42,9 @@ def jit(v, seed=1):
 def job(p):
     warnings.filterwarnings("ignore")
     from cdt.causality.pairwise import IGCI, RECI, CDS
-    x, y = jit(p["x"]), jit(p["y"], 2)
+    x, y = p["x"], p["y"]; xj, yj = jit(x), jit(y, 2)
     sc = scored(x, y, 1); m = {k: (float(v[1]) if v[0] == "x->y" else -float(v[1])) for k, v in sc.items()}
-    for name, fn in (("Compression", lambda: sorted_compression_faithful(p["x"], p["y"])), ("TRA", lambda: tra_delta(x, y, seed=0)), ("RESIT", lambda: resit_pair(x, y)),
+    for name, fn in (("Compression", lambda: sorted_compression_faithful(p["x"], p["y"])), ("TRA", lambda: tra_delta(xj, yj, seed=0)), ("RESIT", lambda: resit_pair(x, y)),
                      ("cdt-IGCI", lambda: float(IGCI().predict_proba((x, y)))), ("cdt-RECI", lambda: float(RECI().predict_proba((x, y)))), ("cdt-CDS", lambda: float(CDS().predict_proba((x, y))))):
         try: m[name] = fn()
         except Exception: m[name] = None
