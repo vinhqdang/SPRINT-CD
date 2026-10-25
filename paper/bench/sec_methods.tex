@@ -39,6 +39,14 @@ reference graph is oriented by the larger additive-noise log-likelihood of (chil
 neighbours) plus (cause $\mid$ its neighbours), with spline regression; the neighbours come from the
 reference graph, which favours the rule, and the sequential ranking of the preprint is not implemented.
 
+\paragraph{Published methods with public code.} Nine further graph methods were run at library defaults
+(experiment 45): AVICI with the pretrained \texttt{scm-v0} model (edge probability $\ge 0.5$), GOLEM,
+NOTEARS with an MLP, GraN-DAG and DAG-GNN from gCastle, GRaSP and BOSS with the BIC score from
+\texttt{causal-learn}, and RESIT and CAM-UV from \texttt{lingam}. Each saw at most $2000$ rows; a run
+over $900$\,s counts as a timeout and is left out of that cell's mean. AVICI and RESIT were also run on the
+pairs (experiment 46; AVICI scores $P(x\to y)-P(y\to x)$ on a two-variable input). PNL needed $880$\,s per
+pair and was dropped.
+
 \subsection{Methods developed for this study}
 
 All six were frozen before their evaluation on the data in which they are scored, except

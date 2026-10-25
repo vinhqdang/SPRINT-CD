@@ -125,6 +125,39 @@ CERT-CD, nonparametric & 1.00/0.29/0.45 & 0.29/0.16/0.20 & 0.60/0.18/0.28 & 0.24
 \label{fig:graphs}
 \end{figure}
 
+\begin{table}[t]
+\caption{Published methods with public code, skeleton $F_1$, mean over data sets; the number of data sets is in the
+column heads and, where fewer finished, in parentheses; timeouts ($900$\,s) are excluded from the mean.}
+\label{tab:sota}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & Sachs (1) & Chambers iid (20) & ESS $>1000$ (2) & ESS $<20$ (17)\\
+\midrule
+AVICI & 0.56 & 0.37 (14) & 0.26 & 0.28 (8)\\
+GOLEM & 0.30 & 0.31 & 0.41 & 0.33\\
+NOTEARS-MLP & 0.56 & 0.43 & 0.34 (1) & 0.21 (1)\\
+GraN-DAG & 0.11 & 0.06 & 0.06 & 0.12\\
+DAG-GNN & 0.30 & 0.36 & 0.38 & 0.34 (16)\\
+GRaSP & 0.52 & 0.52 & \textbf{0.68} & 0.35\\
+BOSS & 0.52 & \textbf{0.55} & 0.65 & \textbf{0.37}\\
+RESIT & 0.45 & 0.43 & 0.49 & \textbf{0.37}\\
+CAM-UV & 0.11 & 0.42 & 0.53 & 0.02 (15)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Published methods with public code.} The best of them are the permutation searches with a BIC score:
+BOSS ties DirectLiNGAM on the i.i.d.\ recordings ($0.55$) and GRaSP and BOSS are within $0.05$ of GES on the two
+recordings with a large effective sample size ($0.68$, $0.65$ against $0.70$). On Sachs no method of this group
+exceeds $0.56$, and on the seventeen walk recordings none exceeds $0.37$, below the $0.42$ of the nonparametric PC.
+The neural methods are weaker: GraN-DAG finds almost no edges ($F_1\le 0.12$), GOLEM and DAG-GNN report
+$22$ to $36$ false edges per recording, NOTEARS-MLP timed out on $16$ of $17$ walk recordings (sixteen variables) and AVICI on $9$ of $17$
+and on $6$ of $20$ i.i.d.\ subsamples. Two further pair rules: AVICI reaches
+$90.4\%$ on the i.i.d.\ chamber pairs and $58.8\%$ on Tübingen, RESIT $71.3\%$ and $61.3\%$; neither
+exceeds RECI ($97.9\%$, $60.8\%$).
+
 \paragraph{BF-BIC with BOSS.} The 2025 nonlinear score is the strongest of the recent methods on graphs. It
 ties LRG on Sachs ($0.67$: $9$ of its $10$ edges are in the $17$-edge reference) and PC with the nonparametric test on the
 random-walk recordings ($0.42$, at $39$ false edges per recording), and it is below DirectLiNGAM and GES on the i.i.d.\ and the larger recordings ($0.49$ against $0.55$ and $0.58$ against $0.66$--$0.70$). A tie on
