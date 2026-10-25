@@ -27,10 +27,10 @@ rng = np.random.default_rng(20262500)
 def load():
     from exp12_tuebingen_cep import load_pairs
     nrows = {pid: len(x) for pid, x, y, w in load_pairs()}
-    e35 = [r for r in json.load(open(R / "exp35_pdm_eval.json")) if r["set"] == "tuebingen"]
-    e38 = {r["id"]: r for r in json.load(open(R / "exp38_pairs_modern.json")) if r["set"] == "tuebingen"}
-    e42 = {r["id"]: r for r in json.load(open(R / "exp42_pairs_2026.json")) if r["set"] == "tuebingen"}
-    e46 = {r["id"]: r for r in json.load(open(R / "exp46_pairs_sota.json")) if r["set"] == "tuebingen"}
+    e35 = [r for r in json.load(open(R / "exp35_pdm_eval.json"))["records"] if r["set"] == "tuebingen"]
+    e38 = {r["id"]: r for r in json.load(open(R / "exp38_pairs_modern.json"))["records"] if r["set"] == "tuebingen"}
+    e42 = {r["id"]: r for r in json.load(open(R / "exp42_pairs_2026.json"))["records"] if r["set"] == "tuebingen"}
+    e46 = {r["id"]: r for r in json.load(open(R / "exp46_pairs_sota.json"))["records"] if r["set"] == "tuebingen"}
     ids, w, n = [], [], []
     S = {}
     for r in e35:

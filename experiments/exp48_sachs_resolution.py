@@ -1,6 +1,6 @@
 """Experiment 48: resolution of the Sachs graph benchmark.
 
-Written and committed before running.  All methods with Sachs skeletons (exp36, 39, 43, 45; 29 methods
+Written and committed before running.  All methods with Sachs skeletons (exp36, 39, 43, 45; 22 methods
 and variants).  For each, F1 against the 17-arc consensus skeleton, and a 95 percent bootstrap interval from
 10000 resamples of the 55 variable pairs (with replacement).  We report the number of methods whose interval
 contains the best method's point estimate, the number of methods whose point estimate is within 0.10 of the best,
