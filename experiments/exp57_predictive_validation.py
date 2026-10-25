@@ -1,4 +1,4 @@
-"""Experiment 57 (revision 2; the first run is in the git history and is reported in the paper: it was invalid because the log-unique-fraction diagnostic was constant in the simulation, computed on jittered arrays, so real pairs with ties had standardised values of -3e9 and the neighbours were arbitrary).  Revision 2 recomputes the simulation diagnostics from the un-jittered simulated arrays (make() is deterministic) so that real and simulated diagnostics are computed the same way, and additionally reports the median distance to the nearest simulated pair and the results restricted to real pairs whose nearest-neighbour distance is below the 95th percentile of the simulation's leave-one-out distance (in-support pairs).  Experiment 57: does the factorial map of exp56 predict rule accuracy on the real collections?
+"""Experiment 57 (revision 3: the observed decisions of the three new collections are the raw-array ones of exp59 (IGCI, RECI, ANM-HSIC, pairwise LiNGAM, RESIT) instead of the jittered ones of exp53, because the jitter reverses IGCI on tied data; AVICI and the compression come from exp53/54 as before; revision 2; the first run is in the git history and is reported in the paper: it was invalid because the log-unique-fraction diagnostic was constant in the simulation, computed on jittered arrays, so real pairs with ties had standardised values of -3e9 and the neighbours were arbitrary).  Revision 2 recomputes the simulation diagnostics from the un-jittered simulated arrays (make() is deterministic) so that real and simulated diagnostics are computed the same way, and additionally reports the median distance to the nearest simulated pair and the results restricted to real pairs whose nearest-neighbour distance is below the 95th percentile of the simulation's leave-one-out distance (in-support pairs).  Experiment 57: does the factorial map of exp56 predict rule accuracy on the real collections?
 
 Written and committed before running.  Seven real pair collections (Tuebingen 102, chamber i.i.d. 94, chamber walks 122,
 Sachs 17, bernoulli 16, changepoints 70, malus 48 pair-runs).  Rules: IGCI, RECI, ANM-HSIC, pairwise LiNGAM, compression
@@ -55,6 +55,7 @@ def main():
     e38 = json.load(open(R / "exp38_pairs_modern.json"))["records"]
     e42 = json.load(open(R / "exp42_pairs_2026.json"))["records"]; e46 = json.load(open(R / "exp46_pairs_sota.json"))["records"]
     e53r = json.load(open(R / "exp53_more_chamber_pairs.json"))["records"]; e54 = json.load(open(R / "exp54_compression_faithful.json"))["records"]
+    e59 = json.load(open(R / "exp59_ties.json"))["records"]
     obs = {}
     for s in ("tuebingen", "chamber_iid", "chamber_walk", "sachs"):
         a38 = [r for r in e38 if r["set"] == s]; a46 = [r for r in e46 if r["set"] == s]; a54 = [r for r in e54 if r["set"] == s]
@@ -70,9 +71,9 @@ def main():
             rows.append(d)
         obs[s] = rows
     for s in ("bernoulli", "changepoints", "malus"):
-        a53 = [r for r in e53r if r["set"] == s]; a54 = [r for r in e54 if r["set"] == s]
-        assert len(a53) == len(real[s]) == len(a54)
-        obs[s] = [dict({m: corr_of(r["m"].get(m)) for m in ("IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "RESIT", "AVICI")}, Compression=corr_of(b["score"])) for r, b in zip(a53, a54)]
+        a53 = [r for r in e53r if r["set"] == s]; a54 = [r for r in e54 if r["set"] == s]; a59 = [r for r in e59 if r["set"] == s]
+        assert len(a53) == len(real[s]) == len(a54) == len(a59)
+        obs[s] = [dict({m: corr_of(q["m"].get(m + "|raw")) for m in ("IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "RESIT")}, AVICI=corr_of(r["m"].get("AVICI")), Compression=corr_of(b["score"])) for r, b, q in zip(a53, a54, a59)]
     out = {"cells": {}, "rules": RULES}
     pred_cells, obs_cells, const = [], [], np.nanmean(Cs, 0)
     pair_scores = {m: ([], []) for m in RULES}

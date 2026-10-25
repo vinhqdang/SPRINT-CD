@@ -10,8 +10,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent; R = ROOT / "results"; OUT
 L = lambda f: json.load(open(R / f))
 e35 = L("exp35_pdm_eval.json")["records"]; e38 = L("exp38_pairs_modern.json")["records"]; e42 = L("exp42_pairs_2026.json")["records"]
 e46 = L("exp46_pairs_sota.json")["records"]; e53 = L("exp53_more_chamber_pairs.json")["records"]; e54 = L("exp54_compression_faithful.json")["records"]
-COLL = ["tuebingen", "chamber_iid", "chamber_walk", "sachs", "bernoulli", "changepoints", "malus"]
-LAB = {"tuebingen": "T\\\"ubingen", "chamber_iid": "Chambers iid", "chamber_walk": "Chambers walks", "sachs": "Sachs", "bernoulli": "Bernoulli", "changepoints": "Changepoints", "malus": "Malus"}
+e59 = L("exp59_ties.json")["records"]; e58 = L("exp58_walks_all.json")["records"]; e60 = L("exp60_tra_raw.json")["records"] if (R / "exp60_tra_raw.json").exists() else []
+COLL = ["tuebingen", "chamber_iid", "chamber_walk", "walks_all", "sachs", "bernoulli", "changepoints", "malus"]
+LAB = {"tuebingen": "T\\\"ubingen", "chamber_iid": "Chambers iid", "chamber_walk": "Chambers walks", "walks_all": "Walks, all 19", "sachs": "Sachs", "bernoulli": "Bernoulli", "changepoints": "Changepoints", "malus": "Malus"}
 RULES = ["IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "PDM", "LOCI", "ANM-GP", "Compression first", "Compression faithful", "TRA", "AVICI", "RESIT"]
 NAMES = {"LiNGAM-pair": "Pairwise LiNGAM", "ANM-GP": "ANM, Gaussian process", "Compression first": "Compression, first impl.", "Compression faithful": "Compression, faithful"}
 c = lambda s, tx=True: np.nan if s is None or s != s else (0.5 if s == 0 else float((s > 0) == tx))
@@ -30,9 +31,17 @@ for s in COLL:
         for m in ("LOCI", "ANM"): corr["LOCI" if m == "LOCI" else "ANM-GP"][s] = [c(r["m"][m], t) for r, t in zip(a38, tx)]
         corr["Compression first"][s] = [c(r["m"]["SC"], t) for r, t in zip(a42, tx)]; corr["TRA"][s] = [c(r["m"]["TRA"], t) for r, t in zip(a42, tx)]
         corr["AVICI"][s] = [c(r["m"]["AVICI"], t) for r, t in zip(a46, tx)]; corr["RESIT"][s] = [c(r["m"]["RESIT"], t) for r, t in zip(a46, tx)]
+    elif s == "walks_all":
+        for m in ("IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "RESIT", "AVICI"): corr[m][s] = [c(r["m"].get(m)) for r in e58]
+        corr["Compression faithful"][s] = [c(r["m"].get("Compression")) for r in e58]
+        tr = {r["id"]: r["score"] for r in e60 if r["set"] == "walks_all"}
+        corr["TRA"][s] = [c(tr.get(r["rec"] + "/" + r["id"])) for r in e58]
+        continue
     else:
-        a53 = [r for r in e53 if r["set"] == s]
-        for m in ("IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "TRA", "RESIT", "AVICI"): corr[m][s] = [c(r["m"].get(m)) for r in a53]
+        a59 = [r for r in e59 if r["set"] == s]; a53 = [r for r in e53 if r["set"] == s]
+        for m in ("IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "RESIT", "LOCI", "ANM-GP"): corr[m][s] = [c(r["m"].get(m + "|raw")) for r in a59]
+        corr["AVICI"][s] = [c(r["m"].get("AVICI")) for r in a53]
+        tr = {r["id"]: r["score"] for r in e60 if r["set"] == s}; corr["TRA"][s] = [c(tr.get(r["id"])) for r in a53]
     corr["Compression faithful"][s] = [c(r["score"], (r["truth"] == "x->y") if False else True) if s not in ("tuebingen",) else c(r["score"]) for r in [x for x in e54 if x["set"] == s]]
 # chamber/sachs pairs in exp38/42/46/54 have random flips only in exp38-based files; e54 uses unflipped arrays (truth x->y)
 for s in ("chamber_iid", "chamber_walk", "sachs"):
@@ -58,7 +67,7 @@ for i, a in enumerate(COLL):
     for j, b in enumerate(COLL):
         ms = [m for m in RULES if a in acc[m] and b in acc[m]]
         if len(ms) >= 5: M[i, j] = stats.kendalltau([acc[m][a] for m in ms], [acc[m][b] for m in ms])[0]
-ids = {st: ([r["id"] for r in e38 if r["set"] == st] if st in ("tuebingen", "chamber_iid", "chamber_walk", "sachs") else [r["id"] for r in e53 if r["set"] == st]) for st in COLL}
+ids = {st: ([r["id"] for r in e38 if r["set"] == st] if st in ("tuebingen", "chamber_iid", "chamber_walk", "sachs") else ([r["rec"] + "/" + r["id"] for r in e58] if st == "walks_all" else [r["id"] for r in e53 if r["set"] == st])) for st in COLL}
 perm_p = np.full_like(M, np.nan); rng_ = np.random.default_rng(5)
 for i, a in enumerate(COLL):
     for j, b in enumerate(COLL):
