@@ -1,0 +1,33 @@
+\section{Sampling noise}\label{sec:noise}
+
+Table~\ref{tab:multi} gives the accuracies on T\"ubingen with exact Clopper--Pearson intervals. The half-width is about $0.10$ for every rule. All rules are evaluated on the same pairs, so the right comparison between two rules is the exact McNemar test on the pairs on which exactly one is correct. We use the twelve rules of Table~\ref{tab:collections2} and our first-implementation compression with raw rows (a thirteenth column, kept for the multiverse): $78$ pairwise comparisons. Twelve have a raw $p<0.05$ and two survive a Holm correction over the family; the smaller adjusted $p$ is $0.015$, and the comparisons that survive involve the learned classifier PDM, which is below chance. No comparison between two rules of the others reaches significance after correction. For the best rule, faithful compression ($66.7\%$), the exact tests against RECI, LOCI, IGCI, ANM-GP and AVICI have $p=0.39$, $0.88$, $0.14$, $0.20$ and $0.35$ (discordant pairs $20$/$14$, $23$/$21$, $29$/$18$, $24$/$15$, $32$/$24$).
+
+How large a difference is detectable? With the observed rate of discordant pairs ($44\%$), a simulated paired comparison on $102$ pairs reaches $80\%$ power for a difference in accuracy of $0.19$ at level $0.05$ and of $0.28$ with a Bonferroni correction over $66$ tests (the simulation draws the number of discordant pairs from the observed rate and splits them with the alternative probability; $1000$ replications per step of $0.01$; the figure is approximate, ours, and applies to this discordance rate). Differences of two to five points, which separate most of the rules in recent papers, are far below it: the collection cannot resolve them, whatever the rules.
+
+\begin{table}[t]
+\caption{Rules on the 102 T\"ubingen pairs: unweighted accuracy with a 95\% interval (TRA: the $82$ pairs on which it returned a value) and the multiverse summary of Sections~\ref{sec:multi}--\ref{sec:subsets}. ``Range'': minimum and maximum accuracy over the ten reporting universes with at least $30$ pairs per rule; ``Rank'': best and worst rank; ``First'': universes in which the rule is first (ties share the rank); ``$>$RECI'': universes in which it is above RECI; ``Best of 10'': expected best accuracy after trying ten random subsets of $50$ pairs.}
+\label{tab:multi}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Rule & Accuracy [interval] & Range & Rank & First & $>$RECI & Best of 10\\
+\midrule
+IGCI & 0.559 [0.46, 0.66] & 0.47--0.71 & 4--12 & 0 & 0 & 0.636\\
+RECI & 0.608 [0.51, 0.70] & 0.61--0.87 & 1--6 & 1 & 0 & 0.682\\
+ANM-HSIC & 0.608 [0.51, 0.70] & 0.57--0.70 & 3--13 & 0 & 1 & 0.684\\
+Pairwise LiNGAM & 0.608 [0.51, 0.70] & 0.54--0.74 & 5--13 & 0 & 0 & 0.682\\
+PDM & 0.402 [0.31, 0.50] & 0.40--0.61 & 11--13 & 0 & 0 & 0.479\\
+LOCI & 0.647 [0.55, 0.74] & 0.63--0.77 & 1--10 & 1 & 2 & 0.721\\
+ANM, Gaussian process & 0.554 [0.45, 0.65] & 0.55--0.75 & 3--12 & 0 & 0 & 0.629\\
+Compression, first impl. & 0.608 [0.51, 0.70] & 0.61--0.79 & 3--8 & 0 & 0 & 0.684\\
+Compression, first impl., raw rows & 0.647 [0.55, 0.74] & 0.64--0.76 & 2--9 & 0 & 2 & 0.720\\
+TRA & 0.646 [0.53, 0.75] & 0.65--0.76 & 2--7 & 0 & 4 & 0.730\\
+Compression, faithful & 0.667 [0.57, 0.76] & 0.67--0.88 & 1--3 & 8 & 9 & 0.739\\
+AVICI & 0.588 [0.49, 0.68] & 0.54--0.65 & 6--12 & 0 & 0 & 0.666\\
+RESIT & 0.613 [0.52, 0.71] & 0.61--0.76 & 4--9 & 0 & 1 & 0.687\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Graph benchmarks.} The Sachs network has 17 consensus arcs. For $22$ method configurations (Section~\ref{sec:graphs}), $16$ have a $95\%$ bootstrap interval (resampling the $55$ variable pairs) that contains the best $F_1$ ($0.67$), $7$ have a point estimate within $0.10$ of it, and of $231$ pairs of configurations $62$ differ significantly, the smallest significant difference in $F_1$ being $0.17$ (some pairs are the same method at two settings, and resampled variable pairs share nodes, so these are rough). One edge changes recall by $0.06$.

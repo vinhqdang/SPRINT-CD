@@ -1,0 +1,31 @@
+\section{Discussion and recommendations}\label{sec:discussion}
+
+\paragraph{What the evidence supports.} On the real collections we examined, the rules that test a model of the conditional distribution do not beat rules that read marginal asymmetry or error scale, and no rule leads across collections. This is not because the dependence-based rules are poor: ANM-HSIC, RESIT and the Gaussian-process ANM are right on $91$ to $97\%$ of the least heteroscedastic third of the T\"ubingen pairs, and ANM-HSIC is perfect in simulation when the assumption holds. They are reversed when the noise scale depends on the cause, degraded by measurement noise, and unable to use the marginal cue that orients the chamber collections. Averaged over a collection that mixes regimes they equal the baselines. The baselines are not robust either: IGCI is at $0\%$ on the binary and piecewise-constant causes, RECI at $25\%$ on binary causes, compression at $38\%$ on the i.i.d.\ chambers.
+
+\paragraph{What it does not support.} It does not show that any published method misreports; we audited one table and reproduced it. It does not show that dependence-based rules cannot be improved: the failed GATE and the failed predictive validation show that our account is incomplete, and that a regime switch on a single diagnostic is not enough. It does not show that the same pattern holds on other collections of pairs; the collections of Table~\ref{tab:collections} are small and, outside T\"ubingen, concern one or two devices.
+
+\paragraph{Implications for evaluation.}
+\begin{enumerate}
+\item \emph{Test paired and state the power.} Compare rules with an exact paired test on the same pairs and report the detectable difference. With $102$ pairs it is about $19$ points, $28$ after correcting for $66$ comparisons; a gain of two to five points is not resolvable.
+\item \emph{Report the coverage curve and both weightings.} A single decided-only number, a weighted number alone, or an unweighted number alone each select one point of a multiverse that moves a rule by $11$ to $26$ points and its rank by up to ten places.
+\item \emph{Fix subsets, preprocessing and settings before the data are seen, and publish code that applies them,} including conventions the text does not fix: one rounding rule moved a weighted headline by six points.
+\item \emph{Report several collections, and test the marginal-only classifier.} A rule evaluated on one collection tells little about another (Kendall $\tau$ between the T\"ubingen and chamber rankings is negative). A marginal-only classifier is cheap to run on a new collection and indicates how much of the benchmark can be solved without dependence structure.
+\item \emph{Report the effective sample size and the number of distinct edges.} Seventeen of nineteen new chamber recordings have an effective sample size of about three; three of our new pair collections consist of four to eight distinct edges.
+\item \emph{For learned methods, show real-data accuracy next to the simulated test}, and describe how far the real diagnostics lie from the simulator's support (Section~\ref{sec:predict}).
+\end{enumerate}
+
+\paragraph{Why not simply propose a better rule?} We tried, and report the attempts (Appendix~\ref{app:negative}): sequential certificates, a block-replicated additive method, a learned graph classifier, a learned pair classifier, an invariance method with time blocks, a regime-gated rule. None beats the baselines on the real collections. We consider the negative results informative because each was fixed before it was run and the failures are explained, in part, by the mechanisms of Section~\ref{sec:mech}: a conditional-structure rule is up against a marginal cue and a mixture of regimes.
+
+\section{Limitations}\label{sec:limits}
+\begin{itemize}
+\item \emph{Size.} T\"ubingen has $102$ pairs and the Sachs data $17$ arcs; the other pair collections have four to $47$ distinct edges. All inference is as imprecise as Section~\ref{sec:noise} says.
+\item \emph{Implementations.} Twelve rules were run by us, some at library defaults and two re-implemented from preprints (compression, now faithful; TRA with our constants). Tuning could change a ranking. We did not run SLOPE, CAM, SCORE or PNL.
+\item \emph{The multiverse} is finite, its choices are ours, its accuracies are computed on overlapping pairs and are not independent, and several scores are not confidences. The detectable difference of $0.19$ applies to the observed discordance rate and is approximate.
+\item \emph{The heteroscedasticity measure} is computed in the true direction and is close to what the additive-noise tests probe; the tercile analysis is post hoc. The manipulation and the factorial map are simulations from one family of mechanisms.
+\item \emph{The factorial simulator} does not cover the real collections (Section~\ref{sec:predict}).
+\item \emph{The marginal-only classifier} is small, with five features, and its chamber and Sachs accuracies rest on collections with few distinct causes; the T\"ubingen result is within the sampling error of chance.
+\item \emph{Unexplained.} Why additive-noise rules lose on the chambers, and why IGCI is reversed on binary and piecewise-constant causes, are not diagnosed beyond the observation.
+\item \emph{Process.} The study was done with an automated assistant under a pre-registration discipline; the analyses designed after the data are labelled, and independent reviews by separate model instances found several errors (leakage in the marginal classifier, a confounded manipulation, universes with too few pairs), which are corrected in the text.
+\end{itemize}
+
+\paragraph{Data and code availability.} All code, stored per-pair decisions, scripts and pre-registrations are in the repository \texttt{vinhqdang/SPRINT-CD}. The T\"ubingen pairs, the Sachs data and the Causal Chambers data are public; the code of LOCI is fetched from its authors' repository at run time.

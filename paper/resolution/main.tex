@@ -1,197 +1,28 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,natbib}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,natbib,longtable,setspace}
+\setstretch{1.08}
 \bibliographystyle{plainnat}
-\title{Why simple baselines hold their own on real cause--effect benchmarks: noise, marginal shortcuts and assumption regimes}
-\author{Quang-Vinh Dang\\British University Vietnam, Hung Yen, Vietnam\\\texttt{vinh.dq4@buv.edu.vn}}
+\title{Why simple baselines hold their own on real cause--effect benchmarks:\\ resolution, marginal shortcuts and assumption regimes}
+\author{Quang-Vinh Dang\\British University Vietnam, Hung Yen, Vietnam\\\texttt{vinh.dq4@buv.edu.vn}\\ORCID 0000-0002-3877-8024}
 \date{}
 \begin{document}
 \maketitle
 \begin{abstract}
-Methods for causal discovery are often compared by gains of a few accuracy points on the T\"ubingen cause--effect pairs
-or a few edges on the Sachs protein network. We ask what these benchmarks can resolve. On the $102$ univariate T\"ubingen pairs,
-twelve direction rules have accuracies from $40\%$ to $65\%$, and only one of $66$
-paired comparisons survives a Holm correction; a paired test at $n=102$ has $80\%$ power only for differences of about $19$ points ($28$ after a Bonferroni correction over $66$ tests).
-Across the ten defensible reporting choices that leave at least $30$ pairs (official weights or none; subsets by sample size; evaluation on the most confident
-$25$ to $100\%$ of pairs) the accuracy of a single method moves by $9$ to $26$ points and its rank by up to ten places, and four of twelve methods
-are ranked first under at least one choice. Trying ten random subsets of $50$ pairs raises the expected best accuracy by seven to eight
-points (a finite-sample selection effect that does not change the ranking). On the Sachs network, $16$ of $22$ methods have a bootstrap interval that contains the best $F_1$, and the smallest
-significant difference is $0.17$. Methods trained on simulated data lose the most: a pair classifier falls from $95\%$ on its simulator
-to $40\%$ on T\"ubingen. We then ask why dependence-based rules do not beat RECI and IGCI, and give three pieces of evidence. (i) A classifier that sees only the two marginals, trained on a different recording or on pairs that share no variable with the test pair, reaches $98\%$ on the independent-row chamber pairs, $87\%$ on the walk pairs and $94\%$ on the Sachs pairs (RECI: $98$, $94$, $53\%$), but $58\%$ on T\"ubingen; a marginal-only model trained on T\"ubingen reaches $87\%$ and $92\%$ on the chamber pairs. These benchmarks can be largely solved from the marginals. (ii) Additive-noise rules are near-perfect where residuals are homoscedastic and reversed where they are not: on the least heteroscedastic third of T\"ubingen ANM-HSIC and RESIT are right on $97\%$ and $96\%$ of pairs, on the most heteroscedastic third on $29\%$ and $24\%$; the average, near $61\%$, equals the baselines. (iii) In matched simulations, making the noise scale depend on the cause moves ANM-HSIC from $100\%$ to $21\%$ (an independent random scale with the same marginal moves it only to $89\%$), whereas IGCI and RECI gain about the same ($64\to99\%$, $78\to93$ or $98\%$) with either scale: they profit from the heavy-tailed marginal of the effect, not from heteroscedasticity. A rule that switches on a symmetric heteroscedasticity diagnostic, frozen on simulation, did not meet its pre-registered goals ($65.7\%$ on T\"ubingen against RECI's $60.8\%$, $75.5\%$ against $97.9\%$ on the chambers). We identify four sources that can produce apparent gains without any change in a method's accuracy, none of which requires a fault of the
-original authors (we audited no published table), and give a reporting checklist: paired tests with a power statement, the full coverage curve, subsets fixed
-before the data are seen, and a statement of the effective sample size. We re-implemented four methods from 2025--2026 preprints and
-ran nine published graph packages and two pair rules (AVICI, RESIT) at their defaults; none is distinguishable from the best simple baseline at this power (an absence of evidence, not a demonstration of equivalence).
+Methods for causal discovery are usually compared by a gain of a few accuracy points on the T\"ubingen cause--effect pairs or a few edges on a protein network. We ask what these benchmarks can resolve and why rules that test the conditional structure of a pair rarely beat much simpler rules on real data. Twelve direction rules were run under one protocol, fixed in advance, on seven real pair collections (T\"ubingen, four Causal Chambers collections of which three are new, and the Sachs arcs) and on graph benchmarks. (1) No rule leads across collections: five of twelve rules lead at least one, and the ordering of the rules on T\"ubingen is negatively correlated with the ordering on the chamber pairs (Kendall $\tau=-0.38$). (2) On $102$ T\"ubingen pairs a paired test has $80\%$ power only for a difference of $19$ accuracy points, and of $78$ pairwise comparisons two survive a Holm correction; ten defensible reporting choices move a single rule by $11$ to $26$ points and its rank by up to ten places. (3) Reproducing a published headline for a compression baseline ($74.7\%$ weighted, $68$ of $102$ pairs) required one rounding convention that the text does not give; the other plausible conventions give $68.8$ and $70.5\%$. (4) Mechanisms: a classifier that sees only the two marginals orients the chamber and Sachs pairs ($98\%$ across recordings, $87\%$ across walk recordings, $94\%$ leaving out both proteins) and transfers across collections but is at chance on T\"ubingen; additive-noise rules are near-perfect when the noise scale does not depend on the cause ($97\%$ on the least heteroscedastic third of T\"ubingen, $95\%$ in the clean cell of a factorial simulation) and reversed when it does ($29\%$ on the most heteroscedastic third, $6\%$ in simulation), shown by a matched manipulation with a marginal control. (5) Two attempts to build on this account fail with pre-registered predictions: a regime-gated rule, and a nearest-neighbour prediction of real accuracy from the simulation (Spearman $0.17$; real pairs lie two to thirteen standard deviations from the simulation's support). The account is therefore a set of demonstrated mechanisms, not a validated model. We give recommendations for reporting and an accounting of every method we tried and failed to improve, with the pre-registration log of $42$ experiments.
 \end{abstract}
 
-\section{Introduction}
-New causal-discovery methods are usually accompanied by a table in which the new method is best. On pairs the table is
-the T\"ubingen collection of 108 cause--effect pairs \citep{mooij2016distinguishing}, 102 of which are univariate; on graphs it is
-the Sachs protein network \citep{sachs2005causal} with 17 consensus arcs, or simulated graphs. We do not question any
-particular table. We ask a prior question: with the data these benchmarks contain, which differences between methods can be
-detected at all, and how far can a correct but unconstrained choice of protocol move a reported number?
-
-The question is not academic. A recent same-hands re-evaluation of bivariate rules on T\"ubingen with a parameter-free
-compression baseline reports numbers close to ours for RECI and IGCI \citep{stienstra2026oneruler}, and benchmark artefacts that favour simple baselines on simulated graphs are documented \citep{reisach2021beware}. We add three things: a
-quantitative resolution analysis on real data (Section~\ref{sec:noise}), a multiverse over reporting choices that shows how large the
-room for selection is (Sections~\ref{sec:multi}, \ref{sec:subsets}), and evidence that learned methods lose their advantage when the
-test data differ from the simulator (Section~\ref{sec:gap}). The methods compared were all run by us under one protocol; they are listed in
-Section~\ref{sec:data}.
-
-\paragraph{What this paper does not claim.} We did not audit any published table, we do not know which protocol an author used,
-and a method that is not distinguishable from a baseline here may still be better on other data. The multiverse is a set of
-choices that a reader of a paper could face; it is not a statement about what authors did.
-
-\section{Data and methods}\label{sec:data}
-\paragraph{Pairs.} The $102$ univariate T\"ubingen pairs with the official weights (the weights downweight groups of similar pairs). Preprocessing is fixed:
-at most $2000$ random rows, each variable dequantised with a small uniform jitter.
-\paragraph{Methods.} Twelve direction rules, all run by us at settings fixed before the evaluation: IGCI \citep{daniusis2010inferring},
-RECI \citep{blobaum2018cause}, an additive noise model with a spline regression and an HSIC test, the pairwise LiNGAM statistic \citep{hyvarinen2013pairwise},
-a Gaussian-process additive noise model, LOCI \citep{immer2023loci} with the authors' code, a classifier trained on simulated pairs (PDM, ours), sorted-conditional
-compression \citep{stienstra2026oneruler} on dequantised and on raw rows, topological residual asymmetry \citep{elbouchattaoui2026tra}, AVICI
-\citep{lorch2022amortized} with its pretrained model on two-variable input, and RESIT with a random forest. Compression, TRA and AVICI/RESIT are
-recent; compression and TRA were implemented from the preprints because no code was available (TRA's constants are our choice).
-\paragraph{Graphs.} The Sachs observational data (853 cells, 11 proteins, 17-arc consensus network) and the Causal Chambers
-\citep{gamella2025chamber} wind- and light-tunnel recordings with a known graph. Twenty-two graph methods or configurations are on Sachs (PC, GES, DirectLiNGAM, NOTEARS, DAGMA, PCMCI+,
-GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV, AVICI, BF-BIC with BOSS \citep{ramsey2025bfbic}, and our own PC-GCM, BTAD, LRG and sequential certificates). The full
-protocol and all per-method tables are in the companion evaluation (\texttt{paper/bench} in the repository).
-\paragraph{Protocol.} Each evaluation script was committed before it was run (experiments 42--48 in the repository). Experiments 49--51 (marginal shortcut, heteroscedasticity association, dose-response, GATE) have predictions fixed before their runs; the terciles of Table~\ref{tab:strata} are a post hoc description. GATE was run on T\"ubingen and the chambers (the Sachs pairs have no stored ANM-HSIC decision under the same preprocessing). The multiverse and subset analyses (experiment 47) were designed after the per-pair decisions existed, and were revised once after an independent review; the first version is in the repository history.
-
-\section{Sampling noise}\label{sec:noise}
-Table~\ref{tab:multi} gives accuracies with exact Clopper--Pearson intervals; the half-width is about $0.10$ for every method.
-Two methods that agree on about $56\%$ of the pairs can differ in accuracy, and the exact McNemar test on the discordant pairs
-is the correct comparison because the methods are scored on the same pairs. Of $66$ pairwise comparisons, $11$ have a raw $p<0.05$ and one
-survives Holm ($p=0.041$). Simulating a paired comparison with the observed discordance rate ($44\%$), a difference of $0.19$ in
-accuracy is needed for $80\%$ power. A reported gain of two to five points on T\"ubingen is therefore far below what the
-collection can resolve, whatever the method.
-
-\begin{table}[t]
-\caption{Twelve pair rules on the $102$ T\"ubingen pairs (unweighted accuracy, 95\% interval). Multiverse: the range of accuracy over $32$ reporting universes, the
-best and worst rank, the number of universes in which the method ranks first (ties share the rank), the number in which it is above RECI,
-and the expected best accuracy after trying ten random subsets of $50$ pairs.}
-\label{tab:multi}
-\small
-\begin{tabular}{@{}lccccc c@{}}
-\toprule
-Method & Accuracy [interval] & Multiverse range & Rank & First & $>$RECI & Best of 10 subsets\\
-\midrule
-IGCI & 0.559 [0.46, 0.66] & 0.47--0.71 & 3--11 & 0 & 0 & 0.638\\
-RECI & 0.608 [0.51, 0.70] & 0.61--0.87 & 1--5 & 6 & 0 & 0.683\\
-ANM-HSIC & 0.608 [0.51, 0.70] & 0.57--0.70 & 2--12 & 0 & 1 & 0.683\\
-Pairwise LiNGAM & 0.608 [0.51, 0.70] & 0.54--0.74 & 3--12 & 0 & 0 & 0.685\\
-PDM & 0.402 [0.31, 0.50] & 0.40--0.61 & 10--12 & 0 & 0 & 0.478\\
-LOCI & 0.647 [0.55, 0.74] & 0.63--0.77 & 1--9 & 2 & 2 & 0.722\\
-ANM, Gaussian process & 0.554 [0.45, 0.65] & 0.55--0.75 & 2--11 & 0 & 0 & 0.627\\
-Compression, dequantised & 0.608 [0.51, 0.70] & 0.61--0.79 & 2--7 & 0 & 0 & 0.682\\
-Compression, raw rows & 0.647 [0.55, 0.74] & 0.64--0.76 & 1--7 & 1 & 2 & 0.721\\
-TRA (82) & 0.646 [0.53, 0.75] & 0.65--0.76 & 1--5 & 2 & 4 & 0.729\\
-AVICI & 0.588 [0.49, 0.68] & 0.54--0.65 & 5--11 & 0 & 0 & 0.664\\
-RESIT & 0.613 [0.52, 0.71] & 0.61--0.70 & 3--9 & 0 & 1 & 0.685\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{A multiverse of reporting choices}\label{sec:multi}
-We evaluate every method in the $32$ combinations of (i) official weights or none, (ii) all pairs or only pairs with at least $250$, $500$ or $1000$ rows,
-and (iii) accuracy on all pairs or on the $75$, $50$ or $25\%$ most confident decisions (by the absolute score of the method). Each is a choice that has been made in
-the literature on pairs for a reason: weights are the benchmark's recommendation, a row threshold avoids tiny pairs, and decided-only accuracy
-reflects a method that abstains. The coverage is taken exactly (the top $k$ by $|{\rm score}|$, ties broken at random with a fixed seed); a score is not a calibrated confidence for every rule, so this is the operation a reader could apply, not a measure of each method's own abstention. A universe is kept only if every method is evaluated on at least $30$ pairs: $10$ of the $32$ qualify, and the other $22$ (for example $25\%$ of the $36$ pairs with at least $1000$ rows, which is $9$ pairs) are too small to report. In a first run that included them the ranges were far wider ($0.27$ to $0.75$ for IGCI, up to $1.00$ for RECI); we exclude them because an accuracy on nine pairs is not a defensible report. In the $10$ remaining universes a method's accuracy still moves by $9$ to $26$ points ($0.47$ to $0.71$ for IGCI, $0.61$ to $0.87$ for RECI, $0.63$ to $0.77$ for LOCI) and its rank by up to ten places (ANM-HSIC from second to twelfth, pairwise LiNGAM from third to twelfth). RECI is first in $6$ universes, LOCI and TRA in $2$ each, compression on raw rows in $1$; the ranking among the top methods changes with the protocol. The first counts are over universes, not within one universe, and ties share the first rank. TRA returned no value on $20$ pairs; these are excluded from its accuracy (it is evaluated on $82$) and from its coverage ranking.
-
-Two single choices are large in themselves. The official weights move RECI from $60.8\%$ to $70.9\%$ and compression from $60.8\%$ to $68.0\%$, while
-for LOCI they move it down ($64.7\%\to63.9\%$). Raw against dequantised rows moves compression from $64.7\%$ to $60.8\%$ unweighted.
-
-\section{Selective subsets}\label{sec:subsets}
-A common practice in pair benchmarks is to evaluate a method on a subset of pairs (for example those with a given variable type or sample size). We drew $10000$ random subsets of $50$ pairs.
-The accuracy of a method on a subset has a standard deviation of about $0.05$ and for the eight methods whose full-sample accuracy is within $0.04$ of RECI the probability of beating RECI on a subset of $50$ lies between $0.35$ and $0.72$. The expected best accuracy over $m$ independently drawn subsets, which is what is
-reported by a researcher who tries $m$ subsets and keeps the best, grows with $m$: for RECI $0.608$ ($m=1$), $0.649$ ($3$), $0.683$ ($10$); for LOCI $0.647$, $0.688$, $0.722$. The inflation at $m=10$
-is seven to eight points for every method, so a ranking is not changed by it; what changes is the claim of an absolute level. Because each subset is half of the same $102$ pairs, this measures selection noise about a known full-sample accuracy, not how a researcher actually chooses subsets (by pair type or size, not at random).
-
-\section{The simulation gap}\label{sec:gap}
-Methods trained on simulations lose heavily, but dataset difficulty is a confound. Our own pair classifier (PDM) has $95\%$ accuracy on its simulated test and $83\%$ on a different simulated family, and
-$40.2\%$ on T\"ubingen ($p=0.059$ against chance; $0.93$ and $0.84$ on the two chamber pair sets). Our graph classifier (LRG) has $F_1=0.86$ on simulated graphs and $0.36$--$0.53$ on the chambers.
-The pretrained AVICI model reaches $90\%$ on pairs from independent-row chamber recordings but $58.8\%$ on T\"ubingen and $55.7\%$ on pairs from random-walk recordings.
-The simple rules also drop between these sets (RECI $98\%\to61\%$, IGCI $94\%\to56\%$): chamber pairs are easy, and we have no baseline on the simulated test sets, so the comparison is suggestive. PDM is below chance on T\"ubingen, which we did not diagnose. We cannot say which feature of the real data is responsible; the simulators contain serial dependence, drift and several mechanism families and still do not cover them.
-
-\section{Graph benchmarks}\label{sec:graphs}
-On Sachs the same analysis gives the same picture. For $22$ methods, $16$ have a $95\%$ bootstrap interval (over the $55$ variable pairs) that contains the best $F_1$ ($0.67$) and $7$
-have a point estimate within $0.10$ of it. Of $231$ pairs of methods (some are the same method at two settings), $62$ differ significantly and the smallest significant difference in $F_1$ is $0.17$. The reference has $17$ arcs, so one edge changes
-recall by $0.06$. In the Causal Chambers, the bipartite graph (actuators to sensors) makes the skeleton mostly feature selection, and in $17$ of $19$ new wind-tunnel recordings the actuators are random walks with an effective
-sample size of about three out of $4000$ rows, where no method has strict $F_1$ above $0.42$. Several neural methods time out at sixteen variables. Appendix tables
-of the companion evaluation give the per-method values.
-
-
-\section{Why dependence-based rules do not beat the baselines}\label{sec:mech}
-The resolution analysis says the differences are small; it does not say why the sophisticated rules fail to gain. We tested two explanations, each with a prediction written before the run (experiments 49--51).
-
-\subsection{Marginal shortcuts}\label{sec:marg}
-\emph{Hypothesis H1.} On the real pair sets a classifier that never sees the joint distribution, only the two marginals, predicts the direction about as well as the best rule. Features of each variable after scaling to $[0,1]$: skewness, excess kurtosis, spacing entropy, log fraction of unique values and the $1$--$99\%$ range; the pair feature is the difference between the two variables, both orientations enter training, and accuracy is a five-fold cross-validation with folds over pairs ($50$ repetitions). With folds over pairs, marginal-only accuracy is $59.0\%$ on T\"ubingen ($102$ pairs), $100\%$ on the independent-row chamber pairs ($94$), $92.6\%$ on the walk pairs ($122$) and $89.8\%$ on the Sachs pairs ($17$), against RECI's $60.8$, $97.9$, $94.3$ and $52.9\%$ on the same sets. These first numbers leak: chamber edges share their cause variable and the Sachs pairs reuse eleven proteins, so a held-out pair has often had its variable's marginal in training. A second run (experiment 52) removes the sharing: training on one chamber recording and testing on the other gives $97.9\%$ (wind$\to$light and light$\to$wind), leaving one walk recording out $86.9\%$, leaving out both proteins of the test pair $94.1\%$ (all $17$ pairs), and T\"ubingen leave-one-out $57.8\%$. Dropping the feature that separates discrete from continuous variables (a measurement artefact when sets are preprocessed differently) gives $93.6$, $90.2$ and $94.1\%$. Transfer across sets also works: a model trained on the $102$ T\"ubingen pairs reaches $87.2\%$ on the i.i.d.\ chamber pairs and $91.8\%$ on the walks, and one trained on the $17$ Sachs pairs $100\%$ ($96.8\%$ without the feature) on the i.i.d.\ chamber pairs; the reverse direction to T\"ubingen stays at chance ($52$--$58\%$). In the chambers the cause is an actuator set by the experimenter with a distinctive marginal law (uniform or a random walk), so the direction can be read from the marginals alone. The Sachs value rests on $17$ pairs. On T\"ubingen the marginal-only accuracy is not distinguishable from chance ($59.0\%$, interval about $[49,69]$) and equals that of most dependence-based rules. The pre-registered prediction (within $0.05$ of RECI on the chamber sets, and above $0.80$ without leakage) held; chance on T\"ubingen holds within the width of the interval.
-
-This does not show that RECI or IGCI use only marginals; both read the scale of regression errors and the marginal density. It shows that a benchmark of this kind rewards rules that are sensitive to marginal asymmetry, and that a rule built on conditional structure only (an additive-noise test, a location-scale likelihood) has no reason to profit from it.
-
-\subsection{Assumption regimes}\label{sec:regimes}
-\emph{Hypothesis H2.} The additive-noise family loses where its assumption fails. For every T\"ubingen pair we measured the heteroscedasticity of the residuals of an additive-spline regression of the true effect on the true cause, $h=|\rho_S(|r|,x)|$ (Spearman). The pairs on which a rule is wrong have higher $h$ for the four noise-model rules: ANM-HSIC mean $0.32$ against $0.13$ on right pairs ($p<0.001$, one-sided Mann--Whitney), the Gaussian-process ANM $0.30$ against $0.10$ ($p<0.001$), RESIT $0.34$ against $0.13$ ($p<0.001$), LOCI $0.28$ against $0.17$ ($p=0.001$); also TRA ($p=0.004$) and, weaker, RECI ($p=0.021$), PDM ($p=0.021$), and not IGCI ($p=0.71$), pairwise LiNGAM ($p=0.25$) or AVICI ($p=0.93$). Pooling the four noise-model rules ($396$ decisions) in a logistic regression of correctness on standardised $h$ and $\log n$, one standard deviation of $h$ multiplies the odds of a correct decision by $0.26$ ($p<10^{-18}$; the decisions of different rules on the same pair are not independent, so this $p$ is optimistic); $n$ has no effect. We predicted that RECI would not show the effect; it does, mildly.
-
-Splitting T\"ubingen into thirds by $h$ (bounds $0.094$ and $0.268$; $34$ pairs each) makes the regimes visible (Table~\ref{tab:strata}). In the least heteroscedastic third ANM-HSIC, RESIT and the Gaussian-process ANM are right on $97\%$, $96\%$ and $91\%$ of the pairs, far above RECI ($68\%$); in the most heteroscedastic third they are right on $29\%$, $24\%$ and $22\%$, below chance. Averaged over the three regimes ANM-HSIC ($0.61$) and RESIT ($0.62$) equal the baselines; the Gaussian-process ANM is lower ($0.55$). This reading is descriptive: $h$ is computed in the true direction, so it cannot be used as a predictor; its bounds come from the same data; $h$ is close to the dependence between scale and cause that the additive-noise tests probe, so part of the association is by construction; and twelve rules were tested without a multiplicity correction. The manipulation below is the causal evidence.
-
-\begin{table}[t]
-\caption{Accuracy on T\"ubingen by tercile of residual heteroscedasticity $h$ (computed in the true direction; $34$ pairs per tercile, TRA $27$--$28$).}
-\label{tab:strata}
-\small
-\begin{tabular}{@{}lccc@{}}
-\toprule
-Method & low $h$ & middle & high $h$\\
-\midrule
-ANM-HSIC & 0.97 & 0.56 & 0.29\\
-RESIT & 0.96 & 0.65 & 0.24\\
-ANM, Gaussian process & 0.91 & 0.53 & 0.22\\
-TRA & 0.83 & 0.68 & 0.44\\
-LOCI & 0.82 & 0.62 & 0.50\\
-RECI & 0.68 & 0.68 & 0.47\\
-IGCI & 0.59 & 0.44 & 0.65\\
-Pairwise LiNGAM & 0.65 & 0.53 & 0.65\\
-AVICI & 0.53 & 0.56 & 0.68\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{A manipulation with a marginal control}\label{sec:dose}
-An association across pairs cannot separate heteroscedasticity from whatever else differs between pairs, and making the noise scale depend on the cause also changes the marginal of the effect (a scale mixture). We therefore ran the manipulation with matched pairs and a control arm (experiment 52). Pairs $e=f(c)+\sigma\varepsilon$ with $f\in\{\tanh 2c,\, c^3/3,\, \sin 1.5c\}$, $c$ uniform or Gaussian, $n=500$, the same $c$, $f$ and $\varepsilon$ at every level, $a\in\{0,0.5,1,1.5\}$, $100$ pairs per level, a random half swapped. In the heteroscedastic arm $\sigma(c)\propto\exp(ac)$; in the control arm $\sigma_i\propto\exp(au_i)$ with $u_i$ standard normal and independent of $c$, which gives the effect the same kind of heavy-tailed marginal but no dependence of the noise scale on the cause; in both the average noise variance is fixed. Accuracy against $a$ (Table~\ref{tab:dose}): ANM-HSIC falls from $100\%$ to $21\%$ with cause-dependent noise and only to $89\%$ with the independent scale, so the collapse is due to the dependence of the scale on the cause. IGCI and RECI rise in both arms ($64\to99\%$ and $78\to93\%$ with cause-dependent noise, $64\to99\%$ and $78\to98\%$ with the independent scale): they profit from the heavy-tailed marginal of the effect and not from heteroscedasticity. This is the marginal asymmetry of Section~\ref{sec:marg} seen from the other side. (An earlier, unmatched run without the control showed $100\%\to16\%$ for ANM-HSIC and $100\%\to29\%$ for RESIT, and the same rise for IGCI and RECI, which we had wrongly attributed to heteroscedasticity; RESIT was not repeated in the control.) Real pair collections contain both regimes, so a rule that is excellent in one and reversed in the other has the same average accuracy as a rule that is mediocre in both.
-
-\begin{table}[t]
-\caption{Matched simulated pairs: accuracy against $a$ ($100$ pairs per level). Left block: noise scale depends on the cause; right block: independent random scale with the same marginal mixture (control).}
-\label{tab:dose}
-\small
-\begin{tabular}{@{}lcccc|cccc@{}}
-\toprule
- & \multicolumn{4}{c|}{scale depends on cause} & \multicolumn{4}{c}{independent scale}\\
-Method & $0$ & $0.5$ & $1$ & $1.5$ & $0$ & $0.5$ & $1$ & $1.5$\\
-\midrule
-ANM-HSIC & 1.00 & 0.49 & 0.12 & 0.21 & 1.00 & 1.00 & 0.99 & 0.89\\
-IGCI & 0.64 & 0.72 & 0.91 & 0.99 & 0.64 & 0.73 & 0.95 & 0.99\\
-RECI & 0.78 & 0.77 & 0.87 & 0.93 & 0.78 & 0.84 & 0.96 & 0.98\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{A rule that tests the explanation}\label{sec:gate}
-If the regimes are the explanation, a rule that identifies the regime should beat both branches. We froze GATE on simulation before touching a real pair: $h_{\min}=\min(h(x\to y),h(y\to x))$, symmetric in the two variables, with the threshold at the $95$th percentile of $h_{\min}$ on $200$ homoscedastic simulated pairs ($0.058$); GATE gives the ANM-HSIC direction when $h_{\min}\le 0.058$ and the RECI direction otherwise. The pre-registered predictions were an accuracy of at least $0.70$ on T\"ubingen and, on the chambers, within $0.05$ of RECI. Both failed. On T\"ubingen GATE has $65.7\%$ ($77.1\%$ with the official weights) against RECI's $60.8\%$ ($70.9\%$); it routes $34\%$ of the pairs to ANM-HSIC, and the difference to RECI is not significant (exact McNemar $10$ against $5$ discordant pairs, $p=0.30$). On the independent-row chambers GATE has $75.5\%$ against $97.9\%$ for RECI ($0$ against $21$ discordant pairs, $p<10^{-6}$), and $77.0\%$ against $94.3\%$ on the walks ($p<10^{-6}$), because it sends $88\%$ and $62\%$ of those pairs to ANM-HSIC, which is right on only $72\%$ and $63\%$ of them. The threshold was set at $n=500$ while the chamber pairs have $n=2000$ and the null spread of $|\rho|$ shrinks with $n$, so the routing is not comparable across sets; an $n$-aware threshold was not tried. The result is consistent with the account being incomplete (on the chambers, marginal asymmetry favours IGCI and RECI and the additive-noise rules lose for another, undiagnosed reason) but it does not establish it, and it may reflect a poor gate. GATE is a negative result and not offered as a method.
-
-\subsection{Summary of the explanation}
-Two mechanisms have direct evidence and one is a resolution limit. (1) The benchmarks contain a marginal asymmetry between cause and effect that survives leave-recording-out and leave-protein-out validation, and that a conditional-structure rule cannot use; IGCI and RECI are sensitive to it, and in simulation they gain accuracy from a heavy-tailed effect marginal without any change in the conditional structure (Sections~\ref{sec:marg}, \ref{sec:dose}). (2) Additive-noise rules are regime-specific: near-perfect on the homoscedastic third of T\"ubingen, below chance on the heteroscedastic third, and, by manipulation with a control, reversed when the noise scale depends on the cause (Sections~\ref{sec:regimes}, \ref{sec:dose}). Their average equals the baselines because the collection mixes the regimes. (3) The benchmarks cannot resolve the remaining differences (Sections~\ref{sec:noise}--\ref{sec:subsets}). What the evidence does not explain is the chamber loss of the noise-model rules, and GATE's failure shows that a regime switch based on the heteroscedasticity diagnostic alone is not enough.
-
-\section{Why published gains can look larger}\label{sec:why}
-Combining the evidence, a published gain on a small real benchmark can arise without any change in the method's true accuracy from (i) the resolution limit: two methods that differ by two to five points are statistically the same on $102$ pairs; (ii) free
-reporting choices that move one method by up to $26$ points even after discarding universes with fewer than $30$ pairs; (iii) selection among subsets or settings, worth seven to eight points after ten attempts; and (iv) the gap between a simulator and real data for learned methods. None of these requires an error by an author; each is a degree of freedom the benchmark does not constrain. These are
-mechanisms, not an accounting of a particular paper.
-
-\section{Recommendations}
-(1) Compare methods with a paired exact test on the same pairs, state the power, and do not interpret a difference below the detectable one. (2) Report the full coverage curve, not one decided-only number, and report weighted and unweighted accuracy.
-(3) Fix subsets, preprocessing and settings before the data are seen, and publish the code that does it. (4) State the effective sample size of every real data set, and do not use a benchmark whose effective size is a few observations to rank methods.
-(5) For learned methods, report accuracy on real data next to the simulated test, with the simulator's overlap with the real data described. (6) Prefer benchmarks with more independent units: interventional recordings and collections with many more pairs would lower the detectable difference.
-
-\section{Limitations}
-The study uses 102 pairs and one protein network, which is itself the resolution limit it describes. The twelve methods were run by us; some at library defaults, and tuning may change a ranking. The multiverse is finite, its choices are ours, its accuracies are computed on overlapping pairs and are not independent, the scores of several rules are not confidences, and the T\"ubingen collection has known label noise and groups of similar pairs (the reason for the weights). The detectable difference ($0.19$) is for the observed discordance rate ($0.44$), averaged over method pairs, and is approximate. The graph bootstrap resamples variable pairs that share nodes.  We did not run CAM, SCORE or PNL (PNL needs $880$\,s per pair), and two preprints were implemented from their description. The simulation-gap evidence uses our own learned models and one pretrained model.
-
-\paragraph{Data and code.} All code, per-pair decisions and scripts are in the repository \texttt{vinhqdang/SPRINT-CD}. The T\"ubingen pairs, the Sachs data and the Causal Chambers data are public.
+\input{sec/intro}
+\input{sec/related}
+\input{sec/data}
+\input{sec/coll}
+\input{sec/noise}
+\input{sec/multi}
+\input{sec/mech}
+\input{sec/graphs}
+\input{sec/audit}
+\input{sec/discussion}
 
 \bibliography{refs}
+\input{sec/appendix}
 \end{document}

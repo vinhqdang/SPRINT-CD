@@ -1,0 +1,10 @@
+CERT-CD (sequential certificates) & assert edges only by rejecting; anytime-valid & False-edge control holds in simulation ($2.7\%$ against $27$--$91\%$), not on the chambers\\
+BTAD & block-replicated additive gains & highest precision ($0.60$) but recall $0.16$; $F_1$ $0.25$--$0.28$ on walk recordings\\
+LRG & gradient boosting on block-gain features, trained on simulations & $F_1$ $0.36$ (chambers), $0.67$ (Sachs); within-recording AUC $0.55$\\
+PDM & pair classifier trained on $40000$ simulated pairs & $95\%$ on simulated pairs, $40.2\%$ on T\"ubingen\\
+Block-ICP & invariant causal prediction with time blocks & empty graphs, $F_1\le 0.07$ on development recordings\\
+Compression, TRA, BF-BIC (exp 42--43, 54) & re-implemented 2025--2026 methods & compression: $60.8$--$64.7\%$ with our first implementation, $66.7\%$ ($74.7\%$ weighted) faithful, $38.3\%$ on i.i.d.\ chambers; TRA $64.6\%$ ($86.2\%$ on i.i.d.\ chambers); BF-BIC with BOSS: Sachs $0.67$, walks $0.42$\\
+Interventional route (pilot) & shift of each sensor under each intervened actuator (light tunnel) & KS: precision $1.00$, recall $0.72$ ($28$ of $39$ arcs), AUC $0.93$; the missed arcs show no shift; conditional version recall $0.79$ at precision $0.51$\\
+Published packages (exp 45--46) & AVICI, GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV & best: BOSS $0.55$ i.i.d.\ chambers; GRaSP $0.68$, BOSS $0.65$ large-ESS; Sachs $\le0.56$; walks $\le0.37$; many neural timeouts\\
+GATE (exp 51) & ANM-HSIC when a symmetric heteroscedasticity diagnostic is low, else RECI & T\"ubingen $65.7\%$ against $60.8\%$ ($p=0.30$); chambers $75.5\%$, $77.0\%$ against $97.9\%$, $94.3\%$\\
+Predictive validation (exp 57) & nearest simulated neighbours predict each rule's accuracy & Spearman $0.17$ (needed $0.5$); RMSE $0.30$ against $0.26$ for the constant; real pairs are $2$--$13$ sd from the simulation\\

@@ -107,6 +107,14 @@
     "n_wrong": 29,
     "n_right": 53
    },
+   "Compression faithful": {
+    "mean_h_wrong": 0.2280278239446989,
+    "mean_h_right": 0.19317786397282294,
+    "p_h": 0.07529020912926522,
+    "p_unique": 1.0,
+    "n_wrong": 34,
+    "n_right": 68
+   },
    "AVICI": {
     "mean_h_wrong": 0.18035767412889256,
     "mean_h_right": 0.22190030751430392,
