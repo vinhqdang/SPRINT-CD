@@ -1,4 +1,4 @@
-"""Experiment 47 (revision 2, after an independent review of the first run; the first run is in the git history): how much of the spread between pair methods is sampling noise and reporting choices?
+"""Experiment 47 (revision 3: adds the faithful compression variant of exp54 as a thirteenth rule; revision 2, after an independent review of the first run; the first run is in the git history): how much of the spread between pair methods is sampling noise and reporting choices?
 
 Written and committed before running.  Inputs are the per-pair decisions already produced for the 102
 univariate Tuebingen pairs (exp35, 38, 42, 46; scores: positive = x -> y, ties half correct; PDM score
@@ -31,6 +31,7 @@ def load():
     e38 = {r["id"]: r for r in json.load(open(R / "exp38_pairs_modern.json"))["records"] if r["set"] == "tuebingen"}
     e42 = {r["id"]: r for r in json.load(open(R / "exp42_pairs_2026.json"))["records"] if r["set"] == "tuebingen"}
     e46 = {r["id"]: r for r in json.load(open(R / "exp46_pairs_sota.json"))["records"] if r["set"] == "tuebingen"}
+    e54 = {r["id"]: r["score"] for r in json.load(open(R / "exp54_compression_faithful.json"))["records"] if r["set"] == "tuebingen"}
     ids, w, n = [], [], []
     S = {}
     for r in e35:
@@ -39,6 +40,7 @@ def load():
         row["PDM"] = r["pdm"] - 0.5
         row["LOCI"] = e38[i]["m"]["LOCI"]; row["ANM-GP"] = e38[i]["m"]["ANM"]
         row["Compression"] = e42[i]["m"]["SC"]; row["Compression raw"] = e42[i]["m"]["SCraw"]; row["TRA"] = e42[i]["m"]["TRA"]
+        row["Compression faithful"] = e54[i]
         row["AVICI"] = e46[i]["m"]["AVICI"]; row["RESIT"] = e46[i]["m"]["RESIT"]
         S[i] = row
     return ids, np.array(w), np.array(n), S
