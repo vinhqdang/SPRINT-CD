@@ -58,7 +58,16 @@ for i, a in enumerate(COLL):
     for j, b in enumerate(COLL):
         ms = [m for m in RULES if a in acc[m] and b in acc[m]]
         if len(ms) >= 5: M[i, j] = stats.kendalltau([acc[m][a] for m in ms], [acc[m][b] for m in ms])[0]
-json.dump({"acc": acc, "n": n_, "kendall": M.tolist()}, open(R / "resolution_assets.json", "w"), indent=1)
+ids = {st: ([r["id"] for r in e38 if r["set"] == st] if st in ("tuebingen", "chamber_iid", "chamber_walk", "sachs") else [r["id"] for r in e53 if r["set"] == st]) for st in COLL}
+perm_p = np.full_like(M, np.nan); rng_ = np.random.default_rng(5)
+for i, a in enumerate(COLL):
+    for j, b in enumerate(COLL):
+        ms = [m for m in RULES if a in acc[m] and b in acc[m]]
+        if i < j and len(ms) >= 5:
+            va, vb = np.array([acc[m][a] for m in ms]), np.array([acc[m][b] for m in ms]); t0 = stats.kendalltau(va, vb)[0]
+            null = [stats.kendalltau(va, rng_.permutation(vb))[0] for _ in range(5000)]
+            perm_p[i, j] = perm_p[j, i] = float(np.mean(np.abs(null) >= abs(t0) - 1e-12))
+json.dump({"acc": acc, "n": n_, "kendall": M.tolist(), "kendall_perm_p": perm_p.tolist(), "corr": {m: {s: list(map(lambda v: None if v != v else v, corr[m].get(s, []))) for s in COLL} for m in RULES}, "ids": ids}, open(R / "resolution_assets.json", "w"), indent=1)
 fig, ax = plt.subplots(1, 2, figsize=(11, 4.2))
 A = np.array([[acc[m].get(s, np.nan) for s in COLL] for m in RULES])
 im = ax[0].imshow(A, cmap="RdYlGn", vmin=0, vmax=1, aspect="auto"); ax[0].set_xticks(range(len(COLL))); ax[0].set_xticklabels([LAB[s].replace("\\\"", "") for s in COLL], rotation=40, ha="right", fontsize=8)

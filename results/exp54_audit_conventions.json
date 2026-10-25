@@ -1,0 +1,92 @@
+{
+ "floor256_cap500": {
+  "pairs_correct": 64.0,
+  "unweighted": 0.6274509803921569,
+  "weighted": 0.6269406902714172
+ },
+ "floor256_cap1000": {
+  "pairs_correct": 67.0,
+  "unweighted": 0.6568627450980392,
+  "weighted": 0.6974822003278097
+ },
+ "floor256_cap2000": {
+  "pairs_correct": 63.0,
+  "unweighted": 0.6176470588235294,
+  "weighted": 0.6483106870764376
+ },
+ "floor256_cap4000": {
+  "pairs_correct": 69.0,
+  "unweighted": 0.6764705882352942,
+  "weighted": 0.7076905493546398
+ },
+ "floor256_cap8000": {
+  "pairs_correct": 67.0,
+  "unweighted": 0.6568627450980392,
+  "weighted": 0.6882089672423688
+ },
+ "floor256_cap1000000": {
+  "pairs_correct": 67.0,
+  "unweighted": 0.6568627450980392,
+  "weighted": 0.6882089672423688
+ },
+ "floor255_cap500": {
+  "pairs_correct": 69.0,
+  "unweighted": 0.6764705882352942,
+  "weighted": 0.6974899929606547
+ },
+ "floor255_cap1000": {
+  "pairs_correct": 69.0,
+  "unweighted": 0.6764705882352942,
+  "weighted": 0.6947028279464591
+ },
+ "floor255_cap2000": {
+  "pairs_correct": 67.0,
+  "unweighted": 0.6568627450980392,
+  "weighted": 0.6817151065382784
+ },
+ "floor255_cap4000": {
+  "pairs_correct": 71.0,
+  "unweighted": 0.696078431372549,
+  "weighted": 0.7021318045919385
+ },
+ "floor255_cap8000": {
+  "pairs_correct": 71.0,
+  "unweighted": 0.696078431372549,
+  "weighted": 0.7049111769732891
+ },
+ "floor255_cap1000000": {
+  "pairs_correct": 71.0,
+  "unweighted": 0.696078431372549,
+  "weighted": 0.7049111769732891
+ },
+ "round255_cap500": {
+  "pairs_correct": 71.0,
+  "unweighted": 0.696078431372549,
+  "weighted": 0.7166079188734966
+ },
+ "round255_cap1000": {
+  "pairs_correct": 70.0,
+  "unweighted": 0.6862745098039216,
+  "weighted": 0.7404455827460715
+ },
+ "round255_cap2000": {
+  "pairs_correct": 69.0,
+  "unweighted": 0.6764705882352942,
+  "weighted": 0.7438483657550149
+ },
+ "round255_cap4000": {
+  "pairs_correct": 68.0,
+  "unweighted": 0.6666666666666666,
+  "weighted": 0.7401338774322751
+ },
+ "round255_cap8000": {
+  "pairs_correct": 68.0,
+  "unweighted": 0.6666666666666666,
+  "weighted": 0.7466277381363655
+ },
+ "round255_cap1000000": {
+  "pairs_correct": 69.0,
+  "unweighted": 0.6764705882352942,
+  "weighted": 0.7531215988404558
+ }
+}

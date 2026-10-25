@@ -1,4 +1,4 @@
-import sys, numpy as np, pandas as pd, itertools, networkx as nx
+import sys, json, numpy as np, pandas as pd, itertools, networkx as nx
 from scipy.stats import ks_2samp
 import causalchamber.ground_truth as gt
 from causalchamber.datasets import Dataset
@@ -64,3 +64,8 @@ Pc=np.array([x[2] for x in res]); Yc=np.array([(x[0],x[1]) in anc for x in res])
 for a in (0.05,):
     pr=Pc<a/len(Pc); tp=(pr&Yc).sum(); print('cond bonf pred',pr.sum(),'tp',tp,'prec',tp/max(pr.sum(),1),'rec',tp/Yc.sum())
 print('AUC cond',roc_auc_score(Yc,-np.log(Pc+1e-300)))
+
+json.dump({"n_vars": len(var), "ancestral_pairs": len(anc), "direct_pairs": len(direct), "tested_pairs": len(Y), "ks_auc": float(roc_auc_score(Y, -np.log(P + 1e-300))),
+           "bonferroni_0.05": {"predicted": int((P < 0.05 / len(P)).sum()), "tp": int(((P < 0.05 / len(P)) & Y).sum()), "recall": float(((P < 0.05 / len(P)) & Y).sum() / Y.sum()), "precision": float(((P < 0.05 / len(P)) & Y).sum() / max((P < 0.05 / len(P)).sum(), 1))},
+           "cond_bonferroni": {"predicted": int((Pc < 0.05 / len(Pc)).sum()), "tp": int(((Pc < 0.05 / len(Pc)) & Yc).sum()), "recall": float(((Pc < 0.05 / len(Pc)) & Yc).sum() / Yc.sum()), "precision": float(((Pc < 0.05 / len(Pc)) & Yc).sum() / max((Pc < 0.05 / len(Pc)).sum(), 1)), "auc": float(roc_auc_score(Yc, -np.log(Pc + 1e-300)))},
+           "missed_pairs": [[a, b, float(p)] for (a, b), p, yy in zip(pairs, P, Y) if yy and p >= 0.05 / len(P)]}, open("results/lt_interventions_check.json", "w"), indent=1)

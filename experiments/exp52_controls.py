@@ -1,4 +1,4 @@
-"""Experiment 52: controls demanded by the independent review of experiments 49-50.
+"""Experiment 52: controls for experiments 49-50 (leakage-free marginal classifier, matched dose-response with marginal control).
 
 Written and committed before running.
 (A) Marginal-only classifier without leakage through shared variables.  Same features as exp49 (skewness, kurtosis,

@@ -21,9 +21,9 @@ for s in COLL:
         except Exception: pass
         kc.append(stats.kurtosis((x - x.mean()) / (x.std() + 1e-12))); ke.append(stats.kurtosis((y - y.mean()) / (y.std() + 1e-12)))
         fewc.append(len(np.unique(x)) <= 10); ties.append(len(np.unique(x)) < 0.9 * len(x) or len(np.unique(y)) < 0.9 * len(y))
-    diag[s] = dict(n=int(np.median(n)), rho=float(np.nanmedian(rho)), h=float(np.nanmedian(h)), kc=float(np.median(kc)), ke=float(np.median(ke)), few=float(np.mean(fewc)), ties=float(np.mean(ties)))
+    diag[s] = dict(ucause=int(np.median([len(np.unique(x)) for _, x, y in L])), n=int(np.median(n)), rho=float(np.nanmedian(rho)), h=float(np.nanmedian(h)), kc=float(np.median(kc)), ke=float(np.median(ke)), few=float(np.mean(fewc)), ties=float(np.mean(ties)))
     d = diag[s]
-    rows.append(f"{LAB[s]} & {len(L)} & {d['n']} & {d['rho']:.2f} & {d['h']:.2f} & {d['kc']:.1f} & {d['ke']:.1f} & {d['few']:.2f} & {d['ties']:.2f}\\\\")
+    rows.append(f"{LAB[s]} & {len(L)} & {d['n']} & {d['rho']:.2f} & {d['h']:.2f} & {d['kc']:.1f} & {d['ke']:.1f} & {d['ucause']} & {d['ties']:.2f}\\\\")
 (OUT / "tab_diag.tex").write_text("\n".join(rows)); json.dump(diag, open("results/collection_diagnostics.json", "w"), indent=1)
 rng = np.random.default_rng(7)
 fig, axs = plt.subplots(2, 4, figsize=(12, 5.4)); axs = axs.ravel()
