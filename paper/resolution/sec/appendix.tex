@@ -22,7 +22,7 @@ Each row is an experiment script (\texttt{experiments/expNN\_*.py}) with the sho
 28 & \texttt{06bffaf} & 2026-10-23 & Experiment 28: abstaining comparison of the pair rules at matched coverage.\\
 29 & \texttt{f85302f} & 2026-10-23 & Experiment 29: BTAD against PC, GES, DirectLiNGAM and PC with an iid nonparametric test\\
 30 & \texttt{ced1b11} & 2026-10-23 & Experiment 30: BTAD on the untouched Causal Chamber recordings, time-ordered.\\
-31 & \texttt{9dddc37} & 2026-10-24 & Fit the LRG classifier on exp31 features; choose the threshold on validation; report held-out simulation metri\\
+31 & \texttt{9dddc37} & 2026-10-24 & Fit the LRG classifier on exp31 features; choose the threshold on validation; report held-out simulation metrics.\\
 31 & \texttt{d682048} & 2026-10-24 & Experiment 31: train the learned replicated-gain skeleton model (LRG) on simulated data.\\
 32 & \texttt{9dddc37} & 2026-10-24 & Experiment 32: the frozen LRG model on the untouched, time-ordered Causal Chamber recordings.\\
 33 & \texttt{b91cbf1} & 2026-10-24 & Experiment 33: frozen LRG and BTAD on the two Causal Chamber recordings with i.i.d. random actuators.\\
@@ -40,16 +40,20 @@ Each row is an experiment script (\texttt{experiments/expNN\_*.py}) with the sho
 44 & \texttt{cdf776c} & 2026-10-24 & Experiment 44: SNOE-style edge orientation (arXiv 2506.05590, see sprint\_cd/snoe\_lite.py).\\
 45 & \texttt{37f8d52} & 2026-10-25 & Experiment 45: published methods with public code on the graph benchmark.\\
 46 & \texttt{101841b} & 2026-10-25 & Experiment 46: published pair rules with public code (AVICI pretrained, RESIT) on the exp38 pair sets.\\
-47 & \texttt{b805f02} & 2026-10-25 & Experiment 47 (revision 3: adds the faithful compression variant of exp54 as a thirteenth rule; revision 2, af\\
+47 & \texttt{b805f02} & 2026-10-25 & Experiment 47 (revision 4: the discordance rate and McNemar counts exclude missing values and exact ties, the Bonferroni\\
 48 & \texttt{211fb35} & 2026-10-25 & Experiment 48: resolution of the Sachs graph benchmark.\\
 49 & \texttt{02dfe48} & 2026-10-25 & Experiment 49: why do direction rules that exploit dependence lose to RECI/IGCI on real pairs?\\
 50 & \texttt{c17d1ad} & 2026-10-25 & Experiment 50: does heteroscedastic noise cause the loss of the noise-model rules? (simulation, dose-response)\\
 51 & \texttt{31dadda} & 2026-10-25 & Experiment 51: an assumption-gated direction rule (GATE), frozen on simulation, tested once on real pairs.\\
-52 & \texttt{4282166} & 2026-10-25 & Experiment 52: controls for experiments 49-50 (leakage-free marginal classifier, matched dose-response with marginal control).\\
+52 & \texttt{4282166} & 2026-10-25 & Experiment 52: controls for experiments 49-50 (leakage-free marginal classifier, matched dose-response with marginal con\\
 53 & \texttt{37fc958} & 2026-10-25 & Experiment 53: three further real pair collections from the Causal Chambers, and the diagnostics of exp49.\\
-54 & \texttt{37d6d13} & 2026-10-25 & Experiment 54: sorted-conditional compression with the quantisation convention that reproduces its published f\\
+54 & \texttt{37d6d13} & 2026-10-25 & Experiment 54: sorted-conditional compression with the quantisation convention that reproduces its published figure.\\
+55 & \texttt{8f63bb7} & 2026-10-25 & Experiment 55: reference implementations from the cdt package, and LOCI/ANM-GP/PDM on the three new collections.\\
 56 & \texttt{04de9ce} & 2026-10-25 & Experiment 56: a factorial simulation of the regimes found in exp49-52, with label-free diagnostics.\\
-57 & \texttt{241d7b0} & 2026-10-25 & Experiment 57 (revision 2; the first run is in the git history and is reported in the paper: it was invalid be\\
+57 & \texttt{241d7b0} & 2026-10-25 & Experiment 57 (revision 3: the observed decisions of the three new collections are the raw-array ones of exp59 (IGCI, RE\\
+58 & \texttt{5c1c168} & 2026-10-25 & Experiment 58: pair rules on every untouched Causal Chambers recording (not only the first of each type).\\
+59 & \texttt{8b388ce} & 2026-10-25 & Experiment 59: tie handling as a free parameter, and raw-array versions for the three new collections.\\
+60 & \texttt{b592bf7} & 2026-10-25 & Experiment 60: TRA on raw arrays for the all-recordings walk pairs (exp58) and the three new collections (exp53).\\
 \bottomrule
 \end{longtable}
 \endgroup
@@ -94,22 +98,22 @@ Predictive validation (exp 57) & nearest simulated neighbours predict each rule'
 \caption{Accuracy with exact 95\% intervals for every rule and collection.}
 \label{tab:collections_ci}
 \scriptsize\setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}lccccccc@{}}
+\begin{tabular}{@{}lcccccccc@{}}
 \toprule
-Rule & T\"ubingen & iid & walks & Sachs & Bernoulli & Changepoints & Malus\\
+Rule & T\"ubingen & iid & walks & walks (19) & Sachs & Bernoulli & Changepoints & Malus\\
 \midrule
-IGCI & 0.56 [0.46,0.66] & 0.94 [0.85,1.00] & 0.89 [0.71,0.99] & 0.65 [0.41,0.88] & 0.00 [0.00,0.00] & 0.00 [0.00,0.00] & 0.96 [0.92,1.00]\\
-RECI & 0.61 [0.51,0.70] & 0.98 [0.94,1.00] & 0.94 [0.86,1.00] & 0.53 [0.29,0.76] & 0.25 [0.00,0.62] & 1.00 [1.00,1.00] & 0.56 [0.52,0.58]\\
-ANM-HSIC & 0.61 [0.52,0.70] & 0.72 [0.61,0.84] & 0.63 [0.47,0.81] & 0.59 [0.35,0.82] & 0.31 [0.06,0.62] & 0.47 [0.24,0.70] & 0.33 [0.27,0.40]\\
-Pairwise LiNGAM & 0.61 [0.51,0.71] & 0.78 [0.67,0.87] & 0.71 [0.61,0.81] & 0.53 [0.29,0.76] & 0.88 [0.69,1.00] & 0.43 [0.24,0.61] & 0.40 [0.21,0.58]\\
-PDM & 0.40 [0.30,0.50] & 0.93 [0.84,0.99] & 0.84 [0.60,0.97] & -- & -- & -- & --\\
-LOCI & 0.65 [0.56,0.74] & 0.77 [0.66,0.86] & 0.68 [0.57,0.84] & 0.47 [0.24,0.71] & -- & -- & --\\
-ANM, Gaussian process & 0.55 [0.46,0.65] & 0.77 [0.67,0.86] & 0.67 [0.54,0.81] & 0.56 [0.32,0.79] & -- & -- & --\\
-Compression, first impl. & 0.61 [0.51,0.71] & 0.30 [0.19,0.40] & 0.61 [0.47,0.69] & 0.76 [0.53,0.94] & -- & -- & --\\
-Compression, faithful & 0.67 [0.57,0.75] & 0.38 [0.29,0.48] & 0.52 [0.45,0.57] & 0.65 [0.41,0.88] & 0.50 [0.19,0.75] & 1.00 [1.00,1.00] & 0.60 [0.48,0.71]\\
-TRA & 0.65 [0.54,0.75] & 0.86 [0.77,0.95] & 0.61 [0.37,0.77] & 0.59 [0.35,0.82] & -- & -- & --\\
-AVICI & 0.59 [0.49,0.68] & 0.90 [0.82,0.97] & 0.56 [0.41,0.70] & 0.53 [0.29,0.76] & 0.62 [0.25,0.88] & 0.40 [0.17,0.66] & 0.02 [0.00,0.06]\\
-RESIT & 0.61 [0.52,0.71] & 0.71 [0.62,0.81] & 0.65 [0.52,0.78] & 0.47 [0.29,0.65] & 0.31 [0.12,0.44] & 0.50 [0.26,0.73] & 0.50 [0.50,0.50]\\
+IGCI & 0.56 [0.46,0.66] & 0.94 [0.85,1.00] & 0.89 [0.71,0.99] & 0.96 [0.91,0.99] & 0.65 [0.41,0.88] & 1.00 [1.00,1.00] & 1.00 [1.00,1.00] & 0.08 [0.00,0.17]\\
+RECI & 0.61 [0.51,0.70] & 0.98 [0.94,1.00] & 0.94 [0.86,1.00] & 0.83 [0.79,0.87] & 0.53 [0.29,0.76] & 0.25 [0.00,0.62] & 1.00 [1.00,1.00] & 0.56 [0.52,0.58]\\
+ANM-HSIC & 0.61 [0.51,0.71] & 0.72 [0.61,0.83] & 0.63 [0.47,0.81] & 0.43 [0.38,0.50] & 0.59 [0.35,0.82] & 0.31 [0.06,0.62] & 0.57 [0.29,0.84] & 0.31 [0.27,0.33]\\
+Pairwise LiNGAM & 0.61 [0.51,0.70] & 0.78 [0.68,0.87] & 0.71 [0.60,0.80] & 0.67 [0.62,0.72] & 0.53 [0.29,0.76] & 0.88 [0.69,1.00] & 0.43 [0.24,0.60] & 0.40 [0.21,0.58]\\
+PDM & 0.40 [0.30,0.50] & 0.93 [0.84,0.99] & 0.84 [0.58,0.97] & -- & -- & -- & -- & --\\
+LOCI & 0.65 [0.56,0.74] & 0.77 [0.66,0.86] & 0.68 [0.57,0.84] & -- & 0.47 [0.24,0.71] & 0.56 [0.38,0.75] & 0.80 [0.57,0.97] & 0.38 [0.29,0.46]\\
+ANM, Gaussian process & 0.55 [0.46,0.65] & 0.77 [0.68,0.87] & 0.67 [0.55,0.81] & -- & 0.56 [0.32,0.79] & 0.47 [0.22,0.72] & 0.54 [0.38,0.66] & 0.33 [0.25,0.50]\\
+Compression, first impl. & 0.61 [0.52,0.70] & 0.30 [0.19,0.40] & 0.61 [0.48,0.69] & -- & 0.76 [0.53,0.94] & -- & -- & --\\
+Compression, faithful & 0.67 [0.58,0.75] & 0.38 [0.29,0.48] & 0.52 [0.45,0.57] & 0.50 [0.43,0.57] & 0.65 [0.41,0.88] & 0.50 [0.19,0.81] & 1.00 [1.00,1.00] & 0.60 [0.48,0.71]\\
+TRA & 0.65 [0.54,0.75] & 0.86 [0.77,0.94] & 0.61 [0.40,0.76] & 0.56 [0.50,0.61] & 0.59 [0.35,0.82] & 0.62 [0.38,0.88] & -- & 0.54 [0.46,0.62]\\
+AVICI & 0.59 [0.49,0.69] & 0.90 [0.82,0.97] & 0.56 [0.42,0.70] & 0.63 [0.58,0.68] & 0.53 [0.29,0.76] & 0.62 [0.25,1.00] & 0.40 [0.17,0.67] & 0.02 [0.00,0.06]\\
+RESIT & 0.61 [0.52,0.70] & 0.71 [0.61,0.81] & 0.65 [0.52,0.79] & 0.48 [0.43,0.53] & 0.47 [0.29,0.65] & 0.25 [0.06,0.44] & 0.53 [0.24,0.77] & 0.50 [0.50,0.50]\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -333,17 +337,18 @@ sin & discrete5 & indep & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 0.96 & 1.00 & 0
 \caption{Kendall rank correlation between the orderings of the rules on two collections, with a permutation $p$-value (5000 permutations of one ordering) in parentheses; rules run on both collections, at least five.}
 \label{tab:kendall}
 \scriptsize\setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}lccccccc@{}}
+\begin{tabular}{@{}lcccccccc@{}}
 \toprule
- & T\"ub. & iid & walks & Sachs & Bern. & Chgpt. & Malus\\
+ & T\"ub. & iid & walks & walks19 & Sachs & Bern. & Chgpt. & Malus\\
 \midrule
-T\"ubingen & -- & -0.38 (0.11) & -0.30 (0.21) & -0.12 (0.67) & +0.26 (0.53) & +0.79 (0.02) & +0.21 (0.67)\\
-iid & -0.38 (0.11) & -- & +0.53 (0.01) & -0.17 (0.54) & -0.29 (0.47) & -0.49 (0.17) & -0.05 (1.00)\\
-walks & -0.30 (0.21) & +0.53 (0.01) & -- & -0.27 (0.31) & -0.39 (0.30) & -0.10 (0.88) & +0.33 (0.38)\\
-Sachs & -0.12 (0.67) & -0.17 (0.54) & -0.27 (0.31) & -- & -0.22 (0.63) & -0.11 (0.86) & +0.37 (0.37)\\
-Bernoulli & +0.26 (0.53) & -0.29 (0.47) & -0.39 (0.30) & -0.22 (0.63) & -- & -0.05 (0.99) & -0.49 (0.19)\\
-Changepoints & +0.79 (0.02) & -0.49 (0.17) & -0.10 (0.88) & -0.11 (0.86) & -0.05 (0.99) & -- & +0.29 (0.47)\\
-Malus & +0.21 (0.67) & -0.05 (1.00) & +0.33 (0.38) & +0.37 (0.37) & -0.49 (0.19) & +0.29 (0.47) & --\\
+T\"ubingen & -- & -0.38 (0.11) & -0.30 (0.21) & -0.42 (0.20) & -0.12 (0.68) & -0.19 (0.54) & +0.24 (0.46) & +0.51 (0.06)\\
+iid & -0.38 (0.11) & -- & +0.53 (0.02) & +0.57 (0.06) & -0.17 (0.53) & +0.34 (0.21) & -0.03 (1.00) & -0.16 (0.60)\\
+walks & -0.30 (0.21) & +0.53 (0.02) & -- & +0.43 (0.18) & -0.27 (0.30) & +0.07 (0.86) & +0.26 (0.41) & -0.02 (1.00)\\
+walks19 & -0.42 (0.20) & +0.57 (0.06) & +0.43 (0.18) & -- & +0.04 (1.00) & +0.52 (0.11) & +0.21 (0.65) & -0.07 (0.90)\\
+Sachs & -0.12 (0.68) & -0.17 (0.53) & -0.27 (0.30) & +0.04 (1.00) & -- & +0.27 (0.35) & +0.41 (0.18) & -0.02 (1.00)\\
+Bernoulli & -0.19 (0.54) & +0.34 (0.21) & +0.07 (0.86) & +0.52 (0.11) & +0.27 (0.35) & -- & -0.06 (0.92) & -0.25 (0.37)\\
+Changepoints & +0.24 (0.46) & -0.03 (1.00) & +0.26 (0.41) & +0.21 (0.65) & +0.41 (0.18) & -0.06 (0.92) & -- & +0.26 (0.40)\\
+Malus & +0.51 (0.06) & -0.16 (0.60) & -0.02 (1.00) & -0.07 (0.90) & -0.02 (1.00) & -0.25 (0.37) & +0.26 (0.40) & --\\
 \bottomrule
 \end{tabular}
 \end{table}

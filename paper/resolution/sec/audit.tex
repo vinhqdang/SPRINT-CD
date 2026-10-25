@@ -26,3 +26,36 @@ first implementation (floor, $2000$ rows) & 62 & 0.608 & 0.680\\
 \paragraph{What we do not reproduce or compare.} We did not run SLOPE, and so cannot confirm the $77.2\%$ or $82.4\%$ figures. For LOCI, our run of the authors' code gives $64.7\%$ unweighted and $63.9\%$ weighted ($65.7\%$ and $66.4\%$ with $2000$ rows instead of $1000$); we did not locate a published T\"ubingen accuracy for LOCI that we could verify offline and make no comparison. The TRA preprint does not fix the constants we had to choose; our $64.6\%$ on the $82$ pairs it scores is for our constants and is not a test of its claims. SNOE, BF-BIC and AVICI make claims on graphs or simulated data that we did not attempt to reproduce.
 
 \paragraph{What the audit shows for the argument.} (i) Two numbers that a reader would call ``the compression baseline on T\"ubingen'' differ by six weighted points because of an unreported rounding; a comparison between methods whose gaps are three to five points is therefore inside the variation produced by implementation conventions that no paper documents. (ii) The reproduced baseline is, on T\"ubingen, among the best rules in our panel ($66.7\%$, $74.7\%$ weighted), above RECI and LOCI but not significantly (exact McNemar $p=0.39$ and $0.88$), and it is at $38.3\%$ on the i.i.d.\ chamber pairs, where RECI is at $97.9\%$. (iii) Its authors state that the rule's signal is partly marginal-geometric (a rank transform of the inputs, which flattens marginal shape, costs sixteen points in their experiments); this is the mechanism of Section~\ref{sec:marg}.
+
+\section{Tie handling and implementation variants}\label{sec:ties}
+
+The compression audit of Section~\ref{sec:audit} is one case of a general problem: choices that no paper reports and that a rule is sensitive to. Two more we measured.
+
+\paragraph{Ties reverse IGCI.} The chamber arrays contain many tied values (discretised sensors, actuator levels). IGCI estimates the entropy of each scaled variable from the spacings between consecutive sorted values and prefers the direction in which the effect has the smaller entropy. Our implementation, like many, discards zero spacings; the alternative is to break ties with a tiny jitter, which turns the repeated values into spacings of order $10^{-6}$ and lowers the entropy of the tied variable. Table~\ref{tab:ties} gives the accuracy of IGCI under the two conditions on every collection (experiment 59, the same pairs): on the raw arrays $94\%$ on the i.i.d.\ chamber pairs, $89\%$ on the walk pairs, $100\%$ on the Bernoulli and the changepoint pairs and $8\%$ on Malus; with a jitter of one millionth of the range on the tied values $6\%$, $13\%$, $0\%$, $0\%$ and $94\%$. The two conditions give the complementary accuracy on every collection that has ties ($a$ against $1-a$), so the decision of a rule that is ``best on the chambers'' or ``best on Malus'' is determined by a convention of one line of code. T\"ubingen, which is dequantised and has no ties, is unaffected ($55.9\%$ in both conditions). RECI, pairwise LiNGAM and the cdt versions of RECI and CDS do not change; ANM-HSIC changes by up to ten points on one collection (changepoints, $0.57$ raw, $0.47$ jittered). TRA fails on the jittered arrays (its smoothing-spline fit is ill-posed) and works on the raw ones. We use the raw arrays for every rule (Section~\ref{sec:rules}). A first pass of this study gave the new collections the jittered arrays, reported IGCI at $0\%$ on the Bernoulli and the changepoint pairs and offered a conjecture about it; the conjecture was wrong, the cause was the jitter, and the stored raw results replace that analysis.
+
+\begin{table}[t]
+\caption{Accuracy of rules under two tie conditions (raw arrays; $10^{-6}$ range jitter on tied values), same pairs (experiment 59). T\"ubingen is dequantised in both. cdt: \texttt{cdt} package defaults.}
+\label{tab:ties}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccccccc@{}}
+\toprule
+Rule & Ties & T\"ub. & iid & walks & Sachs & Bern. & Chgpt. & Malus\\
+\midrule
+IGCI (ours, uniform reference) & raw & 0.56 & 0.94 & 0.89 & 0.65 & 1.00 & 1.00 & 0.08\\
+IGCI (ours, uniform reference) & jitter & 0.56 & 0.06 & 0.13 & 0.47 & 0.00 & 0.00 & 0.94\\
+IGCI (cdt, Gaussian reference) & raw & 0.42 & 0.94 & 0.84 & 0.47 & 1.00 & 1.00 & 0.08\\
+IGCI (cdt, Gaussian reference) & jitter & 0.42 & 0.06 & 0.12 & 0.53 & 0.00 & 0.00 & 0.94\\
+ANM-HSIC & raw & 0.57 & 0.73 & 0.62 & 0.59 & 0.31 & 0.57 & 0.31\\
+ANM-HSIC & jitter & 0.57 & 0.72 & 0.62 & 0.59 & 0.31 & 0.47 & 0.33\\
+RECI & raw & 0.61 & 0.98 & 0.94 & 0.53 & 0.25 & 1.00 & 0.56\\
+RECI & jitter & 0.61 & 0.98 & 0.94 & 0.53 & 0.25 & 1.00 & 0.56\\
+Pairwise LiNGAM & raw & 0.61 & 0.78 & 0.71 & 0.53 & 0.88 & 0.43 & 0.40\\
+Pairwise LiNGAM & jitter & 0.61 & 0.78 & 0.71 & 0.53 & 0.88 & 0.43 & 0.40\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Reference implementations.} Running the \texttt{cdt} implementations (experiment 55) gives a check of ours. Our IGCI makes exactly the decisions of cdt's IGCI with a uniform reference measure on every pair of every collection ($100\%$ agreement), whereas cdt's default reference is Gaussian (standardised variables): on T\"ubingen the two references give $55.9\%$ and $42.2\%$ ($80\%$ of the decisions agree) and on the raw Sachs pairs $64.7\%$ and $47.1\%$; on the i.i.d.\ chamber pairs they agree ($94\%$ in both, raw) and on the walks they differ little ($89\%$ and $84\%$). The IGCI reference measure is thus a free parameter with a $14$-point effect on T\"ubingen. Our RECI makes the same decision as cdt's RECI on $98.9\%$ of the i.i.d.\ chamber pairs, $97.5\%$ of the walk pairs and all pairs of the other chamber collections, Sachs and the new collections, but on $85.3\%$ of the T\"ubingen pairs ($60.8\%$ against $63.7\%$ accuracy on T\"ubingen): the two differ in the regression used for the error. cdt's CDS reaches $61.8\%$ on T\"ubingen, $90.4\%$ on the i.i.d.\ chambers and $79.5\%$ on the walks; cdt's ANM (Gaussian-process regression with an HSIC test) and BivariateFit, run on the jittered arrays of experiment 55, are at $51.5\%$ and $48.0\%$ on T\"ubingen and at $46\%$ and $5\%$ on the i.i.d.\ chambers. We did not obtain the authors' code for these rules; the cdt versions are themselves re-implementations.
+
+\paragraph{Seed variability.} The HSIC-based rule has a random component: the same ANM-HSIC on the same T\"ubingen pairs gives $60.8\%$ with the seed of the first experiments and $56.9\%$ with the seed of experiment 59 ($2000$ rows, dequantised). Differences of this size are within what separates published rules.
