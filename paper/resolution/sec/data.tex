@@ -1,7 +1,7 @@
 \section{Collections, rules and protocol}\label{sec:data}
 
 \subsection{Pair collections}\label{sec:collections}
-Table~\ref{tab:collections} lists the seven collections. A \emph{pair} is an ordered pair of variables with a known direction; the cause is the first variable of an edge of the documented graph. Two features of the table matter for every later statement. First, only T\"ubingen is a collection of unrelated mechanisms; the six others consist of pairs taken from one or two devices, so the number of \emph{distinct edges} is much smaller than the number of pair-runs (47 distinct edges behind the 94 i.i.d.\ chamber pair-runs, 8 behind the Bernoulli collection, 7 behind the changepoint collection and 4 behind the Malus collection, whose pairs share their cause variable). Second, in the chamber collections the cause is an actuator whose value the experimenter sets, which gives it a recognisable marginal law (uniform, binary, piecewise constant, a random walk) while the effects are sensors.
+Table~\ref{tab:collections} lists the seven collections. A \emph{pair} is an ordered pair of variables with a known direction; the cause is the first variable of an edge of the documented graph. Two features of the table matter for every later statement. First, only T\"ubingen is a collection of unrelated mechanisms; the six others consist of pairs taken from one or two devices, so the number of \emph{distinct edges} is much smaller than the number of pair-runs (47 distinct edges behind the 94 i.i.d.\ chamber pair-runs, 8 behind the Bernoulli collection, 7 behind the changepoint collection and 4 behind the Malus collection, whose pairs share their cause variable). Second, in the chamber collections the cause is an actuator whose value the experimenter sets, which gives it a recognisable marginal law (uniform on a grid of levels, piecewise constant, a random walk) while the effects are sensors.
 
 \begin{table}[t]
 \caption{The seven real pair collections. ``Pairs'': pair-runs scored; ``edges'': distinct edges of the documented graph; ``units'': independent recordings or experiments. Rows: rows per pair after the cap of $2000$ random rows (T\"ubingen: at most $2000$ rows, dequantised; chamber collections: raw values).}
@@ -15,12 +15,40 @@ T\"ubingen & 102 & 102 & 102 & $\le 2000$ & Univariate pairs of the CEP benchmar
 Chambers iid & 94 & 47 & 2 & 2000 & Wind and light tunnel with i.i.d.\ actuator settings \citep{gamella2025chamber}; two seeds per edge\\
 Chambers walks & 122 & 122 & 5 & 2000 & First recording of each type of random-walk experiments (actuators are random walks)\\
 Sachs & 17 & 17 & 1 & 853 & Consensus arcs among 11 proteins, log scale \citep{sachs2005causal}\\
-Bernoulli & 16 & 8 & 1 & 2000 & Wind tunnel, binary actuator settings (\texttt{random\_loads\_both}); cause always \texttt{load\_in}\\
+Bernoulli & 16 & 8 & 1 & 2000 & Wind tunnel, \texttt{random\_loads\_both}; the cause \texttt{load\_in} takes $101$ levels (steps of $0.01$), so after subsampling it has about $20$ rows per value; cause always \texttt{load\_in}\\
 Changepoints & 70 & 7 & 10 & 2000 & Wind tunnel, piecewise-constant actuator (change points); cause always \texttt{load\_in}\\
 Malus & 48 & 4 & 12 & 1000 & Light tunnel with polarisers, Malus's law; causes \texttt{pol\_1}, \texttt{pol\_2}\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Table~\ref{tab:diag} describes the collections with the quantities used later: the median number of rows, the median absolute Spearman correlation, the median residual heteroscedasticity $h$ of Section~\ref{sec:regimes} (true direction), the median excess kurtosis of the cause and of the effect, the share of pairs whose cause has at most ten distinct values, and the share of pairs with many ties (fewer distinct values than $90\%$ of the rows) in either variable before any jitter (T\"ubingen is reported after dequantisation, hence zero). Figure~\ref{fig:examples} shows one randomly chosen pair per collection.
+
+\begin{table}[t]
+\caption{Descriptive diagnostics of the seven collections (medians over pairs unless stated).}
+\label{tab:diag}
+\small
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+Collection & Pairs & $n$ & $|\rho_S|$ & $h$ & kurt. cause & kurt. effect & $\le10$ values & ties\\
+\midrule
+T\"ubingen & 102 & 392 & 0.50 & 0.18 & -0.2 & 0.2 & 0.00 & 0.00\\
+Chambers iid & 94 & 2000 & 0.27 & 0.02 & -1.2 & -0.4 & 0.00 & 1.00\\
+Chambers walks & 122 & 2000 & 0.26 & 0.08 & -1.2 & -0.6 & 0.00 & 1.00\\
+Sachs & 17 & 853 & 0.08 & 0.08 & 3.1 & 2.3 & 0.00 & 1.00\\
+Bernoulli & 16 & 2000 & 0.53 & 0.18 & -1.2 & -1.2 & 0.00 & 1.00\\
+Changepoints & 70 & 1983 & 0.45 & 0.22 & -0.7 & -0.1 & 1.00 & 1.00\\
+Malus & 48 & 1000 & 0.02 & 0.02 & -1.2 & -1.4 & 0.00 & 1.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/examples.png}
+\caption{One randomly chosen pair (seed $7$) from each collection; $800$ random rows, cause on the horizontal axis.}
+\label{fig:examples}
+\end{figure}
 
 \subsection{Rules}\label{sec:rules}
 Twelve rules, all run by us. Each returns a score whose sign gives the direction; a score of exactly zero counts as half correct. Settings were fixed in the script before the run (Appendix~\ref{app:prereg}) and none was tuned on a collection in which it is scored.
