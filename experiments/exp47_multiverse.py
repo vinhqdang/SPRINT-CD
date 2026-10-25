@@ -1,4 +1,4 @@
-"""Experiment 47: how much of the spread between pair methods is sampling noise and reporting choices?
+"""Experiment 47 (revision 2, after an independent review of the first run; the first run is in the git history): how much of the spread between pair methods is sampling noise and reporting choices?
 
 Written and committed before running.  Inputs are the per-pair decisions already produced for the 102
 univariate Tuebingen pairs (exp35, 38, 42, 46; scores: positive = x -> y, ties half correct; PDM score
@@ -8,7 +8,7 @@ LiNGAM, PDM, LOCI, ANM (GP), compression (dequantised and raw rows), TRA, AVICI,
      smallest accuracy difference detectable with 80% power at n = 102 (simulated, discordance rate from the data).
  (B) Multiverse of reporting choices: weighting {official weights, none} x subset {all 102, >= 250 rows,
      >= 500, >= 1000} x coverage {100, 75, 50, 25 percent most confident by |score|} = 32 universes.  For each
-     method: accuracy range, best and worst rank (ties share the best rank) and the number of universes in which it
+     method: accuracy range over the universes in which every method is evaluated on at least 30 pairs, best and worst rank (ties share the best rank) and the number of universes in which it
      ranks first, and in which it ranks above RECI.
  (C) Selective subsets: 10000 random subsets of 50 pairs; for each method the mean subset accuracy, and the expected
      maximum over m = 1, 3, 10 independently drawn subsets (the accuracy a researcher would report after
@@ -49,10 +49,10 @@ def main():
     M = list(S[ids[0]].keys())
     sc = np.array([[S[i][m] if S[i][m] is not None and S[i][m] == S[i][m] else np.nan for m in M] for i in ids])  # (102, M)
     # IGCI/RECI score sign convention: scored() returns a magnitude with the direction label; handled in load()
-    ok = np.where(np.isnan(sc), 0.5, np.where(sc > 0, 1.0, np.where(sc < 0, 0.0, 0.5)))   # truth is always x -> y
+    ok = np.where(np.isnan(sc), np.nan, np.where(sc > 0, 1.0, np.where(sc < 0, 0.0, 0.5)))   # truth is always x -> y; nan = no value, excluded
     out = {"methods": M, "n_pairs": len(ids)}
     # (A)
-    acc = ok.mean(0); out["accuracy"] = dict(zip(M, acc.tolist()))
+    acc = np.nanmean(ok, 0); out["accuracy"] = dict(zip(M, acc.tolist()))
     pv = {}
     for a, b in itertools.combinations(range(len(M)), 2):
         b01 = int(((ok[:, a] == 1) & (ok[:, b] == 0)).sum()); b10 = int(((ok[:, a] == 0) & (ok[:, b] == 1)).sum())
@@ -64,35 +64,39 @@ def main():
     out["smallest_p_holm"] = min(holm.values())
     # detectable difference at 80% power (paired, discordance rate d from data)
     disc = np.mean([((ok[:, a] != ok[:, b]) & (ok[:, a] != .5) & (ok[:, b] != .5)).mean() for a, b in itertools.combinations(range(len(M)), 2)])
-    det = None
-    for delta in np.arange(0.02, 0.4, 0.01):
-        pa = (disc + delta) / 2; hits = 0
-        for _ in range(400):
-            k = rng.binomial(len(ids), disc); x = rng.binomial(k, pa / disc) if disc else 0
-            hits += binomtest(int(x), int(k), 0.5).pvalue < 0.05 if k else 0
-        if hits / 400 >= 0.8: det = float(delta); break
+    def detect(alpha):
+        for delta in np.arange(0.02, 0.5, 0.01):
+            pa = (disc + delta) / 2; hits = 0
+            for _ in range(1000):
+                k = rng.binomial(len(ids), disc); x = rng.binomial(k, pa / disc) if disc else 0
+                hits += binomtest(int(x), int(k), 0.5).pvalue < alpha if k else 0
+            if hits / 1000 >= 0.8: return float(delta)
+    det = detect(0.05); out["detectable_difference_bonferroni_66"] = detect(0.05 / 66)
     out["discordance_rate"] = float(disc); out["detectable_difference_80pct_power"] = det
     # (B)
     uni = []
+    tie = rng.random(sc.shape)
     for wt, minrows, cov in itertools.product(("official", "none"), (0, 250, 500, 1000), (1.0, .75, .5, .25)):
         sel = n >= minrows; wv = w if wt == "official" else np.ones_like(w)
-        accs = []
+        accs = []; cnt = []
         for j in range(len(M)):
-            s = np.abs(np.nan_to_num(sc[:, j], nan=0.0)); idx = np.where(sel)[0]
+            idx = np.where(sel & ~np.isnan(ok[:, j]))[0]
             if cov < 1.0:
-                thr = np.quantile(s[idx], 1 - cov); idx = idx[s[idx] >= thr]
-            accs.append(float((ok[idx, j] * wv[idx]).sum() / wv[idx].sum()))
-        uni.append({"weights": wt, "min_rows": minrows, "coverage": cov, "n": int(sel.sum()), "acc": accs})
-    A = np.array([u["acc"] for u in uni]); rk = (-A).argsort(1).argsort(1) + 1
+                keep = max(1, int(round(cov * len(idx))))
+                order_ = np.lexsort((tie[idx, j], -np.abs(sc[idx, j]))); idx = idx[order_[:keep]]
+            accs.append(float((ok[idx, j] * wv[idx]).sum() / wv[idx].sum())); cnt.append(len(idx))
+        uni.append({"weights": wt, "min_rows": minrows, "coverage": cov, "n_selected": int(sel.sum()), "min_evaluated": int(min(cnt)), "acc": accs})
+    uni_all = uni; uni = [u for u in uni_all if u["min_evaluated"] >= 30]
+    A = np.array([u["acc"] for u in uni])
     best_rank = np.array([[1 + (A[u] > A[u, j] + 1e-12).sum() for j in range(len(M))] for u in range(len(uni))])
     jr = M.index("RECI")
     out["multiverse"] = {m: {"acc_min": float(A[:, j].min()), "acc_max": float(A[:, j].max()), "best_rank": int(best_rank[:, j].min()),
                               "worst_rank": int(best_rank[:, j].max()), "universes_first": int((best_rank[:, j] == 1).sum()),
                               "universes_above_RECI": int((A[:, j] > A[:, jr] + 1e-12).sum())} for j, m in enumerate(M)}
-    out["n_universes"] = len(uni); out["universes"] = uni
+    out["n_universes"] = len(uni); out["n_universes_defined"] = len(uni_all); out["universes"] = uni
     # (C)
     idx_all = np.arange(len(ids)); subs = [rng.choice(idx_all, 50, replace=False) for _ in range(10000)]
-    SA = np.array([ok[s].mean(0) for s in subs])
+    SA = np.array([np.nanmean(ok[s], 0) for s in subs])
     out["subsets"] = {}
     for j, m in enumerate(M):
         v = SA[:, j]; e = {}
@@ -100,7 +104,7 @@ def main():
             k = len(v) // mm * mm; e[str(mm)] = float(v[:k].reshape(-1, mm).max(1).mean())
         out["subsets"][m] = {"mean": float(v.mean()), "sd": float(v.std()), "expected_max": e, "p_beats_RECI": float((v > SA[:, jr]).mean())}
     (R / "exp47_multiverse.json").write_text(json.dumps(out, indent=1))
-    print(json.dumps({k: out[k] for k in ("accuracy", "pairs_tested", "raw_p_below_0.05", "holm_p_below_0.05", "smallest_p_holm", "discordance_rate", "detectable_difference_80pct_power")}, indent=1))
+    print(json.dumps({k: out[k] for k in ("accuracy", "pairs_tested", "raw_p_below_0.05", "holm_p_below_0.05", "smallest_p_holm", "discordance_rate", "detectable_difference_80pct_power", "detectable_difference_bonferroni_66", "n_universes", "n_universes_defined")}, indent=1))
     for m in M: print(f"{m:16s}", {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out["multiverse"][m].items()}, {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out["subsets"][m].items() if k != "expected_max"}, {k: round(v, 3) for k, v in out["subsets"][m]["expected_max"].items()})
 
 
