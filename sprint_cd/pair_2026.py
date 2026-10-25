@@ -112,3 +112,23 @@ def tra_conservative(x, y, kappa=1.0, c_beta=4.0, K=5, B=100, alpha=0.10, seed=0
         cnt += abs(db) >= abs(d0)
     p = (1 + cnt) / (B + 1)
     return ("x->y" if d0 > 0 else "y->x") if p <= alpha else None, float(d0), float(p)
+
+
+def _quant_round255(v):
+    v = np.asarray(v, float)
+    lo, hi = v.min(), v.max()
+    q = np.zeros(len(v)) if hi <= lo else (v - lo) / (hi - lo)
+    return np.round(q * 255).astype(np.uint8)
+
+
+def sorted_compression_faithful(x, y, max_n=8000):
+    """Sorted-conditional compression with the convention that reproduces the published Tuebingen figure
+    (74.7% weighted, 68 of 102 pairs, arXiv:2606.23767): quantisation q = round(255 * minmax), series longer than
+    ``max_n`` thinned linearly, raw (not dequantised) values.  The paper's text does not fix the rounding; with the
+    floor(256 q) convention of ``sorted_compression`` the same data give 67 of 102 and 68.8% weighted."""
+    x, y = np.asarray(x, float), np.asarray(y, float)
+    if len(x) > max_n:
+        idx = np.linspace(0, len(x) - 1, max_n).astype(int)
+        x, y = x[idx], y[idx]
+    qx, qy = _quant_round255(x), _quant_round255(y)
+    return float(_sc(qy, qx) / max(_dc(qx), 1) - _sc(qx, qy) / max(_dc(qy), 1))
