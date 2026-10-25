@@ -1,0 +1,86 @@
+{
+ "t": 0.05770517322069287,
+ "sets": {
+  "tuebingen": {
+   "n": 102,
+   "acc": {
+    "GATE": 0.6568627450980392,
+    "RECI": 0.6078431372549019,
+    "ANM-HSIC": 0.6078431372549019
+   },
+   "share_gated_to_anm": 0.3431372549019608,
+   "weighted": {
+    "GATE": 0.7708784115497207,
+    "RECI": 0.7089010049898822,
+    "ANM-HSIC": 0.6092072554606873
+   },
+   "mcnemar_vs_RECI": {
+    "gate_only": 10,
+    "other_only": 5,
+    "p": 0.30175781249999994
+   },
+   "mcnemar_vs_ANM-HSIC": {
+    "gate_only": 18,
+    "other_only": 13,
+    "p": 0.47312965989112854
+   }
+  },
+  "chamber_iid": {
+   "n": 94,
+   "acc": {
+    "GATE": 0.7553191489361702,
+    "RECI": 0.9787234042553191,
+    "ANM-HSIC": 0.723404255319149
+   },
+   "share_gated_to_anm": 0.8829787234042553,
+   "mcnemar_vs_RECI": {
+    "gate_only": 0,
+    "other_only": 21,
+    "p": 9.5367431640625e-07
+   },
+   "mcnemar_vs_ANM-HSIC": {
+    "gate_only": 5,
+    "other_only": 2,
+    "p": 0.453125
+   }
+  },
+  "chamber_walk": {
+   "n": 122,
+   "acc": {
+    "GATE": 0.7704918032786885,
+    "RECI": 0.9426229508196722,
+    "ANM-HSIC": 0.6311475409836066
+   },
+   "share_gated_to_anm": 0.6229508196721312,
+   "mcnemar_vs_RECI": {
+    "gate_only": 0,
+    "other_only": 21,
+    "p": 9.5367431640625e-07
+   },
+   "mcnemar_vs_ANM-HSIC": {
+    "gate_only": 17,
+    "other_only": 0,
+    "p": 1.52587890625e-05
+   }
+  },
+  "sachs": {
+   "n": 0,
+   "acc": {
+    "GATE": NaN,
+    "RECI": NaN,
+    "ANM-HSIC": NaN
+   },
+   "share_gated_to_anm": NaN,
+   "mcnemar_vs_RECI": {
+    "gate_only": 0,
+    "other_only": 0,
+    "p": 1.0
+   },
+   "mcnemar_vs_ANM-HSIC": {
+    "gate_only": 0,
+    "other_only": 0,
+    "p": 1.0
+   }
+  }
+ }
+}

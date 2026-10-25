@@ -2,7 +2,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,natbib}
 \bibliographystyle{plainnat}
-\title{How much can a causal-discovery benchmark resolve? Sampling noise, reporting choices and the simulation gap on real data}
+\title{Why simple baselines hold their own on real cause--effect benchmarks: noise, marginal shortcuts and assumption regimes}
 \author{Quang-Vinh Dang\\British University Vietnam, Hung Yen, Vietnam\\\texttt{vinh.dq4@buv.edu.vn}}
 \date{}
 \begin{document}
@@ -17,10 +17,10 @@ $25$ to $100\%$ of pairs) the accuracy of a single method moves by $9$ to $26$ p
 are ranked first under at least one choice. Trying ten random subsets of $50$ pairs raises the expected best accuracy by seven to eight
 points (a finite-sample selection effect that does not change the ranking). On the Sachs network, $16$ of $22$ methods have a bootstrap interval that contains the best $F_1$, and the smallest
 significant difference is $0.17$. Methods trained on simulated data lose the most: a pair classifier falls from $95\%$ on its simulator
-to $40\%$ on T\"ubingen. We identify four sources that can produce apparent gains without any change in a method's accuracy, none of which requires a fault of the
+to $40\%$ on T\"ubingen. We then ask why dependence-based rules do not beat RECI and IGCI, and give three pieces of evidence. (i) A classifier that sees only the two marginals reaches $100\%$ on the independent-row chamber pairs, $92.6\%$ on the walk pairs, $89.8\%$ on the Sachs pairs and $59.0\%$ on T\"ubingen (RECI: $97.9$, $94.3$, $52.9$, $60.8$), so the chamber and Sachs benchmarks can be solved without any dependence structure. (ii) Additive-noise rules are near-perfect where residuals are homoscedastic and reversed where they are not: on the least heteroscedastic third of T\"ubingen ANM-HSIC and RESIT are right on $97\%$ and $96\%$ of pairs, on the most heteroscedastic third on $29\%$ and $24\%$; the average, near $61\%$, equals the baselines. (iii) In simulation, raising the heteroscedasticity alone moves ANM-HSIC from $100\%$ to $16\%$ and RESIT from $100\%$ to $29\%$ while IGCI and RECI rise from $72\%$ and $80\%$ to $98\%$ and $94\%$. A rule that switches on a symmetric heteroscedasticity diagnostic, frozen on simulation, did not meet its pre-registered goals ($65.7\%$ on T\"ubingen against RECI's $60.8\%$, $75.5\%$ against $97.9\%$ on the chambers). We identify four sources that can produce apparent gains without any change in a method's accuracy, none of which requires a fault of the
 original authors (we audited no published table), and give a reporting checklist: paired tests with a power statement, the full coverage curve, subsets fixed
 before the data are seen, and a statement of the effective sample size. We re-implemented four methods from 2025--2026 preprints and
-ran nine published packages at their defaults; none is distinguishable from the best simple baseline at this power (an absence of evidence, not a demonstration of equivalence).
+ran nine published graph packages and two pair rules (AVICI, RESIT) at their defaults; none is distinguishable from the best simple baseline at this power (an absence of evidence, not a demonstration of equivalence).
 \end{abstract}
 
 \section{Introduction}
@@ -54,7 +54,7 @@ recent; compression and TRA were implemented from the preprints because no code 
 \citep{gamella2025chamber} wind- and light-tunnel recordings with a known graph. Twenty-two graph methods or configurations are on Sachs (PC, GES, DirectLiNGAM, NOTEARS, DAGMA, PCMCI+,
 GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV, AVICI, BF-BIC with BOSS \citep{ramsey2025bfbic}, and our own PC-GCM, BTAD, LRG and sequential certificates). The full
 protocol and all per-method tables are in the companion evaluation (\texttt{paper/bench} in the repository).
-\paragraph{Protocol.} Each evaluation script was committed before it was run (experiments 42--48 in the repository). The multiverse and subset analyses (experiment 47) were designed after the per-pair decisions existed, and were revised once after an independent review; the first version is in the repository history.
+\paragraph{Protocol.} Each evaluation script was committed before it was run (experiments 42--48 in the repository). Experiments 49--51 (marginal shortcut, heteroscedasticity association, dose-response, GATE) have predictions fixed before their runs; the terciles of Table~\ref{tab:strata} are a post hoc description. GATE was run on T\"ubingen and the chambers (the Sachs pairs have no stored ANM-HSIC decision under the same preprocessing). The multiverse and subset analyses (experiment 47) were designed after the per-pair decisions existed, and were revised once after an independent review; the first version is in the repository history.
 
 \section{Sampling noise}\label{sec:noise}
 Table~\ref{tab:multi} gives accuracies with exact Clopper--Pearson intervals; the half-width is about $0.10$ for every method.
@@ -117,6 +117,68 @@ have a point estimate within $0.10$ of it. Of $231$ pairs of methods (some are t
 recall by $0.06$. In the Causal Chambers, the bipartite graph (actuators to sensors) makes the skeleton mostly feature selection, and in $17$ of $19$ new wind-tunnel recordings the actuators are random walks with an effective
 sample size of about three out of $4000$ rows, where no method has strict $F_1$ above $0.42$. Several neural methods time out at sixteen variables. Appendix tables
 of the companion evaluation give the per-method values.
+
+
+\section{Why dependence-based rules do not beat the baselines}\label{sec:mech}
+The resolution analysis says the differences are small; it does not say why the sophisticated rules fail to gain. We tested two explanations, each with a prediction written before the run (experiments 49--51).
+
+\subsection{Marginal shortcuts}\label{sec:marg}
+\emph{Hypothesis H1.} On the real pair sets a classifier that never sees the joint distribution, only the two marginals, predicts the direction about as well as the best rule. Features of each variable after scaling to $[0,1]$: skewness, excess kurtosis, spacing entropy, log fraction of unique values and the $1$--$99\%$ range; the pair feature is the difference between the two variables, both orientations enter training, and accuracy is a five-fold cross-validation with folds over pairs ($50$ repetitions). Marginal-only accuracy is $59.0\%$ on T\"ubingen ($102$ pairs), $100\%$ on the independent-row chamber pairs ($94$), $92.6\%$ on the walk pairs ($122$) and $89.8\%$ on the Sachs pairs ($17$), against RECI's $60.8$, $97.9$, $94.3$ and $52.9\%$ on the same sets. In the chambers the cause is an actuator set by the experimenter with a distinctive marginal law (uniform or a random walk), so the direction can be read from the marginals alone. The Sachs value rests on $17$ pairs. On T\"ubingen the marginal-only accuracy is not distinguishable from chance ($59.0\%$, interval about $[49,69]$) and equals that of most dependence-based rules. The prediction (within $0.05$ of RECI on the chamber sets) held; the second part (chance on T\"ubingen) holds only within the width of the interval.
+
+This does not show that RECI or IGCI use only marginals; both read the scale of regression errors and the marginal density. It shows that a benchmark of this kind rewards rules that are sensitive to marginal asymmetry, and that a rule built on conditional structure only (an additive-noise test, a location-scale likelihood) has no reason to profit from it.
+
+\subsection{Assumption regimes}\label{sec:regimes}
+\emph{Hypothesis H2.} The additive-noise family loses where its assumption fails. For every T\"ubingen pair we measured the heteroscedasticity of the residuals of an additive-spline regression of the true effect on the true cause, $h=|\rho_S(|r|,x)|$ (Spearman). The pairs on which a rule is wrong have higher $h$ for the four noise-model rules: ANM-HSIC mean $0.32$ against $0.13$ on right pairs ($p<0.001$, one-sided Mann--Whitney), the Gaussian-process ANM $0.30$ against $0.11$ ($p<0.001$), RESIT $0.34$ against $0.13$ ($p<0.001$), LOCI $0.28$ against $0.17$ ($p=0.001$); also TRA ($p=0.004$) and, weaker, RECI ($p=0.021$), PDM ($p=0.021$), and not IGCI ($p=0.71$), pairwise LiNGAM ($p=0.25$) or AVICI ($p=0.93$). Pooling the four noise-model rules ($396$ decisions) in a logistic regression of correctness on standardised $h$ and $\log n$, one standard deviation of $h$ multiplies the odds of a correct decision by $0.26$ ($p<10^{-18}$; the decisions of different rules on the same pair are not independent, so this $p$ is optimistic); $n$ has no effect. We predicted that RECI would not show the effect; it does, mildly.
+
+Splitting T\"ubingen into thirds by $h$ (bounds $0.094$ and $0.268$; $34$ pairs each) makes the regimes visible (Table~\ref{tab:strata}). In the least heteroscedastic third ANM-HSIC, RESIT and the Gaussian-process ANM are right on $97\%$, $96\%$ and $91\%$ of the pairs, far above RECI ($68\%$); in the most heteroscedastic third they are right on $29\%$, $24\%$ and $22\%$, below chance. Averaged over the three regimes each equals the baselines. This reading is descriptive: $h$ is computed in the true direction, so it cannot be used as a predictor, and the bounds come from the same data.
+
+\begin{table}[t]
+\caption{Accuracy on T\"ubingen by tercile of residual heteroscedasticity $h$ (computed in the true direction; $34$ pairs per tercile, TRA $27$--$28$).}
+\label{tab:strata}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Method & low $h$ & middle & high $h$\\
+\midrule
+ANM-HSIC & 0.97 & 0.56 & 0.29\\
+RESIT & 0.96 & 0.65 & 0.24\\
+ANM, Gaussian process & 0.91 & 0.53 & 0.22\\
+TRA & 0.83 & 0.68 & 0.44\\
+LOCI & 0.82 & 0.62 & 0.50\\
+RECI & 0.68 & 0.68 & 0.47\\
+IGCI & 0.59 & 0.44 & 0.65\\
+Pairwise LiNGAM & 0.65 & 0.53 & 0.65\\
+AVICI & 0.53 & 0.56 & 0.68\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A manipulation}\label{sec:dose}
+An association across pairs cannot separate heteroscedasticity from whatever else differs between pairs. We therefore set it by hand. Pairs $e=f(c)+\sigma(c)\varepsilon$ with $f\in\{\tanh 2c,\, c^3/3,\, \sin 1.5c\}$, $c$ uniform or Gaussian, $n=500$, $\sigma(c)\propto\exp(ac)$ scaled to keep the average noise variance fixed, and $a\in\{0,0.5,1,1.5\}$ ($100$ pairs per level, a random half swapped). Accuracy against $a$ (Table~\ref{tab:dose}): ANM-HSIC falls from $100\%$ to $16\%$ and RESIT from $100\%$ to $29\%$; both are below chance at $a\ge 1$. IGCI and RECI do not fall but rise ($72\%\to98\%$ and $80\%\to94\%$), pairwise LiNGAM stays near $32$--$41\%$ and AVICI near $67$--$78\%$. The heteroscedasticity alone therefore reverses the noise-model rules and makes the error-scale rules more accurate. Because real pair collections contain both regimes, a rule that is excellent in one and reversed in the other has the same average accuracy as a rule that is mediocre in both.
+
+\begin{table}[t]
+\caption{Simulated pairs: accuracy against the heteroscedasticity strength $a$ ($100$ pairs per level; at $a=0$ the noise is homoscedastic).}
+\label{tab:dose}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & $a=0$ & $0.5$ & $1.0$ & $1.5$\\
+\midrule
+ANM-HSIC & 1.00 & 0.42 & 0.14 & 0.16\\
+RESIT & 1.00 & 0.41 & 0.16 & 0.29\\
+IGCI & 0.72 & 0.71 & 0.97 & 0.98\\
+RECI & 0.80 & 0.85 & 0.91 & 0.94\\
+Pairwise LiNGAM & 0.32 & 0.41 & 0.38 & 0.38\\
+AVICI & 0.67 & 0.78 & 0.75 & 0.76\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A rule that tests the explanation}\label{sec:gate}
+If the regimes are the explanation, a rule that identifies the regime should beat both branches. We froze GATE on simulation before touching a real pair: $h_{\min}=\min(h(x\to y),h(y\to x))$, symmetric in the two variables, with the threshold at the $95$th percentile of $h_{\min}$ on $200$ homoscedastic simulated pairs ($0.058$); GATE gives the ANM-HSIC direction when $h_{\min}\le 0.058$ and the RECI direction otherwise. The pre-registered predictions were an accuracy of at least $0.70$ on T\"ubingen and, on the chambers, within $0.05$ of RECI. Both failed. On T\"ubingen GATE has $65.7\%$ ($77.1\%$ with the official weights) against RECI's $60.8\%$ ($70.9\%$); it routes $34\%$ of the pairs to ANM-HSIC, and the difference to RECI is not significant (exact McNemar $10$ against $5$ discordant pairs, $p=0.30$). On the independent-row chambers GATE has $75.5\%$ against $97.9\%$ for RECI ($0$ against $21$ discordant pairs, $p<10^{-6}$), and $77.0\%$ against $94.3\%$ on the walks ($p<10^{-6}$), because it sends $88\%$ and $62\%$ of those pairs to ANM-HSIC, which is right on only $72\%$ and $63\%$ of them. Heteroscedasticity therefore explains part of the loss of the noise-model rules on T\"ubingen but not the chambers, where the marginal shortcut of Section~\ref{sec:marg} dominates and the additive-noise rules lose for another, undiagnosed reason. GATE is a negative result and not offered as a method.
+
+\subsection{Summary of the explanation}
+Three mechanisms, each with direct evidence. (1) Where a benchmark can be solved from the marginals, rules that are sensitive to marginal asymmetry win, and rules that use only conditional structure cannot profit (Section~\ref{sec:marg}). (2) Rules with a structural assumption are regime-specific: near-perfect in the homoscedastic third of T\"ubingen and reversed in the heteroscedastic third, with an average that equals the baselines (Sections~\ref{sec:regimes}, \ref{sec:dose}); and heteroscedasticity makes the error-scale rules more accurate, which is why they look robust. (3) The benchmarks are too small to resolve the remaining differences (Sections~\ref{sec:noise}--\ref{sec:subsets}). A third of the T\"ubingen gap and the chamber gap remain unexplained by (2), which GATE confirms.
 
 \section{Why published gains can look larger}\label{sec:why}
 Combining the evidence, a published gain on a small real benchmark can arise without any change in the method's true accuracy from (i) the resolution limit: two methods that differ by two to five points are statistically the same on $102$ pairs; (ii) free
