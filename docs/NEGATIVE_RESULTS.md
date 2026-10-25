@@ -13,6 +13,7 @@ new recordings), Sachs, Tuebingen pairs.
 | Block-ICP | invariant causal prediction with time blocks as environments | empty graphs, F1 <= 0.07 on development recordings |
 | LOCI, ANM, DAGMA, PCMCI+ | modern baselines | no better than RECI / DirectLiNGAM / GES |
 | Sorted-conditional compression, TRA, BF-BIC+BOSS (2025-2026, exp42-43) | re-implemented published methods, settings frozen before running | Tuebingen 60.8-64.7% (RECI 60.8%, LOCI 64.7%); chamber i.i.d. pairs TRA 86.2% vs RECI 97.9%; compression 29.8%; Sachs F1 0.67 (ties LRG, PC-GCM 0.62-0.64); chambers F1 0.49 i.i.d., 0.44 on walks with 36 false edges per run |
+| Interventional route (lt_interventions_standard_v1, pilot, not pre-registered) | two-sample shift of each sensor under each intervened actuator; conditional (cross-fitted residual) version | marginal KS: precision 1.00, recall 0.72 (28/39 arcs), AUC 0.93; the 11 missed arcs (l_ij -> ir/vis) show no shift (p 0.06-0.86); the conditional version raises recall to 0.79 at precision 0.51. No headroom for a new method here |
 
 The recordings with random-walk actuators have an effective sample size of about three observations
 out of 4000; no method exceeds strict F1 0.42 on them.
