@@ -1,4 +1,4 @@
-"""Experiment 47 (revision 3: adds the faithful compression variant of exp54 as a thirteenth rule; revision 2, after an independent review of the first run; the first run is in the git history): how much of the spread between pair methods is sampling noise and reporting choices?
+"""Experiment 47 (revision 4: the discordance rate and McNemar counts exclude missing values and exact ties, the Bonferroni figure uses the actual number of comparisons, and a fixed family of ten rules without PDM and without variant duplicates is added; revision 3: adds the faithful compression variant of exp54 as a thirteenth rule; revision 2, after an independent review of the first run; the first run is in the git history): how much of the spread between pair methods is sampling noise and reporting choices?
 
 Written and committed before running.  Inputs are the per-pair decisions already produced for the 102
 univariate Tuebingen pairs (exp35, 38, 42, 46; scores: positive = x -> y, ties half correct; PDM score
@@ -64,8 +64,21 @@ def main():
         run = max(run, min(1.0, pv[key] * (m_ - k))); holm[key] = run
     out["pairs_tested"] = m_; out["raw_p_below_0.05"] = int(sum(v < .05 for v in pv.values())); out["holm_p_below_0.05"] = int(sum(v < .05 for v in holm.values()))
     out["smallest_p_holm"] = min(holm.values())
+    FAM = ["IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "LOCI", "ANM-GP", "Compression faithful", "TRA", "AVICI", "RESIT"]
+    pvf = {}
+    for a, b in itertools.combinations([M.index(m) for m in FAM], 2):
+        v = ~np.isnan(ok[:, a]) & ~np.isnan(ok[:, b])
+        b01 = int(((ok[:, a] == 1) & (ok[:, b] == 0) & v).sum()); b10 = int(((ok[:, a] == 0) & (ok[:, b] == 1) & v).sum())
+        pvf[(M[a], M[b])] = binomtest(b01, b01 + b10, 0.5).pvalue if b01 + b10 else 1.0
+    of = sorted(pvf, key=pvf.get); runf = 0.0; holmf = {}
+    for k, key in enumerate(of):
+        runf = max(runf, min(1.0, pvf[key] * (len(of) - k))); holmf[key] = runf
+    out["fixed_family"] = {"rules": FAM, "n_comparisons": len(of), "raw_p_below_0.05": int(sum(v < .05 for v in pvf.values())), "holm_p_below_0.05": int(sum(v < .05 for v in holmf.values())), "smallest_p_holm": min(holmf.values()), "smallest_raw_p": min(pvf.values()), "smallest_pair": list(min(pvf, key=pvf.get))}
     # detectable difference at 80% power (paired, discordance rate d from data)
-    disc = np.mean([((ok[:, a] != ok[:, b]) & (ok[:, a] != .5) & (ok[:, b] != .5)).mean() for a, b in itertools.combinations(range(len(M)), 2)])
+    def _disc(a, b):
+        v = ~np.isnan(ok[:, a]) & ~np.isnan(ok[:, b]) & (ok[:, a] != .5) & (ok[:, b] != .5)
+        return ((ok[:, a] != ok[:, b]) & v).sum() / max(v.sum(), 1)
+    disc = np.mean([_disc(a, b) for a, b in itertools.combinations(range(len(M)), 2)])
     def detect(alpha):
         for delta in np.arange(0.02, 0.5, 0.01):
             pa = (disc + delta) / 2; hits = 0
@@ -73,7 +86,7 @@ def main():
                 k = rng.binomial(len(ids), disc); x = rng.binomial(k, pa / disc) if disc else 0
                 hits += binomtest(int(x), int(k), 0.5).pvalue < alpha if k else 0
             if hits / 1000 >= 0.8: return float(delta)
-    det = detect(0.05); out["detectable_difference_bonferroni_66"] = detect(0.05 / 66)
+    det = detect(0.05); out["detectable_difference_bonferroni"] = detect(0.05 / len(pv)); out["n_comparisons"] = len(pv)
     out["discordance_rate"] = float(disc); out["detectable_difference_80pct_power"] = det
     # (B)
     uni = []
@@ -106,7 +119,7 @@ def main():
             k = len(v) // mm * mm; e[str(mm)] = float(v[:k].reshape(-1, mm).max(1).mean())
         out["subsets"][m] = {"mean": float(v.mean()), "sd": float(v.std()), "expected_max": e, "p_beats_RECI": float((v > SA[:, jr]).mean())}
     (R / "exp47_multiverse.json").write_text(json.dumps(out, indent=1))
-    print(json.dumps({k: out[k] for k in ("accuracy", "pairs_tested", "raw_p_below_0.05", "holm_p_below_0.05", "smallest_p_holm", "discordance_rate", "detectable_difference_80pct_power", "detectable_difference_bonferroni_66", "n_universes", "n_universes_defined")}, indent=1))
+    print(json.dumps({k: out[k] for k in ("accuracy", "pairs_tested", "raw_p_below_0.05", "holm_p_below_0.05", "smallest_p_holm", "discordance_rate", "detectable_difference_80pct_power", "detectable_difference_bonferroni", "n_universes", "n_universes_defined")}, indent=1))
     for m in M: print(f"{m:16s}", {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out["multiverse"][m].items()}, {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out["subsets"][m].items() if k != "expected_max"}, {k: round(v, 3) for k, v in out["subsets"][m]["expected_max"].items()})
 
 
