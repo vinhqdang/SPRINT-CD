@@ -86,3 +86,49 @@ def camuv_skeleton(X):
 METHODS = {"AVICI": avici_skeleton, "GOLEM": golem_skeleton, "NOTEARS-MLP": notears_mlp_skeleton,
            "GraN-DAG": grandag_skeleton, "DAG-GNN": daggnn_skeleton, "GRaSP": grasp_skeleton, "BOSS": boss_skeleton,
            "RESIT": resit_skeleton, "CAM-UV": camuv_skeleton}
+
+
+# ---- pair rules: score > 0 means x -> y ----
+_AVP = r'''
+import sys, numpy as np, avici
+m = avici.load_pretrained(download="scm-v0")
+z = np.load(sys.argv[1]); out = []
+for k in sorted(z.files, key=int):
+    g = np.asarray(m(x=z[k].astype(float))); out.append(g[0, 1] - g[1, 0])
+np.save(sys.argv[2], np.array(out))
+'''
+
+
+def avici_pairs(pairs, max_n=1000):
+    """pairs: list of (x, y); returns the AVICI edge-probability difference P(x->y) - P(y->x)."""
+    xs = []
+    for k, (x, y) in enumerate(pairs):
+        if len(x) > max_n:
+            idx = np.random.default_rng(k).choice(len(x), max_n, replace=False); x, y = x[idx], y[idx]
+        xs.append(np.column_stack([(x - x.mean()) / x.std(), (y - y.mean()) / y.std()]))
+    with tempfile.TemporaryDirectory() as t:
+        np.savez(f"{t}/x.npz", **{str(k): v for k, v in enumerate(xs)})
+        subprocess.run([AVICI_PY, "-c", _AVP, f"{t}/x.npz", f"{t}/g.npy"], check=True, capture_output=True, timeout=7200)
+        return [float(v) for v in np.load(f"{t}/g.npy")]
+
+
+def pnl_pair(x, y, max_n=400):
+    from causallearn.search.FCMBased.PNL.PNL import PNL
+    rng = np.random.default_rng(0)
+    if len(x) > max_n:
+        idx = rng.choice(len(x), max_n, replace=False); x, y = x[idx], y[idx]
+    zx, zy = ((x - x.mean()) / x.std()).reshape(-1, 1), ((y - y.mean()) / y.std()).reshape(-1, 1)
+    p1, p2 = PNL().cause_or_effect(zx, zy)
+    return float(p1 - p2)
+
+
+def resit_pair(x, y, max_n=1000):
+    import lingam
+    from sklearn.ensemble import RandomForestRegressor
+    rng = np.random.default_rng(0)
+    if len(x) > max_n:
+        idx = rng.choice(len(x), max_n, replace=False); x, y = x[idx], y[idx]
+    X = np.column_stack([(x - x.mean()) / x.std(), (y - y.mean()) / y.std()])
+    m = lingam.RESIT(regressor=RandomForestRegressor(max_depth=4, random_state=0), alpha=0.01); m.fit(X)
+    A = m.adjacency_matrix_
+    return float(A[1, 0] - A[0, 1])   # A[i, j] = 1 means j -> i
