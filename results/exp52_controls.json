@@ -1,0 +1,84 @@
+{
+ "A": {
+  "all5": {
+   "chamber_iid_cross_recording": 0.9787234042553191,
+   "chamber_walk_leave_recording_out": 0.8688524590163934,
+   "sachs_leave_proteins_out": 0.9411764705882353,
+   "sachs_n_evaluated": 17,
+   "tuebingen_leave_one_out": 0.5784313725490197,
+   "transfer_tuebingen_to_chamber_iid": 0.8723404255319149,
+   "transfer_tuebingen_to_chamber_walk": 0.9180327868852459,
+   "transfer_tuebingen_to_sachs": 0.47058823529411764,
+   "transfer_chamber_iid_to_tuebingen": 0.5196078431372549,
+   "transfer_chamber_iid_to_chamber_walk": 0.9262295081967213,
+   "transfer_chamber_iid_to_sachs": 0.5294117647058824,
+   "transfer_chamber_walk_to_tuebingen": 0.5784313725490197,
+   "transfer_chamber_walk_to_chamber_iid": 1.0,
+   "transfer_chamber_walk_to_sachs": 1.0,
+   "transfer_sachs_to_tuebingen": 0.4803921568627451,
+   "transfer_sachs_to_chamber_iid": 1.0,
+   "transfer_sachs_to_chamber_walk": 0.8114754098360656
+  },
+  "no_unique": {
+   "chamber_iid_cross_recording": 0.9361702127659575,
+   "chamber_walk_leave_recording_out": 0.9016393442622951,
+   "sachs_leave_proteins_out": 0.9411764705882353,
+   "sachs_n_evaluated": 17,
+   "tuebingen_leave_one_out": 0.5784313725490197,
+   "transfer_tuebingen_to_chamber_iid": 0.8723404255319149,
+   "transfer_tuebingen_to_chamber_walk": 0.9180327868852459,
+   "transfer_tuebingen_to_sachs": 0.47058823529411764,
+   "transfer_chamber_iid_to_tuebingen": 0.5196078431372549,
+   "transfer_chamber_iid_to_chamber_walk": 0.8934426229508197,
+   "transfer_chamber_iid_to_sachs": 0.47058823529411764,
+   "transfer_chamber_walk_to_tuebingen": 0.5784313725490197,
+   "transfer_chamber_walk_to_chamber_iid": 0.9787234042553191,
+   "transfer_chamber_walk_to_sachs": 0.8823529411764706,
+   "transfer_sachs_to_tuebingen": 0.49019607843137253,
+   "transfer_sachs_to_chamber_iid": 0.9680851063829787,
+   "transfer_sachs_to_chamber_walk": 0.8114754098360656
+  }
+ },
+ "B": {
+  "hetero": {
+   "IGCI": [
+    0.64,
+    0.72,
+    0.91,
+    0.99
+   ],
+   "RECI": [
+    0.78,
+    0.77,
+    0.87,
+    0.93
+   ],
+   "ANM-HSIC": [
+    1.0,
+    0.49,
+    0.12,
+    0.21
+   ]
+  },
+  "independent": {
+   "IGCI": [
+    0.64,
+    0.73,
+    0.95,
+    0.99
+   ],
+   "RECI": [
+    0.78,
+    0.84,
+    0.96,
+    0.98
+   ],
+   "ANM-HSIC": [
+    1.0,
+    1.0,
+    0.99,
+    0.89
+   ]
+  }
+ }
+}
