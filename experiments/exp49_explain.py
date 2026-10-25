@@ -11,7 +11,7 @@ H1 (marginal shortcut): on the real pair sets a classifier that sees only the tw
    chamber walks (122), Sachs (17).  Prediction: marginal-only accuracy is within 0.05 of RECI on the chamber sets and
    not above chance on Tuebingen (the Tuebingen cause is not marginally distinguishable).
 H2 (assumption violation): the additive-noise family loses accuracy where the model's assumption fails.  On Tuebingen,
-   for each pair the residual heteroscedasticity h = |Spearman(|r|, x)| of a cross-fitted smoothing-spline regression
+   for each pair the residual heteroscedasticity h = |Spearman(|r|, x)| of a cross-fitted additive-spline (6 knots, ridge) regression
    of y on x (true direction) and the fraction of unique values u.  For each of the twelve rules of exp47, the
    Mann-Whitney test of h (and of u) between correctly and wrongly oriented pairs, one-sided in the direction 'more
    violation, more errors'; and, pooled over the four noise-model rules (ANM-HSIC, ANM-GP, RESIT, LOCI), a logistic
@@ -23,7 +23,6 @@ os.environ.setdefault("OMP_NUM_THREADS", "1")
 import json, pathlib, sys, warnings
 import numpy as np
 from scipy import stats
-from scipy.interpolate import make_smoothing_spline
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent)); sys.path.insert(0, str(HERE))
@@ -91,15 +90,13 @@ def cv_acc(F, group, rng, reps=50):
 
 
 def het(x, y, seed=0):
-    from sklearn.model_selection import KFold
-    o = np.argsort(x); xs, ys = x[o], y[o]
-    ux, ix = np.unique(xs, return_index=True)
+    """Cross-fitted additive-spline regression of y on x (6 knots, cubic, ridge 1), then |Spearman(|r|, x)|."""
+    from sklearn.linear_model import Ridge
+    from sklearn.preprocessing import SplineTransformer
+    z = ((x - x.mean()) / x.std()).reshape(-1, 1); B = SplineTransformer(n_knots=6, degree=3).fit_transform(z)
     res = np.empty(len(x)); idx = np.random.default_rng(seed).permutation(len(x)); h = len(x) // 2
     for tr, te in ((idx[:h], idx[h:]), (idx[h:], idx[:h])):
-        t = np.argsort(x[tr]); xt, yt = x[tr][t], y[tr][t]
-        keep = np.r_[True, np.diff(xt) > 0]; xt, yt = xt[keep], yt[keep]
-        sp = make_smoothing_spline(xt, yt)
-        res[te] = y[te] - sp(np.clip(x[te], xt.min(), xt.max()))
+        m = Ridge(alpha=1.0).fit(B[tr], y[tr]); res[te] = y[te] - m.predict(B[te])
     return float(abs(stats.spearmanr(np.abs(res), x)[0]))
 
 
