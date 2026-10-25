@@ -15,7 +15,7 @@ H2 (assumption violation): the additive-noise family loses accuracy where the mo
    of y on x (true direction) and the fraction of unique values u.  For each of the twelve rules of exp47, the
    Mann-Whitney test of h (and of u) between correctly and wrongly oriented pairs, one-sided in the direction 'more
    violation, more errors'; and, pooled over the four noise-model rules (ANM-HSIC, ANM-GP, RESIT, LOCI), a logistic
-   regression of correctness on standardised h, u, log n.  Prediction: h is higher on the pairs the noise-model rules get
+   regression of correctness on standardised h and log n (u is constant after dequantisation and is dropped from the regression; its Mann-Whitney columns are uninformative).  Prediction: h is higher on the pairs the noise-model rules get
    wrong (p < 0.05 for at least two of the four), and not for RECI.
 """
 import os
@@ -134,10 +134,10 @@ def main():
         sc = np.array([S[i][m] if S[i][m] is not None and S[i][m] == S[i][m] else np.nan for i in ids])
         ok = np.where(np.isnan(sc), np.nan, np.where(sc > 0, 1.0, np.where(sc < 0, 0.0, 0.5)))
         for k in range(len(ids)):
-            if ok[k] in (0.0, 1.0): rows.append((ok[k], H[k], U[k], np.log(n[k])))
+            if ok[k] in (0.0, 1.0): rows.append((ok[k], H[k], np.log(n[k])))
     A = np.array(rows); Xz = (A[:, 1:] - A[:, 1:].mean(0)) / A[:, 1:].std(0)
     fit = sm.Logit(A[:, 0], sm.add_constant(Xz)).fit(disp=0)
-    out["h2"]["pooled_logit"] = {"coef_h_u_logn": fit.params[1:].tolist(), "p": fit.pvalues[1:].tolist(), "n": len(A)}
+    out["h2"]["pooled_logit"] = {"coef_h_logn": fit.params[1:].tolist(), "p": fit.pvalues[1:].tolist(), "n": len(A)}
     print("pooled", out["h2"]["pooled_logit"])
     (R / "exp49_explain.json").write_text(json.dumps(out, indent=1))
 
