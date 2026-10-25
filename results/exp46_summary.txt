@@ -1,0 +1,8 @@
+tuebingen    AVICI  n=102/102 acc=0.588 weighted=0.605
+tuebingen    RESIT  n=102/102 acc=0.613 weighted=0.625
+chamber_iid  AVICI  n=94/94 acc=0.904
+chamber_iid  RESIT  n=94/94 acc=0.713
+chamber_walk AVICI  n=122/122 acc=0.557
+chamber_walk RESIT  n=122/122 acc=0.648
+sachs        AVICI  n=17/17 acc=0.529
+sachs        RESIT  n=17/17 acc=0.471
