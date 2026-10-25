@@ -235,3 +235,4 @@ paper/*/*.bbl
 paper/*/*.blg
 paper/*/*.log
 paper/*/*.out
+cache/
