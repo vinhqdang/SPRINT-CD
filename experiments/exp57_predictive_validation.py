@@ -1,4 +1,4 @@
-"""Experiment 57: does the factorial map of exp56 predict rule accuracy on the real collections?
+"""Experiment 57 (revision 2; the first run is in the git history and is reported in the paper: it was invalid because the log-unique-fraction diagnostic was constant in the simulation, computed on jittered arrays, so real pairs with ties had standardised values of -3e9 and the neighbours were arbitrary).  Revision 2 recomputes the simulation diagnostics from the un-jittered simulated arrays (make() is deterministic) so that real and simulated diagnostics are computed the same way, and additionally reports the median distance to the nearest simulated pair and the results restricted to real pairs whose nearest-neighbour distance is below the 95th percentile of the simulation's leave-one-out distance (in-support pairs).  Experiment 57: does the factorial map of exp56 predict rule accuracy on the real collections?
 
 Written and committed before running.  Seven real pair collections (Tuebingen 102, chamber i.i.d. 94, chamber walks 122,
 Sachs 17, bernoulli 16, changepoints 70, malus 48 pair-runs).  Rules: IGCI, RECI, ANM-HSIC, pairwise LiNGAM, compression
@@ -37,10 +37,14 @@ def corr_of(score, truth_xy=True):
 def main():
     warnings.filterwarnings("ignore")
     sim = json.load(open(R / "exp56_factorial.json"))["records"]
+    for r in sim:
+        (x_, y_), _ = e56.make(tuple(r["cell"]), r["k"]); r["f"] = e56.feats(x_, y_)
     Fs = np.array([[r["f"][k] for k in FEATS] for r in sim], float)
     Cs = np.array([[corr_of(r["m"].get(m), not r["flip"]) for m in RULES] for r in sim], float)
     ok = ~np.isnan(Fs).any(1); Fs, Cs = Fs[ok], Cs[ok]
     mu, sd = Fs.mean(0), Fs.std(0) + 1e-9; Z = (Fs - mu) / sd
+    sub = Z[np.random.default_rng(0).choice(len(Z), 400, replace=False)]
+    loo = np.sort(((Z[None] - sub[:, None]) ** 2).sum(2), 1)[:, 1] ** .5; thr = float(np.quantile(loo, .95))
     real = {}
     data = e49.gather()
     for s, pid, x, y in data:
@@ -73,13 +77,14 @@ def main():
     pred_cells, obs_cells, const = [], [], np.nanmean(Cs, 0)
     pair_scores = {m: ([], []) for m in RULES}
     for s, lst in real.items():
-        P = []
+        P = []; NN = []
         for p in lst:
             f = e56.feats(p["x"], p["y"]); v = np.array([f[k] for k in FEATS], float)
             if np.isnan(v).any(): v = np.where(np.isnan(v), mu, v)
-            z = (v - mu) / sd; idx = np.argsort(((Z - z) ** 2).sum(1))[:100]
-            P.append(np.nanmean(Cs[idx], 0))
-        P = np.array(P); O = np.array([[r[m] for m in RULES] for r in obs[s]], float)
+            z = (v - mu) / sd; d2 = ((Z - z) ** 2).sum(1); idx = np.argsort(d2)[:100]
+            P.append(np.nanmean(Cs[idx], 0)); NN.append(float(np.sqrt(d2.min())))
+        P = np.array(P); O = np.array([[r[m] for m in RULES] for r in obs[s]], float); NN = np.array(NN); ins = NN <= thr
+        out.setdefault("support", {})[s] = {"median_nn_distance": float(np.median(NN)), "share_in_support": float(ins.mean()), "threshold": thr}
         out["cells"][s] = {"n": len(lst), "pred": np.nanmean(P, 0).tolist(), "obs": np.nanmean(O, 0).tolist()}
         for j, m in enumerate(RULES):
             v = ~np.isnan(O[:, j]); pair_scores[m][0].extend(P[v, j]); pair_scores[m][1].extend(O[v, j])
