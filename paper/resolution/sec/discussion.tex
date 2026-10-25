@@ -19,7 +19,7 @@
 \section{Limitations}\label{sec:limits}
 \begin{itemize}
 \item \emph{Size.} T\"ubingen has $102$ pairs and the Sachs data $17$ arcs; the other pair collections have four to $47$ distinct edges. All inference is as imprecise as Section~\ref{sec:noise} says.
-\item \emph{Implementations.} Twelve rules were run by us, some at library defaults and two re-implemented from preprints (compression, now faithful; TRA with our constants). Tuning could change a ranking. We did not run SLOPE, CAM, SCORE or PNL.
+\item \emph{Implementations.} IGCI, RECI, ANM-HSIC and pairwise LiNGAM are short re-implementations that we did not check against the authors' code on the T\"ubingen pairs (RECI agrees with a published faithful re-run within $0.2$ weighted points); statements about them are about our implementations. Twelve rules were run by us, some at library defaults and two re-implemented from preprints (compression, now faithful; TRA with our constants). Tuning could change a ranking. We did not run SLOPE, CAM, SCORE or PNL.
 \item \emph{The multiverse} is finite, its choices are ours, its accuracies are computed on overlapping pairs and are not independent, and several scores are not confidences. The detectable difference of $0.19$ applies to the observed discordance rate and is approximate.
 \item \emph{The heteroscedasticity measure} is computed in the true direction and is close to what the additive-noise tests probe; the tercile analysis is post hoc. The manipulation and the factorial map are simulations from one family of mechanisms.
 \item \emph{The factorial simulator} does not cover the real collections (Section~\ref{sec:predict}).
