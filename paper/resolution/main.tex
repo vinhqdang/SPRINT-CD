@@ -8,19 +8,19 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Recent methods for causal discovery routinely report gains of a few accuracy points on the T\"ubingen cause--effect pairs
+Methods for causal discovery are often compared by gains of a few accuracy points on the T\"ubingen cause--effect pairs
 or a few edges on the Sachs protein network. We ask what these benchmarks can resolve. On the $102$ univariate T\"ubingen pairs,
 twelve direction rules have accuracies from $40\%$ to $65\%$, and only one of $66$
-paired comparisons survives a Holm correction; a paired test at $n=102$ has $80\%$ power only for differences of about $19$ points.
-A multiverse of $32$ defensible reporting choices (official weights or none, subsets by sample size, evaluation on the most confident
-$25$ to $100\%$ of pairs) moves the accuracy of a single method by up to $47$ points, and seven of twelve methods are
-ranked first under at least one choice. Trying ten random subsets of $50$ pairs raises the expected best accuracy by seven to eight
-points. On the Sachs network, $16$ of $22$ methods have a bootstrap interval that contains the best $F_1$, and the smallest
+paired comparisons survives a Holm correction; a paired test at $n=102$ has $80\%$ power only for differences of about $19$ points ($28$ after a Bonferroni correction over $66$ tests).
+Across the ten defensible reporting choices that leave at least $30$ pairs (official weights or none; subsets by sample size; evaluation on the most confident
+$25$ to $100\%$ of pairs) the accuracy of a single method moves by $9$ to $26$ points and its rank by up to ten places, and four of twelve methods
+are ranked first under at least one choice. Trying ten random subsets of $50$ pairs raises the expected best accuracy by seven to eight
+points (a finite-sample selection effect that does not change the ranking). On the Sachs network, $16$ of $22$ methods have a bootstrap interval that contains the best $F_1$, and the smallest
 significant difference is $0.17$. Methods trained on simulated data lose the most: a pair classifier falls from $95\%$ on its simulator
-to $40\%$ on T\"ubingen. We trace the apparent progress to these four sources, none of which involves a fault of the
-original authors, and give a reporting checklist: paired tests with a power statement, the full coverage curve, subsets fixed
+to $40\%$ on T\"ubingen. We identify four sources that can produce apparent gains without any change in a method's accuracy, none of which requires a fault of the
+original authors (we audited no published table), and give a reporting checklist: paired tests with a power statement, the full coverage curve, subsets fixed
 before the data are seen, and a statement of the effective sample size. We re-implemented four methods from 2025--2026 preprints and
-ran nine published packages at their defaults; none is distinguishable from the best simple baseline.
+ran nine published packages at their defaults; none is distinguishable from the best simple baseline at this power (an absence of evidence, not a demonstration of equivalence).
 \end{abstract}
 
 \section{Introduction}
@@ -31,8 +31,7 @@ particular table. We ask a prior question: with the data these benchmarks contai
 detected at all, and how far can a correct but unconstrained choice of protocol move a reported number?
 
 The question is not academic. A recent same-hands re-evaluation of bivariate rules on T\"ubingen with a parameter-free
-compression baseline reports numbers close to ours for RECI and IGCI \citep{stienstra2026oneruler}, and the gap between published and re-measured
-accuracies is a recurring observation in the literature on simulated graphs \citep{reisach2021beware}. We add three things: a
+compression baseline reports numbers close to ours for RECI and IGCI \citep{stienstra2026oneruler}, and benchmark artefacts that favour simple baselines on simulated graphs are documented \citep{reisach2021beware}. We add three things: a
 quantitative resolution analysis on real data (Section~\ref{sec:noise}), a multiverse over reporting choices that shows how large the
 room for selection is (Sections~\ref{sec:multi}, \ref{sec:subsets}), and evidence that learned methods lose their advantage when the
 test data differ from the simulator (Section~\ref{sec:gap}). The methods compared were all run by us under one protocol; they are listed in
@@ -52,17 +51,16 @@ compression \citep{stienstra2026oneruler} on dequantised and on raw rows, topolo
 \citep{lorch2022amortized} with its pretrained model on two-variable input, and RESIT with a random forest. Compression, TRA and AVICI/RESIT are
 recent; compression and TRA were implemented from the preprints because no code was available (TRA's constants are our choice).
 \paragraph{Graphs.} The Sachs observational data (853 cells, 11 proteins, 17-arc consensus network) and the Causal Chambers
-\citep{gamella2025chamber} wind- and light-tunnel recordings with a known graph. Twenty-two graph methods are on Sachs (PC, GES, DirectLiNGAM, NOTEARS, DAGMA, PCMCI+,
+\citep{gamella2025chamber} wind- and light-tunnel recordings with a known graph. Twenty-two graph methods or configurations are on Sachs (PC, GES, DirectLiNGAM, NOTEARS, DAGMA, PCMCI+,
 GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV, AVICI, BF-BIC with BOSS \citep{ramsey2025bfbic}, and our own PC-GCM, BTAD, LRG and sequential certificates). The full
 protocol and all per-method tables are in the companion evaluation (\texttt{paper/bench} in the repository).
-\paragraph{Pre-registration.} Each evaluation script was committed before it was run (experiments 42--48 in the repository);
-the analysis in this paper uses the stored per-pair decisions of those runs.
+\paragraph{Protocol.} Each evaluation script was committed before it was run (experiments 42--48 in the repository). The multiverse and subset analyses (experiment 47) were designed after the per-pair decisions existed, and were revised once after an independent review; the first version is in the repository history.
 
 \section{Sampling noise}\label{sec:noise}
 Table~\ref{tab:multi} gives accuracies with exact Clopper--Pearson intervals; the half-width is about $0.10$ for every method.
-Two methods that agree on $59\%$ of the pairs can differ in accuracy, and the exact McNemar test on the discordant pairs
+Two methods that agree on about $56\%$ of the pairs can differ in accuracy, and the exact McNemar test on the discordant pairs
 is the correct comparison because the methods are scored on the same pairs. Of $66$ pairwise comparisons, $11$ have a raw $p<0.05$ and one
-survives Holm ($p=0.041$). Simulating a paired comparison with the observed discordance rate ($41\%$), a difference of $0.19$ in
+survives Holm ($p=0.041$). Simulating a paired comparison with the observed discordance rate ($44\%$), a difference of $0.19$ in
 accuracy is needed for $80\%$ power. A reported gain of two to five points on T\"ubingen is therefore far below what the
 collection can resolve, whatever the method.
 
@@ -76,18 +74,18 @@ and the expected best accuracy after trying ten random subsets of $50$ pairs.}
 \toprule
 Method & Accuracy [interval] & Multiverse range & Rank & First & $>$RECI & Best of 10 subsets\\
 \midrule
-IGCI & 0.559 [0.46, 0.66] & 0.27--0.75 & 3--12 & 0 & 0 & 0.637\\
-RECI & 0.608 [0.51, 0.70] & 0.58--1.00 & 1--9 & 14 & 0 & 0.681\\
-ANM-HSIC & 0.608 [0.51, 0.70] & 0.53--0.91 & 1--12 & 3 & 8 & 0.684\\
-Pairwise LiNGAM & 0.608 [0.51, 0.70] & 0.52--0.90 & 3--12 & 0 & 1 & 0.682\\
-PDM & 0.402 [0.31, 0.50] & 0.33--0.71 & 8--12 & 0 & 0 & 0.478\\
-LOCI & 0.647 [0.55, 0.74] & 0.51--0.91 & 1--12 & 3 & 6 & 0.720\\
-ANM, Gaussian process & 0.554 [0.45, 0.65] & 0.55--0.95 & 1--11 & 6 & 9 & 0.629\\
-Compression, dequantised & 0.608 [0.51, 0.70] & 0.61--1.00 & 1--10 & 8 & 9 & 0.682\\
-Compression, raw rows & 0.647 [0.55, 0.74] & 0.58--0.96 & 1--10 & 1 & 10 & 0.721\\
-TRA & 0.618 [0.52, 0.71] & 0.56--0.97 & 2--10 & 0 & 2 & 0.685\\
-AVICI & 0.588 [0.49, 0.68] & 0.41--0.83 & 1--12 & 3 & 7 & 0.665\\
-RESIT & 0.613 [0.52, 0.71] & 0.61--0.75 & 2--10 & 0 & 7 & 0.686\\
+IGCI & 0.559 [0.46, 0.66] & 0.47--0.71 & 3--11 & 0 & 0 & 0.638\\
+RECI & 0.608 [0.51, 0.70] & 0.61--0.87 & 1--5 & 6 & 0 & 0.683\\
+ANM-HSIC & 0.608 [0.51, 0.70] & 0.57--0.70 & 2--12 & 0 & 1 & 0.683\\
+Pairwise LiNGAM & 0.608 [0.51, 0.70] & 0.54--0.74 & 3--12 & 0 & 0 & 0.685\\
+PDM & 0.402 [0.31, 0.50] & 0.40--0.61 & 10--12 & 0 & 0 & 0.478\\
+LOCI & 0.647 [0.55, 0.74] & 0.63--0.77 & 1--9 & 2 & 2 & 0.722\\
+ANM, Gaussian process & 0.554 [0.45, 0.65] & 0.55--0.75 & 2--11 & 0 & 0 & 0.627\\
+Compression, dequantised & 0.608 [0.51, 0.70] & 0.61--0.79 & 2--7 & 0 & 0 & 0.682\\
+Compression, raw rows & 0.647 [0.55, 0.74] & 0.64--0.76 & 1--7 & 1 & 2 & 0.721\\
+TRA (82) & 0.646 [0.53, 0.75] & 0.65--0.76 & 1--5 & 2 & 4 & 0.729\\
+AVICI & 0.588 [0.49, 0.68] & 0.54--0.65 & 5--11 & 0 & 0 & 0.664\\
+RESIT & 0.613 [0.52, 0.71] & 0.61--0.70 & 3--9 & 0 & 1 & 0.685\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -96,36 +94,33 @@ RESIT & 0.613 [0.52, 0.71] & 0.61--0.75 & 2--10 & 0 & 7 & 0.686\\
 We evaluate every method in the $32$ combinations of (i) official weights or none, (ii) all pairs or only pairs with at least $250$, $500$ or $1000$ rows,
 and (iii) accuracy on all pairs or on the $75$, $50$ or $25\%$ most confident decisions (by the absolute score of the method). Each is a choice that has been made in
 the literature on pairs for a reason: weights are the benchmark's recommendation, a row threshold avoids tiny pairs, and decided-only accuracy
-reflects a method that abstains. The same method then spans a wide range of accuracy (Table~\ref{tab:multi}): $0.27$ to $0.75$ for IGCI, $0.51$ to $0.91$ for LOCI, $0.55$ to $0.95$ for the Gaussian-process ANM,
-$0.58$ to $1.00$ for RECI. Seven of the twelve methods are first in at least one universe; RECI is first in $14$ of $32$, compression in $8$, the Gaussian-process
-ANM in $6$, and four more in $3$ or $1$. Ranks of a single method run over most of the list, for example from first to twelfth for the
-LOCI. In one universe, any of seven methods can be called the best; the evidence for a ranking is a property of the protocol as much as of the methods.
+reflects a method that abstains. The coverage is taken exactly (the top $k$ by $|{\rm score}|$, ties broken at random with a fixed seed); a score is not a calibrated confidence for every rule, so this is the operation a reader could apply, not a measure of each method's own abstention. A universe is kept only if every method is evaluated on at least $30$ pairs: $10$ of the $32$ qualify, and the other $22$ (for example $25\%$ of the $36$ pairs with at least $1000$ rows, which is $9$ pairs) are too small to report. In a first run that included them the ranges were far wider ($0.27$ to $0.75$ for IGCI, up to $1.00$ for RECI); we exclude them because an accuracy on nine pairs is not a defensible report. In the $10$ remaining universes a method's accuracy still moves by $9$ to $26$ points ($0.47$ to $0.71$ for IGCI, $0.61$ to $0.87$ for RECI, $0.63$ to $0.77$ for LOCI) and its rank by up to ten places (ANM-HSIC from second to twelfth, pairwise LiNGAM from third to twelfth). RECI is first in $6$ universes, LOCI and TRA in $2$ each, compression on raw rows in $1$; the ranking among the top methods changes with the protocol. The first counts are over universes, not within one universe, and ties share the first rank. TRA returned no value on $20$ pairs; these are excluded from its accuracy (it is evaluated on $82$) and from its coverage ranking.
 
 Two single choices are large in themselves. The official weights move RECI from $60.8\%$ to $70.9\%$ and compression from $60.8\%$ to $68.0\%$, while
 for LOCI they move it down ($64.7\%\to63.9\%$). Raw against dequantised rows moves compression from $64.7\%$ to $60.8\%$ unweighted.
 
 \section{Selective subsets}\label{sec:subsets}
 A common practice in pair benchmarks is to evaluate a method on a subset of pairs (for example those with a given variable type or sample size). We drew $10000$ random subsets of $50$ pairs.
-The accuracy of a method on a subset has a standard deviation of about $0.05$ and for the seven methods whose full-sample accuracy is within $0.04$ of RECI the probability of beating RECI on a subset lies between $0.43$ and $0.68$. The expected best accuracy over $m$ independently drawn subsets, which is what is
-reported by a researcher who tries $m$ subsets and keeps the best, grows with $m$: for RECI $0.608$ ($m=1$), $0.648$ ($3$), $0.681$ ($10$); for LOCI $0.647$, $0.688$, $0.720$. The inflation at $m=10$
-is seven to eight points, and the same for every method, so a ranking is not changed by it; what changes is the claim of an absolute level.
+The accuracy of a method on a subset has a standard deviation of about $0.05$ and for the eight methods whose full-sample accuracy is within $0.04$ of RECI the probability of beating RECI on a subset of $50$ lies between $0.35$ and $0.72$. The expected best accuracy over $m$ independently drawn subsets, which is what is
+reported by a researcher who tries $m$ subsets and keeps the best, grows with $m$: for RECI $0.608$ ($m=1$), $0.649$ ($3$), $0.683$ ($10$); for LOCI $0.647$, $0.688$, $0.722$. The inflation at $m=10$
+is seven to eight points for every method, so a ranking is not changed by it; what changes is the claim of an absolute level. Because each subset is half of the same $102$ pairs, this measures selection noise about a known full-sample accuracy, not how a researcher actually chooses subsets (by pair type or size, not at random).
 
 \section{The simulation gap}\label{sec:gap}
-Methods trained on simulations lose the most. Our own pair classifier (PDM) has $95\%$ accuracy on its simulated test and $83\%$ on a different simulated family, and
+Methods trained on simulations lose heavily, but dataset difficulty is a confound. Our own pair classifier (PDM) has $95\%$ accuracy on its simulated test and $83\%$ on a different simulated family, and
 $40.2\%$ on T\"ubingen ($p=0.059$ against chance; $0.93$ and $0.84$ on the two chamber pair sets). Our graph classifier (LRG) has $F_1=0.86$ on simulated graphs and $0.36$--$0.53$ on the chambers.
 The pretrained AVICI model reaches $90\%$ on pairs from independent-row chamber recordings but $58.8\%$ on T\"ubingen and $55.7\%$ on pairs from random-walk recordings.
-We cannot say which feature of the real data is responsible; the simulators contain serial dependence, drift and several mechanism families and still do not cover them.
+The simple rules also drop between these sets (RECI $98\%\to61\%$, IGCI $94\%\to56\%$): chamber pairs are easy, and we have no baseline on the simulated test sets, so the comparison is suggestive. PDM is below chance on T\"ubingen, which we did not diagnose. We cannot say which feature of the real data is responsible; the simulators contain serial dependence, drift and several mechanism families and still do not cover them.
 
 \section{Graph benchmarks}\label{sec:graphs}
 On Sachs the same analysis gives the same picture. For $22$ methods, $16$ have a $95\%$ bootstrap interval (over the $55$ variable pairs) that contains the best $F_1$ ($0.67$) and $7$
-have a point estimate within $0.10$ of it. Of $231$ pairs of methods, $62$ differ significantly and the smallest significant difference in $F_1$ is $0.17$. The reference has $17$ arcs, so one edge changes
+have a point estimate within $0.10$ of it. Of $231$ pairs of methods (some are the same method at two settings), $62$ differ significantly and the smallest significant difference in $F_1$ is $0.17$. The reference has $17$ arcs, so one edge changes
 recall by $0.06$. In the Causal Chambers, the bipartite graph (actuators to sensors) makes the skeleton mostly feature selection, and in $17$ of $19$ new wind-tunnel recordings the actuators are random walks with an effective
 sample size of about three out of $4000$ rows, where no method has strict $F_1$ above $0.42$. Several neural methods time out at sixteen variables. Appendix tables
 of the companion evaluation give the per-method values.
 
 \section{Why published gains can look larger}\label{sec:why}
 Combining the evidence, a published gain on a small real benchmark can arise without any change in the method's true accuracy from (i) the resolution limit: two methods that differ by two to five points are statistically the same on $102$ pairs; (ii) free
-reporting choices that move one method by up to $47$ points; (iii) selection among subsets or settings, worth seven to eight points after ten attempts; and (iv) the gap between a simulator and real data for learned methods. None of these requires an error by an author; each is a degree of freedom the benchmark does not constrain. These are
+reporting choices that move one method by up to $26$ points even after discarding universes with fewer than $30$ pairs; (iii) selection among subsets or settings, worth seven to eight points after ten attempts; and (iv) the gap between a simulator and real data for learned methods. None of these requires an error by an author; each is a degree of freedom the benchmark does not constrain. These are
 mechanisms, not an accounting of a particular paper.
 
 \section{Recommendations}
@@ -134,7 +129,7 @@ mechanisms, not an accounting of a particular paper.
 (5) For learned methods, report accuracy on real data next to the simulated test, with the simulator's overlap with the real data described. (6) Prefer benchmarks with more independent units: interventional recordings and collections with many more pairs would lower the detectable difference.
 
 \section{Limitations}
-The study uses 102 pairs and one protein network, which is itself the resolution limit it describes. The twelve methods were run by us; some at library defaults, and tuning may change a ranking. The multiverse is finite and its choices are ours. We did not run CAM, SCORE or PNL (PNL needs $880$\,s per pair), and two preprints were implemented from their description. The simulation-gap evidence uses our own learned models and one pretrained model.
+The study uses 102 pairs and one protein network, which is itself the resolution limit it describes. The twelve methods were run by us; some at library defaults, and tuning may change a ranking. The multiverse is finite, its choices are ours, its accuracies are computed on overlapping pairs and are not independent, the scores of several rules are not confidences, and the T\"ubingen collection has known label noise and groups of similar pairs (the reason for the weights). The detectable difference ($0.19$) is for the observed discordance rate ($0.44$), averaged over method pairs, and is approximate. The graph bootstrap resamples variable pairs that share nodes.  We did not run CAM, SCORE or PNL (PNL needs $880$\,s per pair), and two preprints were implemented from their description. The simulation-gap evidence uses our own learned models and one pretrained model.
 
 \paragraph{Data and code.} All code, per-pair decisions and scripts are in the repository \texttt{vinhqdang/SPRINT-CD}. The T\"ubingen pairs, the Sachs data and the Causal Chambers data are public.
 
