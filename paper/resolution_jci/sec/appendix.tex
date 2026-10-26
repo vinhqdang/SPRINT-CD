@@ -1,6 +1,6 @@
 \appendix
 
-\section{Pre-registration log}\label{app:prereg}
+\section{Log of pre-specified experiments}\label{app:prereg}
 Each row is an experiment script (\texttt{experiments/expNN\_*.py}) with the short hash of the commit that first added it, before it was run, and the date. The first line of each script's docstring is quoted. Scripts were revised after a first run only where stated in their docstrings (experiments 47, 49, 57; each revision is a separate commit and the first version is retrievable). Experiments 1--16 belong to the earlier theory paper on sequential certificates and are not used here.
 \begingroup\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}rllp{9.8cm}@{}}
@@ -54,12 +54,13 @@ Each row is an experiment script (\texttt{experiments/expNN\_*.py}) with the sho
 58 & \texttt{5c1c168} & 2026-10-25 & Experiment 58: pair rules on every untouched Causal Chambers recording (not only the first of each type).\\
 59 & \texttt{8b388ce} & 2026-10-25 & Experiment 59: tie handling as a free parameter, and raw-array versions for the three new collections.\\
 60 & \texttt{b592bf7} & 2026-10-25 & Experiment 60: TRA on raw arrays for the all-recordings walk pairs (exp58) and the three new collections (exp53).\\
+61 & \texttt{d68bf71} & 2026-10-25 & Experiment 61: how much does the evaluation protocol move each rule on Tuebingen?\\
 \bottomrule
 \end{longtable}
 \endgroup
 
 \section{Implementation details}\label{app:impl}
-\paragraph{Preprocessing.} T\"ubingen: at most $2000$ rows drawn with a seed that depends on the pair identifier; each variable with tied values dequantised by adding uniform noise in $\pm\frac12$ of the smallest positive gap between distinct values (experiment 14). Chamber and Sachs collections: raw values (Sachs on the log scale with a floor at $10^{-3}$), at most $2000$ random rows; walk recordings use random rows of the first $4000$ rows for pairs and the first $4000$ (graphs) or $2000$ (45) rows in time order for graphs. For the three new collections, rules that need distinct values receive a jitter of $10^{-6}$ times the range on tied values.
+\paragraph{Preprocessing.} T\"ubingen: at most $2000$ rows drawn with a seed that depends on the pair identifier; each variable with tied values dequantised by adding uniform noise in $\pm\frac12$ of the smallest positive gap between distinct values (experiment 14). Chamber and Sachs collections: raw values (Sachs on the log scale with a floor at $10^{-3}$), at most $2000$ random rows; walk recordings use random rows of the first $4000$ rows for pairs and the first $4000$ (graphs) or $2000$ (45) rows in time order for graphs. All rules see the raw arrays; a copy with a $10^{-6}$ range jitter on tied values is used only in the sensitivity analysis of Section~\ref{sec:ties} and in the simulations.
 \paragraph{Scores.} All rules return a signed score, positive for $x\to y$. IGCI, RECI, ANM-HSIC and pairwise LiNGAM return a direction label and a magnitude that we convert to a sign. A score of exactly zero counts as half correct (this affected $23$ pairs of the Gaussian-process ANM). A rule that returns no value on a pair (TRA's spline failure) is excluded from that pair and the denominator is reduced.
 \paragraph{Compression.} Section~\ref{sec:audit}. In both variants the score is $s=\mathrm{sc}(q_y,q_x)/\max(\mathrm{dc}(q_x),1)-\mathrm{sc}(q_x,q_y)/\max(\mathrm{dc}(q_y),1)$ with $\mathrm{sc}(\mathrm{key},\mathrm{val})=|\mathrm{bz2}(\Delta\,\mathrm{val}[\mathrm{argsort}(\mathrm{key})])|$ and $\mathrm{dc}(q)=|\mathrm{bz2}(\Delta q)|$, a stable sort, differences cast to \texttt{int8}, bzip2 level 9; $s>0$ means $x\to y$.
 \paragraph{TRA.} Cross-fitted smoothing-spline residuals ($5$ folds), a rank-uniform point cloud, the total length of the zero-dimensional persistence (minimum spanning tree) in the window $\alpha=\kappa n^{-2/3}$, $\beta=c_\beta\alpha$ with $\kappa=1$, $c_\beta=4$, at most $1000$ rows; the direction is the sign of the difference of the two residual functionals. The conservative variant TRA-C ($B=100$ Gaussian-copula bootstrap draws) took $27$\,s per pair at $n=800$ and was not run.
@@ -84,10 +85,10 @@ LRG & gradient boosting on block-gain features, trained on simulations & $F_1$ $
 PDM & pair classifier trained on $40000$ simulated pairs & $95\%$ on simulated pairs, $40.2\%$ on T\"ubingen\\
 Block-ICP & invariant causal prediction with time blocks & empty graphs, $F_1\le 0.07$ on development recordings\\
 Compression, TRA, BF-BIC (exp 42--43, 54) & re-implemented 2025--2026 methods & compression: $60.8$--$64.7\%$ with our first implementation, $66.7\%$ ($74.7\%$ weighted) faithful, $38.3\%$ on i.i.d.\ chambers; TRA $64.6\%$ ($86.2\%$ on i.i.d.\ chambers); BF-BIC with BOSS: Sachs $0.67$, walks $0.42$\\
-Interventional route (pilot) & shift of each sensor under each intervened actuator (light tunnel) & KS: precision $1.00$, recall $0.72$ ($28$ of $39$ arcs), AUC $0.93$; the missed arcs show no shift; conditional version recall $0.79$ at precision $0.51$\\
+Interventional route (pilot) & shift of each sensor under each intervened actuator (light tunnel) & KS: precision $1.00$, recall $0.72$ ($28$ of $39$ arcs), AUC $0.91$; the missed arcs show no shift; conditional version recall $0.79$ at precision $0.51$\\
 Published packages (exp 45--46) & AVICI, GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV & best: BOSS $0.55$ i.i.d.\ chambers; GRaSP $0.68$, BOSS $0.65$ large-ESS; Sachs $\le0.56$; walks $\le0.37$; many neural timeouts\\
 GATE (exp 51) & ANM-HSIC when a symmetric heteroscedasticity diagnostic is low, else RECI & T\"ubingen $65.7\%$ against $60.8\%$ ($p=0.30$); chambers $75.5\%$, $77.0\%$ against $97.9\%$, $94.3\%$\\
-Predictive validation (exp 57) & nearest simulated neighbours predict each rule's accuracy & Spearman $0.17$ (needed $0.5$); RMSE $0.30$ against $0.26$ for the constant; real pairs are $2$--$13$ sd from the simulation\\
+Predictive validation (exp 57) & nearest simulated neighbours predict each rule's accuracy & Spearman $0.006$ in the reported revision (needed $0.5$); RMSE $0.31$ against $0.24$ for the constant; real pairs are $2$--$13$ sd from the simulation\\
 \bottomrule
 \end{longtable}
 \endgroup
@@ -95,7 +96,7 @@ Predictive validation (exp 57) & nearest simulated neighbours predict each rule'
 \section{Additional tables}\label{app:tables}
 
 \begin{table}[ht]
-\caption{Accuracy with exact 95\% intervals for every rule and collection.}
+\caption{Accuracy with $95\%$ cluster-bootstrap intervals for every rule and collection (clusters: pairs for T\"ubingen and Sachs, edges for the i.i.d.\ chambers and the three new collections, recordings for the walks).}
 \label{tab:collections_ci}
 \scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}lcccc@{}}
@@ -147,15 +148,15 @@ RESIT & 0.47 [0.29,0.65] & 0.25 [0.06,0.44] & 0.53 [0.24,0.77] & 0.50 [0.50,0.50
 Weights & Rows & Cov. & $n$ & min & IGCI & RECI & ANM-H & LiNGAM & LOCI & TRA & CmpF & AVICI & RESIT\\
 \midrule
 official & 0 & 100 & 102 & 82 & 0.66 & 0.71 & 0.61 & 0.62 & 0.64 & 0.65 & 0.75 & 0.61 & 0.62\\
-official & 0 & 75 & 102 & 62 & 0.64 & 0.77 & 0.58 & 0.65 & 0.67 & 0.71 & 0.78 & 0.60 & 0.65\\
-official & 0 & 50 & 102 & 41 & 0.66 & 0.87 & 0.57 & 0.74 & 0.63 & 0.74 & 0.88 & 0.58 & 0.76\\
+official & 0 & 75 & 102 & 62 & 0.64 & 0.77 & 0.58 & 0.65 & 0.67 & 0.71 & 0.78 & 0.60 & 0.57\\
+official & 0 & 50 & 102 & 41 & 0.66 & 0.87 & 0.57 & 0.74 & 0.63 & 0.74 & 0.88 & 0.58 & 0.47\\
 official & 250 & 100 & 76 & 56 & 0.71 & 0.75 & 0.65 & 0.54 & 0.71 & 0.70 & 0.75 & 0.59 & 0.63\\
-official & 250 & 75 & 76 & 42 & 0.69 & 0.84 & 0.63 & 0.56 & 0.77 & 0.74 & 0.77 & 0.60 & 0.67\\
+official & 250 & 75 & 76 & 42 & 0.69 & 0.84 & 0.63 & 0.56 & 0.77 & 0.74 & 0.77 & 0.60 & 0.56\\
 none & 0 & 100 & 102 & 82 & 0.56 & 0.61 & 0.61 & 0.61 & 0.65 & 0.65 & 0.67 & 0.59 & 0.61\\
-none & 0 & 75 & 102 & 62 & 0.50 & 0.68 & 0.57 & 0.63 & 0.63 & 0.71 & 0.72 & 0.63 & 0.64\\
-none & 0 & 50 & 102 & 41 & 0.47 & 0.76 & 0.57 & 0.71 & 0.63 & 0.76 & 0.84 & 0.65 & 0.75\\
+none & 0 & 75 & 102 & 62 & 0.50 & 0.68 & 0.57 & 0.63 & 0.63 & 0.71 & 0.72 & 0.63 & 0.58\\
+none & 0 & 50 & 102 & 41 & 0.47 & 0.76 & 0.57 & 0.71 & 0.63 & 0.76 & 0.84 & 0.65 & 0.55\\
 none & 250 & 100 & 76 & 56 & 0.55 & 0.67 & 0.70 & 0.55 & 0.72 & 0.68 & 0.71 & 0.54 & 0.66\\
-none & 250 & 75 & 76 & 42 & 0.51 & 0.75 & 0.67 & 0.58 & 0.75 & 0.76 & 0.77 & 0.61 & 0.70\\
+none & 250 & 75 & 76 & 42 & 0.51 & 0.75 & 0.67 & 0.58 & 0.75 & 0.76 & 0.77 & 0.61 & 0.63\\
 \bottomrule
 \end{tabular}
 \end{table}
