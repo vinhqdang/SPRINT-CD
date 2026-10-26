@@ -409,35 +409,170 @@ CERT-CD nonparametric & 1.00/0.29/0.45 & 0.29/0.16/0.20 & 0.60/0.18/0.28 & 0.24/
 
 \paragraph{What we do not conclude.} The reference networks are small, the Sachs consensus is contested, and several baselines (CAM, SCORE) were not run. The differences between graph methods are mostly within sampling error, and the effective sample size of the walk recordings limits what any method can show. We read the graph results as consistent with the pair results: no rule leads across families.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{figs/collections.png}
-\caption{Left: accuracy of each rule on each collection. Right: Kendall rank correlation between the orderings of the rules on two collections (rules run on both; at least five).}
-\label{fig:collections}
-\end{figure}
+
 
 \section{Selective subsets}\label{app:subsets}
 
 
 Pair benchmarks are often evaluated on a subset of pairs (a given variable type or sample size, or pairs where the other rules disagree). We drew $10000$ random subsets of $50$ of the $102$ pairs. The accuracy of a rule on a subset has a standard deviation of about $0.05$. For the eight rules whose full-sample accuracy is within $0.04$ of RECI the probability that a rule beats RECI on a subset lies between $0.34$ and $0.71$, so most subsets would support either order; for round255 compression, $0.059$ above RECI, it is $0.79$. The expected best accuracy over $m$ independently drawn subsets, which is what a researcher reports after trying $m$ subsets and keeping the best, grows with $m$: RECI $0.608$ ($m=1$), $0.650$ ($3$), $0.684$ ($10$); LOCI $0.647$, $0.688$, $0.722$; round255 compression $0.667$, $0.707$, $0.740$. The inflation at $m=10$ is seven to eight points for every rule, which leaves the order of the rules unchanged; what it changes is the claim of an absolute level. Each subset is half of the same $102$ pairs, so this measures selection noise about a known full-sample accuracy, not how a researcher actually chooses subsets (by type or size, not at random).
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.55\linewidth]{figs/transfer.png}
-\caption{Marginal-only classifier trained on one collection (rows) and tested on another (columns), accuracy. The cue learned on T\"ubingen, Sachs or the chambers orients the chamber pairs; nothing learned on the chambers or Sachs transfers to T\"ubingen.}
-\label{fig:transfer}
-\end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.85\linewidth]{figs/strata.png}
-\caption{T\"ubingen accuracy by tercile of the residual heteroscedasticity $h$.}
-\label{fig:strata}
-\end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.95\linewidth]{figs/dose.png}
-\caption{Accuracy against the strength $a$ of the noise-scale variation. Left: scale depends on the cause. Right: independent scale (control).}
-\label{fig:dose}
-\end{figure}
+
+
+
+
+\section{Tables moved from the main text}
+\begin{table}[ht]
+\caption{Accuracy (fraction of pairs oriented correctly; exact ties half) of twelve rules on eight collections. All rules see the raw arrays, except that T\"ubingen is dequantised (Section~\ref{sec:rules}). ``--'': not run, or no value for most pairs (TRA on the changepoint collection; PDM and the first compression implementation only on the original collections). ``Walks (19)'' contains all $19$ untouched recordings ($486$ pairs; the $122$ pairs of ``walks'' come from five of them). The new collections have $8$, $7$ and $4$ distinct edges; intervals that account for clusters are in Appendix Table~\ref{tab:collections_ci}.}
+\label{tab:collections2}
+\small
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+Rule & T\"ub. & iid & walks & Walks & Sachs & Bern. & Chgpt. & Malus\\
+ & (102) & (94) & (122) & (19: 486) & (17) & (16) & (70) & (48)\\
+\midrule
+IGCI & 0.56 & 0.94 & 0.89 & 0.96 & 0.65 & 1.00 & 1.00 & 0.08\\
+RECI & 0.61 & 0.98 & 0.94 & 0.83 & 0.53 & 0.25 & 1.00 & 0.56\\
+ANM-HSIC & 0.61 & 0.72 & 0.63 & 0.43 & 0.59 & 0.31 & 0.57 & 0.31\\
+Pairwise LiNGAM & 0.61 & 0.78 & 0.71 & 0.67 & 0.53 & 0.88 & 0.43 & 0.40\\
+PDM & 0.40 & 0.93 & 0.84 & -- & -- & -- & -- & --\\
+LOCI & 0.65 & 0.77 & 0.68 & -- & 0.47 & 0.56 & 0.80 & 0.38\\
+ANM, Gaussian process & 0.55 & 0.77 & 0.67 & -- & 0.56 & 0.47 & 0.54 & 0.33\\
+Compression, floor256 & 0.61 & 0.30 & 0.61 & -- & 0.76 & -- & -- & --\\
+Compression, round255 & 0.67 & 0.38 & 0.52 & 0.50 & 0.65 & 0.50 & 1.00 & 0.60\\
+TRA & 0.65 & 0.86 & 0.61 & 0.56 & 0.59 & 0.62 & -- & 0.54\\
+AVICI & 0.59 & 0.90 & 0.56 & 0.63 & 0.53 & 0.62 & 0.40 & 0.02\\
+RESIT & 0.61 & 0.71 & 0.65 & 0.48 & 0.47 & 0.25 & 0.53 & 0.50\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{Rules on the 102 T\"ubingen pairs: unweighted accuracy with a 95\% interval (TRA: the $82$ pairs on which it returned a value) and the multiverse summary of Section~\ref{sec:multi}. ``Range'': minimum and maximum accuracy over the ten reporting universes with at least $30$ pairs per rule; ``Rank'': best and worst rank; ``First'': universes in which the rule is first (ties share the rank); ``$>$RECI'': universes in which it is above RECI; ``Best of 10'': expected best accuracy after trying ten random subsets of $50$ pairs.}
+\label{tab:multi}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Rule & Accuracy [interval] & Range & Rank & First & $>$RECI & Best of 10\\
+\midrule
+IGCI & 0.559 [0.46, 0.66] & 0.47--0.71 & 4--12 & 0 & 0 & 0.635\\
+RECI & 0.608 [0.51, 0.70] & 0.61--0.87 & 1--6 & 1 & 0 & 0.684\\
+ANM-HSIC & 0.608 [0.51, 0.70] & 0.57--0.70 & 3--12 & 0 & 1 & 0.682\\
+Pairwise LiNGAM & 0.608 [0.51, 0.70] & 0.54--0.74 & 4--13 & 0 & 0 & 0.682\\
+PDM & 0.402 [0.31, 0.50] & 0.40--0.61 & 10--13 & 0 & 0 & 0.477\\
+LOCI & 0.647 [0.55, 0.74] & 0.63--0.77 & 1--9 & 1 & 2 & 0.722\\
+ANM, Gaussian process & 0.554 [0.45, 0.65] & 0.55--0.75 & 3--12 & 0 & 0 & 0.628\\
+Compression, floor256 & 0.608 [0.51, 0.70] & 0.61--0.79 & 3--8 & 0 & 0 & 0.686\\
+Compression, floor256, raw rows & 0.647 [0.55, 0.74] & 0.64--0.76 & 2--8 & 0 & 2 & 0.721\\
+TRA & 0.646 [0.53, 0.75] & 0.65--0.76 & 2--6 & 0 & 4 & 0.729\\
+Compression, round255 & 0.667 [0.57, 0.76] & 0.67--0.88 & 1--3 & 8 & 9 & 0.740\\
+AVICI & 0.588 [0.49, 0.68] & 0.54--0.65 & 5--12 & 0 & 0 & 0.665\\
+RESIT & 0.613 [0.52, 0.71] & 0.47--0.66 & 5--13 & 0 & 1 & 0.686\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{T\"ubingen, $50$ protocol configurations (five row caps $\times$ dequantisation or not $\times$ five seeds). Range of the unweighted and of the official-weight accuracy over all configurations, and the range (in points) between the best and the worst level of each factor, averaged over the others.}
+\label{tab:protocol}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Rule & unweighted & weighted & rows & dequant. & seed\\
+\midrule
+IGCI (ours, uniform ref.) & 0.49--0.66 & 0.57--0.68 & 1 & 11 & 1\\
+RECI & 0.56--0.67 & 0.58--0.73 & 2 & 1 & 2\\
+ANM-HSIC & 0.54--0.61 & 0.52--0.60 & 3 & 0 & 2\\
+Pairwise LiNGAM & 0.56--0.64 & 0.58--0.67 & 2 & 0 & 3\\
+Compression, round255 & 0.61--0.71 & 0.60--0.78 & 2 & 1 & 1\\
+IGCI (cdt, Gaussian ref.) & 0.40--0.63 & 0.40--0.64 & 1 & 18 & 0\\
+RECI (cdt) & 0.60--0.68 & 0.66--0.79 & 2 & 2 & 1\\
+CDS (cdt) & 0.54--0.66 & 0.50--0.65 & 7 & 4 & 2\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{Accuracy of rules under two tie conditions (raw arrays; $10^{-6}$ range jitter on tied values), same pairs (experiment 59). T\"ubingen is dequantised in both. cdt: \texttt{cdt} package defaults.}
+\label{tab:ties}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccccccc@{}}
+\toprule
+Rule & Ties & T\"ub. & iid & walks & Sachs & Bern. & Chgpt. & Malus\\
+\midrule
+IGCI (ours, uniform reference) & raw & 0.56 & 0.94 & 0.89 & 0.65 & 1.00 & 1.00 & 0.08\\
+IGCI (ours, uniform reference) & jitter & 0.56 & 0.06 & 0.13 & 0.47 & 0.00 & 0.00 & 0.94\\
+IGCI (cdt, Gaussian reference) & raw & 0.42 & 0.94 & 0.84 & 0.47 & 1.00 & 1.00 & 0.08\\
+IGCI (cdt, Gaussian reference) & jitter & 0.42 & 0.06 & 0.12 & 0.53 & 0.00 & 0.00 & 0.94\\
+ANM-HSIC & raw & 0.57 & 0.73 & 0.62 & 0.59 & 0.31 & 0.57 & 0.31\\
+ANM-HSIC & jitter & 0.57 & 0.72 & 0.62 & 0.59 & 0.31 & 0.47 & 0.33\\
+RECI & raw & 0.61 & 0.98 & 0.94 & 0.53 & 0.25 & 1.00 & 0.56\\
+RECI & jitter & 0.61 & 0.98 & 0.94 & 0.53 & 0.25 & 1.00 & 0.56\\
+Pairwise LiNGAM & raw & 0.61 & 0.78 & 0.71 & 0.53 & 0.88 & 0.43 & 0.40\\
+Pairwise LiNGAM & jitter & 0.61 & 0.78 & 0.71 & 0.53 & 0.88 & 0.43 & 0.40\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{Reproduction of the compression baseline on the $102$ T\"ubingen pairs (official weights). The published value is $68$ of $102$ pairs, $74.7\%$ weighted.}
+\label{tab:audit}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Quantisation and rows & pairs correct & unweighted & weighted\\
+\midrule
+$\lfloor 256q\rfloor$, all rows & 67 & 0.657 & 0.688\\
+$\lfloor 255q\rfloor$, all rows & 71 & 0.696 & 0.705\\
+$\mathrm{round}(255q)$, all rows & 68 & 0.667 & 0.747\\
+$\mathrm{round}(255q)$, $2000$ rows & 69 & 0.676 & 0.744\\
+$\mathrm{round}(255q)$, no thinning & 69 & 0.676 & 0.753\\
+$\mathrm{round}(255q)$, $500$ rows & 71 & 0.696 & 0.717\\
+floor256, $2000$ random dequantised rows (experiment 42) & 62 & 0.608 & 0.680\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{T\"ubingen accuracy by tercile of $h$ ($34$ pairs per tercile; TRA $24$, $31$, $27$).}
+\label{tab:strata}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Rule & low $h$ & middle & high $h$\\
+\midrule
+ANM-HSIC & 0.97 & 0.56 & 0.29\\
+RESIT & 0.96 & 0.65 & 0.24\\
+ANM, Gaussian process & 0.91 & 0.53 & 0.22\\
+TRA & 0.83 & 0.68 & 0.44\\
+LOCI & 0.82 & 0.62 & 0.50\\
+RECI & 0.68 & 0.68 & 0.47\\
+IGCI & 0.59 & 0.44 & 0.65\\
+Pairwise LiNGAM & 0.65 & 0.53 & 0.65\\
+Compression, round255 & 0.74 & 0.74 & 0.53\\
+Compression, floor256, raw & 0.71 & 0.68 & 0.56\\
+AVICI & 0.53 & 0.56 & 0.68\\
+PDM & 0.56 & 0.35 & 0.29\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{Matched simulated pairs: accuracy against the strength $a$ ($100$ pairs per level). Left: noise scale depends on the cause. Right: independent random scale with the same kind of marginal (control).}
+\label{tab:dose}
+\small
+\begin{tabular}{@{}lcccc|cccc@{}}
+\toprule
+ & \multicolumn{4}{c|}{scale depends on cause} & \multicolumn{4}{c}{independent scale}\\
+Rule & $0$ & $0.5$ & $1$ & $1.5$ & $0$ & $0.5$ & $1$ & $1.5$\\
+\midrule
+ANM-HSIC & 1.00 & 0.49 & 0.12 & 0.21 & 1.00 & 1.00 & 0.99 & 0.89\\
+IGCI & 0.64 & 0.72 & 0.91 & 0.99 & 0.64 & 0.73 & 0.95 & 0.99\\
+RECI & 0.78 & 0.77 & 0.87 & 0.93 & 0.78 & 0.84 & 0.96 & 0.98\\
+\bottomrule
+\end{tabular}
+\end{table}

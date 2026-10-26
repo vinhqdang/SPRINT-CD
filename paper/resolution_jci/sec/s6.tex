@@ -2,7 +2,7 @@
 
 \paragraph{What the evidence supports.} On the collections we examined, rules that test a model of the conditional distribution do not beat rules that read marginal asymmetry or error scale, and no rule leads across collections. This is not because the dependence-based rules are poor: ANM-HSIC, RESIT and the Gaussian-process ANM are right on $91$ to $97\%$ of the least heteroscedastic third of the T\"ubingen pairs and ANM-HSIC is perfect in simulation when its assumption holds. They are reversed when the noise scale depends on the cause, degraded by measurement noise, and unable to use the marginal cue that orients the chamber collections; averaged over a collection that mixes regimes they equal the baselines. The baselines are not robust either: IGCI is at $8\%$ on the Malus pairs and, with or without a jitter on ties, at $6\%$ or $94\%$ on the i.i.d.\ chambers; RECI is at $25\%$ on the Bernoulli pairs; compression is at $38\%$ on the i.i.d.\ chambers. We do not claim that published methods misreport (we reproduced the one table we audited), nor that dependence-based rules cannot be improved: the failed regime-gated rule and the failed predictive validation show the account is incomplete.
 
-\paragraph{Recommendations.}
+\paragraph{Recommendations.} Algorithm~\ref{alg:protocol} lists them as a protocol; the main points are:
 \begin{enumerate}
 \item \emph{Test paired and state the power.} With $102$ pairs the detectable difference is about $19$ points ($27$ after correcting for $78$ comparisons); a gain of two to five points is not resolvable, and about $330$ pairs are needed for $10$ points.
 \item \emph{Report the coverage curve and both weightings.} A single decided-only, weighted or unweighted number selects one point of a multiverse that moves a rule by $11$ to $26$ points and its rank by up to nine places.
@@ -11,6 +11,27 @@
 \item \emph{Report the effective sample size and the number of distinct edges} (seventeen of the nineteen untouched chamber recordings have an effective sample size of about three out of $4000$ rows; the new pair collections have four to eight distinct edges).
 \item \emph{For learned methods, show real-data accuracy next to the simulated test} and how far the real diagnostics lie from the simulator's support.
 \end{enumerate}
+
+
+\begin{algorithm}[t]
+\caption{Evaluating direction rules on a pair benchmark (the protocol of this study, as a checklist).}\label{alg:protocol}
+\begin{algorithmic}[1]
+\State \textbf{Declare before running:} preprocessing (raw arrays; dequantisation only where stated), quantiser and row-cap conventions, tie handling, the reporting universes (weights, row threshold, coverage), and the family of rules to be compared (excluding degenerate rules and duplicate variants).
+\State For every collection record the \emph{cluster} (edge or recording) of each pair.
+\For{each rule and each of $\ge5$ seeds}
+  \State Run on every pair; store the signed score and any missing value.
+\EndFor
+\State Check each rule against an independent implementation on the same pairs; report the agreement.
+\State Per collection and rule report accuracy with a cluster-aware interval (omit it for fewer than nine clusters).
+\For{each pair of rules in the declared family}
+  \State Exact paired test on pairs where both decide; cluster-level sign-flip test; Holm correction over the family.
+\EndFor
+\State Report the detectable difference $(z_{1-\alpha/2}+z_{1-\beta})\sqrt{d/n}$ for the observed discordance rate $d$.
+\State Run the declared reporting universes and the preprocessing grid; report each rule's range and rank span.
+\State Fit a marginal-only classifier with leave-recording-out validation and cross-collection transfer.
+\State Report every departure from this plan, and every convention varied.
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Limitations}\label{sec:limits}
 T\"ubingen has $102$ pairs, Sachs $17$ arcs and the other collections four to $47$ distinct edges, so all inference is as imprecise as Section~\ref{sec:results} says. IGCI, RECI, ANM-HSIC, pairwise LiNGAM, compression and TRA are our implementations (RECI agrees with a published re-run within $0.2$ weighted points; TRA uses our constants); we did not run SLOPE, CAM, SCORE or PNL, and tuning could change a ranking. The multiverse is finite, its choices are ours, its accuracies are computed on overlapping pairs and several scores are not confidences. The heteroscedasticity measure is computed in the true direction and the tercile analysis is post hoc; the manipulation and factorial map use one family of mechanisms, and the factorial simulator does not cover the real collections (Appendix~\ref{app:mech}). The marginal-only classifier is small, and its chamber results concern an actuator-to-sensor design. Why additive-noise rules lose on the chambers and why IGCI fails on Malus are not diagnosed. Analyses designed after the data are labelled as such, and several errors found on internal review (leakage in the marginal classifier, a confounded manipulation, universes with too few pairs) are described where they occurred.
