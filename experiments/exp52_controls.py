@@ -4,7 +4,7 @@ Written and committed before running.
 (A) Marginal-only classifier without leakage through shared variables.  Same features as exp49 (skewness, kurtosis,
     spacing entropy, log fraction of unique values, 1-99% range), same logistic regression.  Protocols:
     (A1) chamber i.i.d.: train on one recording's pairs, test on the other's (and conversely); chamber walks: leave one
-    recording out (19 recordings); Sachs: leave one protein out (train on pairs involving neither protein of the test pair);
+    recording out (five recordings in the data; an earlier wording said 19); Sachs: leave one protein out (train on pairs involving neither protein of the test pair);
     Tuebingen: leave one pair out.  (A2) cross-set transfer: train on all pairs of one set, test on each other set.
     (A3) the same with the log-unique feature removed (it separates discrete actuators from continuous sensors and
     is a measurement artefact when sets are preprocessed differently).  Prediction: accuracy on the chambers stays
