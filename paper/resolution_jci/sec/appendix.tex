@@ -84,7 +84,7 @@ BTAD & block-replicated additive gains & highest precision ($0.60$) but recall $
 LRG & gradient boosting on block-gain features, trained on simulations & $F_1$ $0.36$ (chambers), $0.67$ (Sachs); within-recording AUC $0.55$\\
 PDM & pair classifier trained on $40000$ simulated pairs & $95\%$ on simulated pairs, $40.2\%$ on T\"ubingen\\
 Block-ICP & invariant causal prediction with time blocks & empty graphs, $F_1\le 0.07$ on development recordings\\
-Compression, TRA, BF-BIC (exp 42--43, 54) & re-implemented 2025--2026 methods & compression: $60.8$--$64.7\%$ with our first implementation, $66.7\%$ ($74.7\%$ weighted) faithful, $38.3\%$ on i.i.d.\ chambers; TRA $64.6\%$ ($86.2\%$ on i.i.d.\ chambers); BF-BIC with BOSS: Sachs $0.67$, walks $0.42$\\
+Compression, TRA, BF-BIC (exp 42--43, 54) & re-implemented 2025--2026 methods & compression: $60.8$--$64.7\%$ with the floor256 variant, $66.7\%$ ($74.7\%$ weighted) round255, $38.3\%$ on i.i.d.\ chambers; TRA $64.6\%$ ($86.2\%$ on i.i.d.\ chambers); BF-BIC with BOSS: Sachs $0.67$, walks $0.42$\\
 Interventional route (pilot) & shift of each sensor under each intervened actuator (light tunnel) & KS: precision $1.00$, recall $0.72$ ($28$ of $39$ arcs), AUC $0.91$; the missed arcs show no shift; conditional version recall $0.79$ at precision $0.51$\\
 Published packages (exp 45--46) & AVICI, GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV & best: BOSS $0.55$ i.i.d.\ chambers; GRaSP $0.68$, BOSS $0.65$ large-ESS; Sachs $\le0.56$; walks $\le0.37$; many neural timeouts\\
 GATE (exp 51) & ANM-HSIC when a symmetric heteroscedasticity diagnostic is low, else RECI & T\"ubingen $65.7\%$ against $60.8\%$ ($p=0.30$); chambers $75.5\%$, $77.0\%$ against $97.9\%$, $94.3\%$\\
@@ -96,25 +96,25 @@ Predictive validation (exp 57) & nearest simulated neighbours predict each rule'
 \section{Additional tables}\label{app:tables}
 
 \begin{table}[ht]
-\caption{Accuracy with $95\%$ cluster-bootstrap intervals for every rule and collection (clusters: pairs for T\"ubingen and Sachs, edges for the i.i.d.\ chambers and the three new collections, recordings for the walks).}
+\caption{Accuracy with $95\%$ cluster-bootstrap intervals for every rule and collection (clusters: pairs for T\"ubingen and Sachs, edges for the i.i.d.\ chambers and the three new collections, recordings for the walks); for collections with $8$ or fewer clusters (the five-recording walks, Bernoulli, changepoints, Malus) only the accuracy is given because the interval is degenerate.}
 \label{tab:collections_ci}
 \scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 Rule & T\"ubingen & iid & walks & walks (19)\\
 \midrule
-IGCI & 0.56 [0.46,0.66] & 0.94 [0.85,1.00] & 0.89 [0.71,0.99] & 0.96 [0.91,0.99]\\
-RECI & 0.61 [0.51,0.70] & 0.98 [0.94,1.00] & 0.94 [0.86,1.00] & 0.83 [0.79,0.87]\\
-ANM-HSIC & 0.61 [0.51,0.71] & 0.72 [0.61,0.83] & 0.63 [0.47,0.81] & 0.43 [0.38,0.50]\\
-Pairwise LiNGAM & 0.61 [0.51,0.70] & 0.78 [0.68,0.87] & 0.71 [0.60,0.80] & 0.67 [0.62,0.72]\\
-PDM & 0.40 [0.30,0.50] & 0.93 [0.84,0.99] & 0.84 [0.58,0.97] & --\\
-LOCI & 0.65 [0.56,0.74] & 0.77 [0.66,0.86] & 0.68 [0.57,0.84] & --\\
-ANM, Gaussian process & 0.55 [0.46,0.65] & 0.77 [0.68,0.87] & 0.67 [0.55,0.81] & --\\
-Compression, first impl. & 0.61 [0.52,0.70] & 0.30 [0.19,0.40] & 0.61 [0.48,0.69] & --\\
-Compression, faithful & 0.67 [0.58,0.75] & 0.38 [0.29,0.48] & 0.52 [0.45,0.57] & 0.50 [0.43,0.57]\\
-TRA & 0.65 [0.54,0.75] & 0.86 [0.77,0.94] & 0.61 [0.40,0.76] & 0.56 [0.50,0.61]\\
-AVICI & 0.59 [0.49,0.69] & 0.90 [0.82,0.97] & 0.56 [0.42,0.70] & 0.63 [0.58,0.68]\\
-RESIT & 0.61 [0.52,0.70] & 0.71 [0.61,0.81] & 0.65 [0.52,0.79] & 0.48 [0.43,0.53]\\
+IGCI & 0.56 [0.46,0.66] & 0.94 [0.85,1.00] & 0.89 & 0.96 [0.91,0.99]\\
+RECI & 0.61 [0.51,0.70] & 0.98 [0.94,1.00] & 0.94 & 0.83 [0.79,0.87]\\
+ANM-HSIC & 0.61 [0.51,0.71] & 0.72 [0.61,0.83] & 0.63 & 0.43 [0.38,0.50]\\
+Pairwise LiNGAM & 0.61 [0.51,0.70] & 0.78 [0.68,0.87] & 0.71 & 0.67 [0.62,0.72]\\
+PDM & 0.40 [0.30,0.50] & 0.93 [0.84,0.99] & 0.84 & --\\
+LOCI & 0.65 [0.56,0.74] & 0.77 [0.66,0.86] & 0.68 & --\\
+ANM, Gaussian process & 0.55 [0.46,0.65] & 0.77 [0.68,0.87] & 0.67 & --\\
+Compression, floor256 & 0.61 [0.52,0.70] & 0.30 [0.19,0.40] & 0.61 & --\\
+Compression, round255 & 0.67 [0.58,0.75] & 0.38 [0.29,0.48] & 0.52 & 0.50 [0.43,0.57]\\
+TRA & 0.65 [0.54,0.75] & 0.86 [0.77,0.94] & 0.61 & 0.56 [0.50,0.61]\\
+AVICI & 0.59 [0.49,0.69] & 0.90 [0.82,0.97] & 0.56 & 0.63 [0.58,0.68]\\
+RESIT & 0.61 [0.52,0.70] & 0.71 [0.61,0.81] & 0.65 & 0.48 [0.43,0.53]\\
 \bottomrule
 \end{tabular}
 \medskip
@@ -123,24 +123,24 @@ RESIT & 0.61 [0.52,0.70] & 0.71 [0.61,0.81] & 0.65 [0.52,0.79] & 0.48 [0.43,0.53
 \toprule
 Rule & Sachs & Bernoulli & Changepoints & Malus\\
 \midrule
-IGCI & 0.65 [0.41,0.88] & 1.00 [1.00,1.00] & 1.00 [1.00,1.00] & 0.08 [0.00,0.17]\\
-RECI & 0.53 [0.29,0.76] & 0.25 [0.00,0.62] & 1.00 [1.00,1.00] & 0.56 [0.52,0.58]\\
-ANM-HSIC & 0.59 [0.35,0.82] & 0.31 [0.06,0.62] & 0.57 [0.29,0.84] & 0.31 [0.27,0.33]\\
-Pairwise LiNGAM & 0.53 [0.29,0.76] & 0.88 [0.69,1.00] & 0.43 [0.24,0.60] & 0.40 [0.21,0.58]\\
+IGCI & 0.65 [0.41,0.88] & 1.00 & 1.00 & 0.08\\
+RECI & 0.53 [0.29,0.76] & 0.25 & 1.00 & 0.56\\
+ANM-HSIC & 0.59 [0.35,0.82] & 0.31 & 0.57 & 0.31\\
+Pairwise LiNGAM & 0.53 [0.29,0.76] & 0.88 & 0.43 & 0.40\\
 PDM & -- & -- & -- & --\\
-LOCI & 0.47 [0.24,0.71] & 0.56 [0.38,0.75] & 0.80 [0.57,0.97] & 0.38 [0.29,0.46]\\
-ANM, Gaussian process & 0.56 [0.32,0.79] & 0.47 [0.22,0.72] & 0.54 [0.38,0.66] & 0.33 [0.25,0.50]\\
-Compression, first impl. & 0.76 [0.53,0.94] & -- & -- & --\\
-Compression, faithful & 0.65 [0.41,0.88] & 0.50 [0.19,0.81] & 1.00 [1.00,1.00] & 0.60 [0.48,0.71]\\
-TRA & 0.59 [0.35,0.82] & 0.62 [0.38,0.88] & -- & 0.54 [0.46,0.62]\\
-AVICI & 0.53 [0.29,0.76] & 0.62 [0.25,1.00] & 0.40 [0.17,0.67] & 0.02 [0.00,0.06]\\
-RESIT & 0.47 [0.29,0.65] & 0.25 [0.06,0.44] & 0.53 [0.24,0.77] & 0.50 [0.50,0.50]\\
+LOCI & 0.47 [0.24,0.71] & 0.56 & 0.80 & 0.38\\
+ANM, Gaussian process & 0.56 [0.32,0.79] & 0.47 & 0.54 & 0.33\\
+Compression, floor256 & 0.76 [0.53,0.94] & -- & -- & --\\
+Compression, round255 & 0.65 [0.41,0.88] & 0.50 & 1.00 & 0.60\\
+TRA & 0.59 [0.35,0.82] & 0.62 & -- & 0.54\\
+AVICI & 0.53 [0.29,0.76] & 0.62 & 0.40 & 0.02\\
+RESIT & 0.47 [0.29,0.65] & 0.25 & 0.53 & 0.50\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[ht]
-\caption{The ten reporting universes with at least $30$ pairs per rule: weighting, minimum number of rows, coverage (\%), pairs in the subset, smallest number of pairs evaluated for any rule, and the accuracy of each rule (a subset of the columns of Table~\ref{tab:multi}; CmpF: faithful compression; the other four columns are in the repository file \texttt{results/exp47\_multiverse.json}).}
+\caption{The ten reporting universes with at least $30$ pairs per rule: weighting, minimum number of rows, coverage (\%), pairs in the subset, smallest number of pairs evaluated for any rule, and the accuracy of each rule (a subset of the columns of Table~\ref{tab:multi}; CmpF: round255 compression; the other four columns are in the repository file \texttt{results/exp47\_multiverse.json}).}
 \label{tab:universes}
 \tiny\setlength{\tabcolsep}{1.5pt}
 \begin{tabular}{@{}lrrrrccccccccc@{}}
@@ -197,7 +197,7 @@ CAM-UV & 0.11 & [0.00, 0.33]\\
 
 \begingroup\scriptsize\setlength{\tabcolsep}{2.5pt}
 \begin{longtable}{@{}lllccccccccc@{}}
-\caption{Factorial simulation, accuracy per cell (25 pairs each; cause marginal, noise scale, measurement noise, $n$; rules in the order IGCI, RECI, ANM-HSIC, LiNGAM, compression (faithful), RESIT, AVICI).}\label{tab:cells}\\
+\caption{Factorial simulation, accuracy per cell (25 pairs each; cause marginal, noise scale, measurement noise, $n$; rules in the order IGCI, RECI, ANM-HSIC, LiNGAM, compression (round255), RESIT, AVICI).}\label{tab:cells}\\
 \toprule
 Mech. & Cause & Scale & Meas. & $n$ & IGCI & RECI & ANM-H & LiNGAM & Cmpr. & RESIT & AVICI\\
 \midrule
@@ -373,3 +373,94 @@ Malus & +0.51 (0.06) & -0.16 (0.60) & -0.02 (1.00) & -0.07 (0.90) & -0.02 (1.00)
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{table}[ht]
+\caption{All $18$ conventions of the compression rule on the $102$ T\"ubingen pairs (quantiser $\times$ row cap; rows thinned linearly above the cap). The published value is $68$ pairs, $74.7\%$ weighted. Source: \texttt{results/exp54\_audit\_conventions.json}.}
+\label{tab:grid18}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Quantiser & Row cap & Pairs correct & Unweighted & Weighted\\
+\midrule
+floor256 & 500 & 64 & 0.627 & 0.627\\
+floor256 & 1000 & 67 & 0.657 & 0.697\\
+floor256 & 2000 & 63 & 0.618 & 0.648\\
+floor256 & 4000 & 69 & 0.676 & 0.708\\
+floor256 & 8000 & 67 & 0.657 & 0.688\\
+floor256 & none & 67 & 0.657 & 0.688\\
+floor255 & 500 & 69 & 0.676 & 0.697\\
+floor255 & 1000 & 69 & 0.676 & 0.695\\
+floor255 & 2000 & 67 & 0.657 & 0.682\\
+floor255 & 4000 & 71 & 0.696 & 0.702\\
+floor255 & 8000 & 71 & 0.696 & 0.705\\
+floor255 & none & 71 & 0.696 & 0.705\\
+round255 & 500 & 71 & 0.696 & 0.717\\
+round255 & 1000 & 70 & 0.686 & 0.740\\
+round255 & 2000 & 69 & 0.676 & 0.744\\
+round255 & 4000 & 68 & 0.667 & 0.740\\
+round255 & 8000 & 68 & 0.667 & 0.747\\
+round255 & none & 69 & 0.676 & 0.753\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Further mechanism evidence}\label{app:mech}
+\subsection{A factorial map}\label{sec:factorial}
+To see the regimes together we crossed five factors (experiment 56): the mechanism ($\tanh 2c$, $c^3/3$, $\sin 1.5c$), the cause marginal (uniform, normal, bimodal, five-level discrete), the noise scale (homoscedastic, cause-dependent, independent random), measurement noise on both variables ($0$ or $0.3$ sd), and $n\in\{200,1000\}$: $144$ cells of $25$ pairs ($3600$ pairs), seven rules. Table~\ref{tab:factorial} gives the accuracy by factor level and Table~\ref{tab:factorial2} the interaction of the noise scale with measurement noise.
+
+\begin{table}[t]
+\caption{Factorial simulation (3600 pairs): accuracy of seven rules averaged over the other factors.}
+\label{tab:factorial}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccccccc@{}}
+\toprule
+Factor & Level & IGCI & RECI & ANM-HSIC & LiNGAM & Compr. & RESIT & AVICI\\
+\midrule
+mechanism & tanh & 0.66 & 0.71 & 0.42 & 0.16 & 0.65 & 0.46 & 0.66\\
+mechanism & cubic & 0.87 & 1.00 & 0.70 & 0.54 & 0.75 & 0.75 & 0.19\\
+mechanism & sin & 0.55 & 0.95 & 0.73 & 0.81 & 0.74 & 0.75 & 0.85\\
+cause marginal & uniform & 0.94 & 0.95 & 0.52 & 0.34 & 0.84 & 0.53 & 0.49\\
+cause marginal & normal & 0.61 & 0.72 & 0.64 & 0.36 & 0.84 & 0.68 & 0.89\\
+cause marginal & bimodal & 0.75 & 0.89 & 0.63 & 0.59 & 0.79 & 0.68 & 0.36\\
+cause marginal & discrete5 & 0.47 & 0.97 & 0.68 & 0.71 & 0.39 & 0.72 & 0.53\\
+noise scale & homoscedastic & 0.56 & 0.82 & 0.82 & 0.50 & 0.68 & 0.84 & 0.55\\
+noise scale & cause & 0.74 & 0.90 & 0.28 & 0.56 & 0.72 & 0.36 & 0.66\\
+noise scale & independent scale & 0.78 & 0.94 & 0.75 & 0.45 & 0.74 & 0.76 & 0.49\\
+measurement noise & 0 & 0.61 & 0.92 & 0.64 & 0.50 & 0.70 & 0.67 & 0.58\\
+measurement noise & 1 & 0.77 & 0.85 & 0.59 & 0.50 & 0.73 & 0.64 & 0.56\\
+n & 200 & 0.66 & 0.87 & 0.61 & 0.52 & 0.62 & 0.66 & 0.58\\
+n & 1000 & 0.73 & 0.90 & 0.62 & 0.48 & 0.81 & 0.65 & 0.55\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Factorial simulation: noise scale $\times$ measurement noise.}
+\label{tab:factorial2}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccccccc@{}}
+\toprule
+Noise scale & Meas. noise & IGCI & RECI & ANM-HSIC & LiNGAM & Compr. & RESIT & AVICI\\
+\midrule
+homoscedastic & no & 0.47 & 0.89 & 0.95 & 0.49 & 0.67 & 0.95 & 0.54\\
+homoscedastic & yes & 0.64 & 0.76 & 0.69 & 0.50 & 0.69 & 0.74 & 0.55\\
+cause-dependent & no & 0.68 & 0.91 & 0.06 & 0.55 & 0.71 & 0.17 & 0.68\\
+cause-dependent & yes & 0.81 & 0.89 & 0.49 & 0.56 & 0.73 & 0.54 & 0.65\\
+independent scale & no & 0.69 & 0.98 & 0.91 & 0.46 & 0.70 & 0.89 & 0.52\\
+independent scale & yes & 0.86 & 0.90 & 0.60 & 0.45 & 0.78 & 0.64 & 0.47\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The additive-noise rules are near-perfect only without cause-dependent scale and without measurement noise (ANM-HSIC $0.95$ and RESIT $0.95$ with homoscedastic noise, $0.91$ and $0.89$ with the independent scale), fall to $0.69$ and $0.74$ with measurement noise alone, and to $0.06$ and $0.17$ with a cause-dependent scale; measurement noise partly masks the reversal ($0.49$, $0.54$). IGCI and the round255 compression are the weakest rules when the cause is discrete ($0.47$ and $0.39$; the simulated arrays carry the $10^{-6}$ jitter under which IGCI reverses, Section~\ref{sec:ties}, so the IGCI figure is partly a tie artefact); IGCI is more accurate with measurement noise than without ($0.77$ against $0.61$); the round255 compression depends on $n$ ($0.62$ at $200$, $0.81$ at $1000$); AVICI fails on the cubic mechanism ($0.19$) and is at $0.49$ for the uniform cause. RECI has the highest average accuracy in $12$ of the $14$ factor levels (the exceptions are the normal cause, where AVICI is at $0.89$ against $0.72$, and homoscedastic noise, where RESIT is at $0.84$ against $0.82$). Which factor breaks which rule is rule-specific.
+
+\subsection{An assumption-gated rule fails}\label{sec:gate}
+If the regimes explain the T\"ubingen average, a rule that identifies the regime should beat both of its branches. We froze GATE on simulation before touching a real pair (experiment 51): $h_{\min}=\min(h(x\to y),h(y\to x))$, symmetric in the variables, threshold at the $95$th percentile of $h_{\min}$ on $200$ homoscedastic simulated pairs ($0.058$ at $n=500$); GATE returns the ANM-HSIC direction when $h_{\min}\le 0.058$ and the RECI direction otherwise. The pre-specified predictions were an accuracy of at least $0.70$ on T\"ubingen and, on the chambers, within $0.05$ of RECI. Both failed. On T\"ubingen GATE has $65.7\%$ ($77.1\%$ with the official weights) against $60.8\%$ ($70.9\%$) for RECI; it routes $34\%$ of the pairs to ANM-HSIC and the difference to RECI is not significant (exact McNemar $10$ against $5$, $p=0.30$). On the i.i.d.\ chambers GATE has $75.5\%$ against $97.9\%$ ($0$ against $21$ discordant pairs, $p<10^{-6}$) and on the walks $77.0\%$ against $94.3\%$ ($p<10^{-6}$), because it sends $88\%$ and $62\%$ of those pairs to ANM-HSIC, which is right on $72\%$ and $63\%$ of the whole collections (we did not store its accuracy on the routed subset). The threshold was set at $n=500$, the chamber pairs have $n=2000$ and the null spread of $|\rho|$ shrinks with $n$, so the routing is not comparable across sets; an $n$-aware threshold was not tried. The Sachs pairs were not evaluated (no stored ANM-HSIC decision under the same preprocessing). GATE is a negative result and is not offered as a method.
+
+\subsection{An attempt to predict real accuracy from the factorial map fails}\label{sec:predict}
+The strongest test of an explanation is that it predicts. For every real pair we computed seven label-free diagnostics (minimum heteroscedasticity over the two directions, log fraction of unique values, minimum and maximum excess kurtosis, maximum absolute skewness, log absolute Spearman correlation, $\log n$), found its $100$ nearest neighbours among the $3600$ simulated pairs of Section~\ref{sec:factorial}, and predicted each rule's accuracy by the neighbours' mean correctness (experiment 57). The pre-specified criteria were a Spearman correlation of at least $0.5$ between predicted and observed accuracy over the $49$ (collection, rule) cells, a smaller RMSE than the constant prediction (each rule's overall simulation accuracy), and the rule predicted best being among the two best observed on at least four of the seven collections.
+
+The first run was invalid as implemented: the unique-fraction diagnostic was constant in the simulation (computed on jittered arrays), so real pairs with tied values had standardised values around $-3\times10^{9}$ and the neighbours were arbitrary (Spearman $-0.01$). Revision 2 computes simulated and real diagnostics identically (the simulator is deterministic) and reports how far the real pairs are from the simulation; it failed (Spearman $0.17$, RMSE $0.30$ against $0.26$). Revision 3 replaces the observed decisions of the three new collections, which had been computed on jittered arrays, by the raw-array ones (Section~\ref{sec:ties}); it is the version reported here. It fails as well: Spearman $0.006$ (criterion $0.5$), RMSE $0.31$ against $0.24$ for the constant prediction, while the criterion that the predicted best rule is among the two best observed is met on $4$ of $7$ collections (it is nearly degenerate: RECI is predicted best for every collection, and is among the two best observed on four of the seven; IGCI is observed best or second on five). The pair-level criterion, the AUC of the predicted correctness for the observed correctness, was also pre-specified and gives $0.66$ for RESIT, $0.62$ for ANM-HSIC, $0.55$ for RECI and AVICI and $0.41$ to $0.48$ for IGCI, pairwise LiNGAM and compression, so the prediction carries some pair-level information for the two additive-noise rules and none for the others. The reason for the failure is visible in the support: the median distance from a real pair to its nearest simulated pair, in units of the simulation's standard deviations (a Euclidean metric on seven standardised diagnostics), is $2.3$ for T\"ubingen, $2.8$--$3.4$ for the chamber collections, $4.4$--$4.6$ for the Bernoulli and changepoint collections, $8.9$ for Sachs and $13.1$ for Malus, against a $95$th-percentile leave-one-out distance of $0.76$ within the simulation; at most $5\%$ of the pairs of any collection lie within the simulation's support. The factorial simulator illustrates mechanisms and cannot be used to predict accuracy on these real collections. (The simulated rules ran on jittered arrays; only the discrete-cause cells have ties, where IGCI's simulated accuracy would change with the tie convention.) The explanation of Sections~\ref{sec:marg}--\ref{sec:factorial} is therefore a set of demonstrated mechanisms, not a validated predictive model, and we do not claim that it accounts for the whole of the differences between the collections.
+

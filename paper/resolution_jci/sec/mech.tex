@@ -25,32 +25,34 @@ The unique-fraction feature separates discrete actuators from continuous sensors
 
 \emph{Transfer across collections.} A classifier trained on the $102$ T\"ubingen pairs orients $87.2\%$ of the i.i.d.\ chamber pairs and $91.8\%$ of the walk pairs; one trained on the $17$ Sachs pairs orients $100\%$ of the i.i.d.\ chamber pairs ($96.8\%$ without the unique-fraction feature) and $81.1\%$ of the walk pairs; one trained on the chambers does not orient T\"ubingen ($52\%$ for the i.i.d.-trained and $58\%$ for the walk-trained model); Sachs is oriented by the walk-trained model ($100\%$, $88\%$ without the unique-fraction feature) but not by the i.i.d.-trained one ($53\%$; the Sachs set has $17$ pairs). Figure~\ref{fig:transfer} shows the matrix. The marginal asymmetry between an experimenter-set actuator and a sensor is a property shared by every device, and it is not present in T\"ubingen in a way that transfers: on T\"ubingen the marginal-only accuracy ($57.8$--$59.0\%$) is within the sampling error of chance and of most dependence-based rules.
 
+\emph{Design confound.} In the chamber collections the cause is an actuator set by the experimenter and the effect a sensor, so a classifier that separates ``actuator-like'' from ``sensor-like'' marginals orients the pairs without any information about causation in general; the result concerns what these benchmarks reward, not what marginals say about cause and effect. The Sachs result rests on $17$ pairs and the Sachs transfer in the other direction is at chance (T\"ubingen to Sachs $47\%$, i.i.d.\ chambers to Sachs $53\%$; only the walk-trained model reaches $100\%$ on it).
+
 \emph{What this does and does not show.} It does not show that RECI or IGCI use only the marginals: both read the scale of regression errors and the marginal density. It shows that the chamber collections can be oriented from the marginals alone, so a rule that is sensitive to marginal asymmetry will do well on them for reasons that have nothing to do with conditional structure, and that a rule that tests only the conditional model, such as an additive-noise test, has no reason to profit. That the chamber rankings (Figure~\ref{fig:collections}) look like the marginal cue and the T\"ubingen ranking does not is consistent with this and is the first leg of the explanation.
 
 \subsection{Additive-noise rules work in one regime and reverse in another}\label{sec:regimes}
-\emph{Hypothesis.} The additive-noise family loses where its assumption fails. For every T\"ubingen pair we measured the heteroscedasticity of the residuals of a cross-fitted additive-spline regression of the true effect on the true cause: $h=|\rho_S(|r|,x)|$ with $\rho_S$ the Spearman correlation (six knots, ridge penalty one, two folds). Table~\ref{tab:h2} gives, for each rule, the mean $h$ on the pairs it orients wrongly and rightly. The four noise-model rules show a large difference: ANM-HSIC $0.32$ against $0.13$, the Gaussian-process ANM $0.29$ against $0.10$, RESIT $0.34$ against $0.13$, LOCI $0.27$ against $0.17$ (one-sided Mann--Whitney, $p\le 0.0014$ for each); also TRA ($p=0.004$) and, weakly, RECI ($p=0.021$) and PDM ($p=0.021$); not IGCI ($p=0.71$), pairwise LiNGAM ($p=0.25$), AVICI ($p=0.93$) or the compression rules ($p=0.075$ to $0.095$). Pooling the decisions of the four noise-model rules ($396$ decisions) in a logistic regression of correctness on the standardised $h$ and $\log n$, one standard deviation of $h$ multiplies the odds of a correct decision by $0.26$ (we do not report the $p$-value, which is not interpretable because the four rules are scored on the same pairs); $n$ has no effect. We had predicted that RECI would not show the effect; it does, mildly.
+\emph{Hypothesis.} The additive-noise family loses where its assumption fails. For every T\"ubingen pair we measured the heteroscedasticity of the residuals of a cross-fitted additive-spline regression of the true effect on the true cause: $h=|\rho_S(|r|,x)|$ with $\rho_S$ the Spearman correlation (six knots, ridge penalty one, two folds). Table~\ref{tab:h2} gives, for each rule, the mean $h$ on the pairs it orients wrongly and rightly. The four noise-model rules show a large difference: ANM-HSIC $0.32$ against $0.13$, the Gaussian-process ANM $0.29$ against $0.10$, RESIT $0.34$ against $0.13$, LOCI $0.27$ against $0.17$ (one-sided Mann--Whitney; Holm-adjusted $p\le 0.014$ for each, $3\times10^{-8}$ for ANM-HSIC and the Gaussian-process ANM); also TRA (adjusted $p=0.036$); not RECI and PDM (raw $0.021$, adjusted $0.17$), IGCI, pairwise LiNGAM, AVICI or the compression rules (adjusted $p\ge 0.45$). Pooling the decisions of the four noise-model rules ($396$ decisions) in a logistic regression of correctness on the standardised $h$ and $\log n$, one standard deviation of $h$ multiplies the odds of a correct decision by $0.26$ (we do not report the $p$-value, which is not interpretable because the four rules are scored on the same pairs); $n$ has no effect.
 
 \begin{table}[t]
-\caption{T\"ubingen: mean residual heteroscedasticity $h$ (true direction) on the pairs a rule orients wrongly and rightly; $p$: one-sided Mann--Whitney test that $h$ is larger on the wrong pairs. Twelve rules, no multiplicity correction.}
+\caption{T\"ubingen: mean residual heteroscedasticity $h$ (true direction) on the pairs a rule orients wrongly and rightly; $p$: one-sided Mann--Whitney test that $h$ is larger on the wrong pairs. Twelve rules; $p_{\rm adj}$: Holm over the twelve.}
 \label{tab:h2}
 \small
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lccccc@{}}
 \toprule
-Rule & wrong/right & $h$ wrong & $h$ right & $p$\\
+Rule & wrong/right & $h$ wrong & $h$ right & $p$ & $p_{\rm adj}$\\
 \midrule
-IGCI & 45/57 & 0.19 & 0.22 & 0.707\\
-RECI & 40/62 & 0.25 & 0.17 & 0.021\\
-ANM-HSIC & 40/62 & 0.32 & 0.13 & 0.000\\
-Pairwise LiNGAM & 40/62 & 0.22 & 0.19 & 0.245\\
-PDM & 61/41 & 0.22 & 0.18 & 0.021\\
-LOCI & 36/66 & 0.27 & 0.17 & 0.001\\
-ANM, Gaussian process & 42/53 & 0.29 & 0.10 & 0.000\\
-Compression, first impl. & 40/62 & 0.22 & 0.19 & 0.088\\
-Compression, first impl., raw & 36/66 & 0.22 & 0.19 & 0.095\\
-TRA & 29/53 & 0.26 & 0.17 & 0.004\\
-Compression, faithful & 34/68 & 0.23 & 0.19 & 0.075\\
-AVICI & 42/60 & 0.18 & 0.22 & 0.926\\
-RESIT & 37/60 & 0.34 & 0.13 & 0.000\\
+IGCI & 45/57 & 0.19 & 0.22 & 0.707 & 1\\
+RECI & 40/62 & 0.25 & 0.17 & 0.0214 & 0.165\\
+ANM-HSIC & 40/62 & 0.32 & 0.13 & 2.67e-09 & 3.2e-08\\
+Pairwise LiNGAM & 40/62 & 0.22 & 0.19 & 0.245 & 0.736\\
+PDM & 61/41 & 0.22 & 0.18 & 0.0206 & 0.165\\
+LOCI & 36/66 & 0.27 & 0.17 & 0.00141 & 0.0141\\
+ANM, Gaussian process & 42/53 & 0.29 & 0.10 & 2.83e-09 & 3.2e-08\\
+Compression, floor256 & 40/62 & 0.22 & 0.19 & 0.0879 & 0.452\\
+Compression, floor256, raw & 36/66 & 0.22 & 0.19 & 0.0946 & 0.452\\
+TRA & 29/53 & 0.26 & 0.17 & 0.00405 & 0.0365\\
+Compression, round255 & 34/68 & 0.23 & 0.19 & 0.0753 & 0.452\\
+AVICI & 42/60 & 0.18 & 0.22 & 0.926 & 1\\
+RESIT & 37/60 & 0.34 & 0.13 & 7.98e-10 & 1.04e-08\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -73,8 +75,8 @@ LOCI & 0.82 & 0.62 & 0.50\\
 RECI & 0.68 & 0.68 & 0.47\\
 IGCI & 0.59 & 0.44 & 0.65\\
 Pairwise LiNGAM & 0.65 & 0.53 & 0.65\\
-Compression, faithful & 0.74 & 0.74 & 0.53\\
-Compression, first impl., raw & 0.71 & 0.68 & 0.56\\
+Compression, round255 & 0.74 & 0.74 & 0.53\\
+Compression, floor256, raw & 0.71 & 0.68 & 0.56\\
 AVICI & 0.53 & 0.56 & 0.68\\
 PDM & 0.56 & 0.35 & 0.29\\
 \bottomrule
@@ -114,64 +116,8 @@ RECI & 0.78 & 0.77 & 0.87 & 0.93 & 0.78 & 0.84 & 0.96 & 0.98\\
 \label{fig:dose}
 \end{figure}
 
-\subsection{A factorial map}\label{sec:factorial}
-To see the regimes together we crossed five factors (experiment 56): the mechanism ($\tanh 2c$, $c^3/3$, $\sin 1.5c$), the cause marginal (uniform, normal, bimodal, five-level discrete), the noise scale (homoscedastic, cause-dependent, independent random), measurement noise on both variables ($0$ or $0.3$ sd), and $n\in\{200,1000\}$: $144$ cells of $25$ pairs ($3600$ pairs), seven rules. Table~\ref{tab:factorial} gives the accuracy by factor level and Table~\ref{tab:factorial2} the interaction of the noise scale with measurement noise.
-
-\begin{table}[t]
-\caption{Factorial simulation (3600 pairs): accuracy of seven rules averaged over the other factors.}
-\label{tab:factorial}
-\small
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llccccccc@{}}
-\toprule
-Factor & Level & IGCI & RECI & ANM-HSIC & LiNGAM & Compr. & RESIT & AVICI\\
-\midrule
-mechanism & tanh & 0.66 & 0.71 & 0.42 & 0.16 & 0.65 & 0.46 & 0.66\\
-mechanism & cubic & 0.87 & 1.00 & 0.70 & 0.54 & 0.75 & 0.75 & 0.19\\
-mechanism & sin & 0.55 & 0.95 & 0.73 & 0.81 & 0.74 & 0.75 & 0.85\\
-cause marginal & uniform & 0.94 & 0.95 & 0.52 & 0.34 & 0.84 & 0.53 & 0.49\\
-cause marginal & normal & 0.61 & 0.72 & 0.64 & 0.36 & 0.84 & 0.68 & 0.89\\
-cause marginal & bimodal & 0.75 & 0.89 & 0.63 & 0.59 & 0.79 & 0.68 & 0.36\\
-cause marginal & discrete5 & 0.47 & 0.97 & 0.68 & 0.71 & 0.39 & 0.72 & 0.53\\
-noise scale & homoscedastic & 0.56 & 0.82 & 0.82 & 0.50 & 0.68 & 0.84 & 0.55\\
-noise scale & cause & 0.74 & 0.90 & 0.28 & 0.56 & 0.72 & 0.36 & 0.66\\
-noise scale & independent scale & 0.78 & 0.94 & 0.75 & 0.45 & 0.74 & 0.76 & 0.49\\
-measurement noise & 0 & 0.61 & 0.92 & 0.64 & 0.50 & 0.70 & 0.67 & 0.58\\
-measurement noise & 1 & 0.77 & 0.85 & 0.59 & 0.50 & 0.73 & 0.64 & 0.56\\
-n & 200 & 0.66 & 0.87 & 0.61 & 0.52 & 0.62 & 0.66 & 0.58\\
-n & 1000 & 0.73 & 0.90 & 0.62 & 0.48 & 0.81 & 0.65 & 0.55\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[t]
-\caption{Factorial simulation: noise scale $\times$ measurement noise.}
-\label{tab:factorial2}
-\small
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llccccccc@{}}
-\toprule
-Noise scale & Meas. noise & IGCI & RECI & ANM-HSIC & LiNGAM & Compr. & RESIT & AVICI\\
-\midrule
-homoscedastic & no & 0.47 & 0.89 & 0.95 & 0.49 & 0.67 & 0.95 & 0.54\\
-homoscedastic & yes & 0.64 & 0.76 & 0.69 & 0.50 & 0.69 & 0.74 & 0.55\\
-cause-dependent & no & 0.68 & 0.91 & 0.06 & 0.55 & 0.71 & 0.17 & 0.68\\
-cause-dependent & yes & 0.81 & 0.89 & 0.49 & 0.56 & 0.73 & 0.54 & 0.65\\
-independent scale & no & 0.69 & 0.98 & 0.91 & 0.46 & 0.70 & 0.89 & 0.52\\
-independent scale & yes & 0.86 & 0.90 & 0.60 & 0.45 & 0.78 & 0.64 & 0.47\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The additive-noise rules are near-perfect only without cause-dependent scale and without measurement noise (ANM-HSIC $0.95$ and RESIT $0.95$ with homoscedastic noise, $0.91$ and $0.89$ with the independent scale), fall to $0.69$ and $0.74$ with measurement noise alone, and to $0.06$ and $0.17$ with a cause-dependent scale; measurement noise partly masks the reversal ($0.49$, $0.54$). IGCI and the faithful compression are the weakest rules when the cause is discrete ($0.47$ and $0.39$; the simulated arrays carry the $10^{-6}$ jitter under which IGCI reverses, Section~\ref{sec:ties}, so the IGCI figure is partly a tie artefact); IGCI is more accurate with measurement noise than without ($0.77$ against $0.61$); the faithful compression depends on $n$ ($0.62$ at $200$, $0.81$ at $1000$); AVICI fails on the cubic mechanism ($0.19$) and is at $0.49$ for the uniform cause. RECI has the highest average accuracy in $12$ of the $14$ factor levels (the exceptions are the normal cause, where AVICI is at $0.89$ against $0.72$, and homoscedastic noise, where RESIT is at $0.84$ against $0.82$). Which factor breaks which rule is rule-specific.
-
-\subsection{An assumption-gated rule fails}\label{sec:gate}
-If the regimes explain the T\"ubingen average, a rule that identifies the regime should beat both of its branches. We froze GATE on simulation before touching a real pair (experiment 51): $h_{\min}=\min(h(x\to y),h(y\to x))$, symmetric in the variables, threshold at the $95$th percentile of $h_{\min}$ on $200$ homoscedastic simulated pairs ($0.058$ at $n=500$); GATE returns the ANM-HSIC direction when $h_{\min}\le 0.058$ and the RECI direction otherwise. The pre-specified predictions were an accuracy of at least $0.70$ on T\"ubingen and, on the chambers, within $0.05$ of RECI. Both failed. On T\"ubingen GATE has $65.7\%$ ($77.1\%$ with the official weights) against $60.8\%$ ($70.9\%$) for RECI; it routes $34\%$ of the pairs to ANM-HSIC and the difference to RECI is not significant (exact McNemar $10$ against $5$, $p=0.30$). On the i.i.d.\ chambers GATE has $75.5\%$ against $97.9\%$ ($0$ against $21$ discordant pairs, $p<10^{-6}$) and on the walks $77.0\%$ against $94.3\%$ ($p<10^{-6}$), because it sends $88\%$ and $62\%$ of those pairs to ANM-HSIC, which is right on $72\%$ and $63\%$ of the whole collections (we did not store its accuracy on the routed subset). The threshold was set at $n=500$, the chamber pairs have $n=2000$ and the null spread of $|\rho|$ shrinks with $n$, so the routing is not comparable across sets; an $n$-aware threshold was not tried. The Sachs pairs were not evaluated (no stored ANM-HSIC decision under the same preprocessing). GATE is a negative result and is not offered as a method.
-
-\subsection{An attempt to predict real accuracy from the factorial map fails}\label{sec:predict}
-The strongest test of an explanation is that it predicts. For every real pair we computed seven label-free diagnostics (minimum heteroscedasticity over the two directions, log fraction of unique values, minimum and maximum excess kurtosis, maximum absolute skewness, log absolute Spearman correlation, $\log n$), found its $100$ nearest neighbours among the $3600$ simulated pairs of Section~\ref{sec:factorial}, and predicted each rule's accuracy by the neighbours' mean correctness (experiment 57). The pre-specified criteria were a Spearman correlation of at least $0.5$ between predicted and observed accuracy over the $49$ (collection, rule) cells, a smaller RMSE than the constant prediction (each rule's overall simulation accuracy), and the rule predicted best being among the two best observed on at least four of the seven collections.
-
-The first run was invalid as implemented: the unique-fraction diagnostic was constant in the simulation (computed on jittered arrays), so real pairs with tied values had standardised values around $-3\times10^{9}$ and the neighbours were arbitrary (Spearman $-0.01$). Revision 2 computes simulated and real diagnostics identically (the simulator is deterministic) and reports how far the real pairs are from the simulation; it failed (Spearman $0.17$, RMSE $0.30$ against $0.26$). Revision 3 replaces the observed decisions of the three new collections, which had been computed on jittered arrays, by the raw-array ones (Section~\ref{sec:ties}); it is the version reported here. It fails as well: Spearman $0.006$ (criterion $0.5$), RMSE $0.31$ against $0.24$ for the constant prediction, while the criterion that the predicted best rule is among the two best observed is met on $4$ of $7$ collections (it is nearly degenerate: RECI is predicted best for every collection, and is among the two best observed on four of the seven; IGCI is observed best or second on five). The pair-level criterion, the AUC of the predicted correctness for the observed correctness, was also pre-specified and gives $0.66$ for RESIT, $0.62$ for ANM-HSIC, $0.55$ for RECI and AVICI and $0.41$ to $0.48$ for IGCI, pairwise LiNGAM and compression, so the prediction carries some pair-level information for the two additive-noise rules and none for the others. The reason for the failure is visible in the support: the median distance from a real pair to its nearest simulated pair, in units of the simulation's standard deviations (a Euclidean metric on seven standardised diagnostics), is $2.3$ for T\"ubingen, $2.8$--$3.4$ for the chamber collections, $4.4$--$4.6$ for the Bernoulli and changepoint collections, $8.9$ for Sachs and $13.1$ for Malus, against a $95$th-percentile leave-one-out distance of $0.76$ within the simulation; at most $5\%$ of the pairs of any collection lie within the simulation's support. The factorial simulator illustrates mechanisms and cannot be used to predict accuracy on these real collections. (The simulated rules ran on jittered arrays; only the discrete-cause cells have ties, where IGCI's simulated accuracy would change with the tie convention.) The explanation of Sections~\ref{sec:marg}--\ref{sec:factorial} is therefore a set of demonstrated mechanisms, not a validated predictive model, and we do not claim that it accounts for the whole of the differences between the collections.
+\subsection{What we could not build on the account}\label{sec:negative_mech}
+Three further analyses, in Appendix~\ref{app:mech}, test whether the account extends. A factorial simulation (experiment 56; five factors, $3600$ pairs, seven rules; Appendix Section~\ref{sec:factorial}) reproduces the regimes: ANM-HSIC and RESIT are at $0.95$ in the clean cell, $0.06$ and $0.17$ with a cause-dependent noise scale and $0.69$ and $0.74$ with measurement noise alone, and RECI has the highest average accuracy in $12$ of $14$ factor levels. A regime-gated rule (GATE, experiment 51; Section~\ref{sec:gate}) that switches between ANM-HSIC and RECI on a symmetric heteroscedasticity diagnostic, frozen on simulation, failed both predictions fixed in advance ($65.7\%$ against RECI's $60.8\%$ on T\"ubingen, $p=0.30$; $75.5\%$ against $97.9\%$ on the i.i.d.\ chambers, $p<10^{-6}$). A nearest-neighbour prediction of each rule's accuracy on the real collections from the factorial simulation (experiment 57; Section~\ref{sec:predict}) failed as well (Spearman $0.006$ against the required $0.5$, RMSE $0.31$ against $0.24$ for a constant prediction); the real pairs lie two to thirteen standard deviations from the simulation's support, so the test could not have succeeded with this simulator and is uninformative about the account beyond showing that the simulator does not cover the real collections. The account is therefore a set of demonstrated mechanisms, not a validated predictive model.
 
 \subsection{Summary of the evidence on mechanisms}
-Two mechanisms are directly supported. (1) The chamber and Sachs collections can be oriented from the marginals alone (we rely on the marginal-only classifier and on RECI, which ties do not change; IGCI's chamber accuracy depends on the tie convention), validated across recordings and across proteins, and the same cue transfers across collections; IGCI and RECI are sensitive to marginal asymmetry and gain accuracy from a heavy-tailed effect marginal in simulation even when the conditional structure is unchanged. (2) Additive-noise rules are regime-specific: near-perfect when the noise scale does not depend on the cause and reversed when it does (manipulation with a control, factorial map, T\"ubingen terciles), and degraded by measurement noise. The T\"ubingen average of these rules equals the baselines because the collection mixes regimes. Two attempts to build on the account fail (GATE, predictive validation). What the evidence leaves unexplained is why the additive-noise rules lose on the chambers and how much of the differences between collections the two mechanisms jointly account for.
+Two mechanisms are directly supported. (1) The chamber collections can be oriented from the marginals alone (we rely on the marginal-only classifier and on RECI, which ties do not change; IGCI's chamber accuracy depends on the tie convention), validated across recordings (wind to light tunnel and back) and, on $17$ pairs, across proteins; the cue is a property of the experimental design, in which the cause is an actuator and the effect a sensor, and it does not transfer to T\"ubingen. In simulation IGCI and RECI gain accuracy when the effect has a heavy-tailed marginal even if the conditional structure is unchanged, which we offer as a conjecture about why they are sensitive to marginal asymmetry; we did not test it directly. (2) Additive-noise rules are regime-specific: near-perfect when the noise scale does not depend on the cause and reversed when it does (manipulation with a control, factorial map, T\"ubingen terciles), and degraded by measurement noise. The T\"ubingen average of these rules equals the baselines because the collection mixes regimes. Two attempts to build on the account fail (Section~\ref{sec:negative_mech}). What the evidence leaves unexplained is why the additive-noise rules lose on the chambers and how much of the differences between collections the two mechanisms jointly account for.

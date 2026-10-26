@@ -14,7 +14,7 @@ e59 = L("exp59_ties.json")["records"]; e58 = L("exp58_walks_all.json")["records"
 COLL = ["tuebingen", "chamber_iid", "chamber_walk", "walks_all", "sachs", "bernoulli", "changepoints", "malus"]
 LAB = {"tuebingen": "T\\\"ubingen", "chamber_iid": "Chambers iid", "chamber_walk": "Chambers walks", "walks_all": "Walks, all 19", "sachs": "Sachs", "bernoulli": "Bernoulli", "changepoints": "Changepoints", "malus": "Malus"}
 RULES = ["IGCI", "RECI", "ANM-HSIC", "LiNGAM-pair", "PDM", "LOCI", "ANM-GP", "Compression first", "Compression faithful", "TRA", "AVICI", "RESIT"]
-NAMES = {"LiNGAM-pair": "Pairwise LiNGAM", "ANM-GP": "ANM, Gaussian process", "Compression first": "Compression, first impl.", "Compression faithful": "Compression, faithful"}
+NAMES = {"LiNGAM-pair": "Pairwise LiNGAM", "ANM-GP": "ANM, Gaussian process", "Compression first": "Compression, floor256", "Compression faithful": "Compression, round255"}
 c = lambda s, tx=True: np.nan if s is None or s != s else (0.5 if s == 0 else float((s > 0) == tx))
 acc = {m: {} for m in RULES}; n_ = {m: {} for m in RULES}; corr = {m: {} for m in RULES}
 for s in COLL:

@@ -1,0 +1,235 @@
+{
+ "common_pairs": 82,
+ "common_family": {
+  "n_comparisons": 45,
+  "raw_below_0.05": 0,
+  "holm_below_0.05": 0,
+  "smallest_raw": 0.0783538818359375,
+  "smallest_pair": [
+   "ANM-GP",
+   "TRA"
+  ]
+ },
+ "tiebreak": {
+  "n_universes": 10,
+  "range_mean": {
+   "IGCI": 0.238,
+   "RECI": 0.262,
+   "ANM-HSIC": 0.132,
+   "LiNGAM-pair": 0.199,
+   "PDM": 0.207,
+   "LOCI": 0.147,
+   "ANM-GP": 0.201,
+   "Compression": 0.187,
+   "Compression raw": 0.127,
+   "TRA": 0.116,
+   "Compression faithful": 0.217,
+   "AVICI": 0.108,
+   "RESIT": 0.093
+  },
+  "range_sd": {
+   "IGCI": 0.0,
+   "RECI": 0.0,
+   "ANM-HSIC": 0.0,
+   "LiNGAM-pair": 0.0,
+   "PDM": 0.0,
+   "LOCI": 0.0,
+   "ANM-GP": 0.0,
+   "Compression": 0.0,
+   "Compression raw": 0.0,
+   "TRA": 0.0,
+   "Compression faithful": 0.0,
+   "AVICI": 0.0,
+   "RESIT": 0.029
+  },
+  "first_count_mean": {
+   "IGCI": 0.0,
+   "RECI": 1.0,
+   "ANM-HSIC": 0.0,
+   "LiNGAM-pair": 0.0,
+   "PDM": 0.0,
+   "LOCI": 1.0,
+   "ANM-GP": 0.0,
+   "Compression": 0.0,
+   "Compression raw": 0.0,
+   "TRA": 0.0,
+   "Compression faithful": 8.0,
+   "AVICI": 0.0,
+   "RESIT": 0.0
+  },
+  "first_count_sd": {
+   "IGCI": 0.0,
+   "RECI": 0.0,
+   "ANM-HSIC": 0.0,
+   "LiNGAM-pair": 0.0,
+   "PDM": 0.0,
+   "LOCI": 0.0,
+   "ANM-GP": 0.0,
+   "Compression": 0.0,
+   "Compression raw": 0.0,
+   "TRA": 0.0,
+   "Compression faithful": 0.0,
+   "AVICI": 0.0,
+   "RESIT": 0.0
+  },
+  "faithful_above_RECI_mean": 9.0,
+  "first_count_without_faithful_mean": {
+   "IGCI": 0.0,
+   "RECI": 6.0,
+   "ANM-HSIC": 0.0,
+   "LiNGAM-pair": 0.0,
+   "PDM": 0.0,
+   "LOCI": 2.0,
+   "ANM-GP": 0.0,
+   "Compression": 0.0,
+   "Compression raw": 1.0,
+   "TRA": 2.0,
+   "AVICI": 0.0,
+   "RESIT": 0.0
+  }
+ },
+ "kendall_holm": {
+  "n": 28,
+  "raw_below_0.05": 1,
+  "holm_below_0.05": 0,
+  "smallest_adjusted": 0.48719999999999997
+ },
+ "mannwhitney_holm": {
+  "IGCI": [
+   0.7074327690516061,
+   1.0
+  ],
+  "RECI": [
+   0.02141486442550082,
+   0.1651091836099056
+  ],
+  "ANM-HSIC": [
+   2.6700980451956257e-09,
+   3.204117654234751e-08
+  ],
+  "LiNGAM-pair": [
+   0.24546503796518687,
+   0.7363951138955607
+  ],
+  "PDM": [
+   0.0206386479512382,
+   0.1651091836099056
+  ],
+  "LOCI": [
+   0.0014107857304695376,
+   0.014107857304695376
+  ],
+  "ANM-GP": [
+   2.833489633530851e-09,
+   3.204117654234751e-08
+  ],
+  "Compression": [
+   0.08792060984872263,
+   0.45174125477559135
+  ],
+  "Compression raw": [
+   0.09459894234530092,
+   0.45174125477559135
+  ],
+  "TRA": [
+   0.004051448234361537,
+   0.036463034109253833
+  ],
+  "Compression faithful": [
+   0.07529020912926522,
+   0.45174125477559135
+  ],
+  "AVICI": [
+   0.9257536861398376,
+   1.0
+  ],
+  "RESIT": [
+   7.984330338821618e-10,
+   1.0379629440468104e-08
+  ]
+ },
+ "cluster_flip": {
+  "chamber_iid:IGCI-RECI": {
+   "clusters": 47,
+   "mean_diff": -0.0425531914893617,
+   "p": 0.62865
+  },
+  "chamber_iid:RECI-ANM-HSIC": {
+   "clusters": 47,
+   "mean_diff": 0.2553191489361702,
+   "p": 0.0005
+  },
+  "chamber_iid:IGCI-ANM-HSIC": {
+   "clusters": 47,
+   "mean_diff": 0.2127659574468085,
+   "p": 0.0117
+  },
+  "chamber_iid:RECI-AVICI": {
+   "clusters": 47,
+   "mean_diff": 0.07446808510638298,
+   "p": 0.17005
+  },
+  "chamber_iid:RECI-LiNGAM-pair": {
+   "clusters": 47,
+   "mean_diff": 0.20212765957446807,
+   "p": 0.00145
+  },
+  "chamber_walk:IGCI-RECI": {
+   "clusters": 5,
+   "mean_diff": -0.1065120065120065,
+   "p": 0.37485
+  },
+  "chamber_walk:RECI-ANM-HSIC": {
+   "clusters": 5,
+   "mean_diff": 0.2708576708576708,
+   "p": 0.06295
+  },
+  "chamber_walk:IGCI-ANM-HSIC": {
+   "clusters": 5,
+   "mean_diff": 0.1643456643456643,
+   "p": 0.37785
+  },
+  "chamber_walk:RECI-AVICI": {
+   "clusters": 5,
+   "mean_diff": 0.3757416757416757,
+   "p": 0.06295
+  },
+  "chamber_walk:RECI-LiNGAM-pair": {
+   "clusters": 5,
+   "mean_diff": 0.2247654247654248,
+   "p": 0.06295
+  },
+  "walks_all:IGCI-RECI": {
+   "clusters": 19,
+   "mean_diff": 0.11074695285221603,
+   "p": 0.0192
+  },
+  "walks_all:RECI-ANM-HSIC": {
+   "clusters": 19,
+   "mean_diff": 0.38445038445038443,
+   "p": 5e-05
+  },
+  "walks_all:IGCI-ANM-HSIC": {
+   "clusters": 19,
+   "mean_diff": 0.4951973373026004,
+   "p": 5e-05
+  },
+  "walks_all:RECI-AVICI": {
+   "clusters": 19,
+   "mean_diff": 0.20026272657851604,
+   "p": 5e-05
+  },
+  "walks_all:RECI-LiNGAM-pair": {
+   "clusters": 19,
+   "mean_diff": 0.1596967123282913,
+   "p": 5e-05
+  }
+ },
+ "analytic_detectable_unadjusted": 0.17977462711184278,
+ "analytic_detectable_bonferroni78": 0.273055042461762,
+ "required_n": {
+  "delta0.02": 8241.323721066543,
+  "delta0.05": 1318.6117953706466,
+  "delta0.1": 329.65294884266166
+ }
+}
