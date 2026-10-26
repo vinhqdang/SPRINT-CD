@@ -1,0 +1,374 @@
+\appendix
+
+\section{Pre-registration log}\label{app:prereg}
+Each row is an experiment script (\texttt{experiments/expNN\_*.py}) with the short hash of the commit that first added it, before it was run, and the date. The first line of each script's docstring is quoted. Scripts were revised after a first run only where stated in their docstrings (experiments 47, 49, 57; each revision is a separate commit and the first version is retrievable). Experiments 1--16 belong to the earlier theory paper on sequential certificates and are not used here.
+\begingroup\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}rllp{9.8cm}@{}}
+\toprule
+\# & Commit & Date & Purpose\\
+\midrule
+\endhead
+17 & \texttt{98de084} & 2026-10-23 & Experiment 17: scaling with graph size and ablation of CERT-CD.\\
+18 & \texttt{0318781} & 2026-10-23 & Experiment 18: held-out simulated pair families, sample-size sweep, baselines.\\
+19 & \texttt{0318781} & 2026-10-23 & Experiment 19: sensitivity of the Tuebingen result to the random seed.\\
+20 & \texttt{c5cd9b0} & 2026-10-23 & Experiment 20: real physical data with a known causal graph (Causal Chambers).\\
+21 & \texttt{269ae7a} & 2026-10-23 & Experiment 21: direction of the known edges of the Causal Chambers.\\
+22 & \texttt{aa99d05} & 2026-10-23 & Experiment 22: nonparametric sequential adjacency certificate vs the linear primitive.\\
+23 & \texttt{aa99d05} & 2026-10-23 & Experiment 23: nonparametric adjacency certificate on the Causal Chambers.\\
+24 & \texttt{9f32aaa} & 2026-10-23 & Experiment 24: Causal Chambers with conditioning-set order k = 3.\\
+25 & \texttt{7045b1b} & 2026-10-23 & Experiment 25: the nonparametric certificate on the exp13 and exp17 DAG data.\\
+26 & \texttt{b59a1c6} & 2026-10-23 & Experiment 26: PC with the same nonparametric test, under monitoring.\\
+27 & \texttt{ba2f7ac} & 2026-10-23 & Experiment 27: untouched Causal Chamber recordings, final algorithm frozen.\\
+28 & \texttt{06bffaf} & 2026-10-23 & Experiment 28: abstaining comparison of the pair rules at matched coverage.\\
+29 & \texttt{f85302f} & 2026-10-23 & Experiment 29: BTAD against PC, GES, DirectLiNGAM and PC with an iid nonparametric test\\
+30 & \texttt{ced1b11} & 2026-10-23 & Experiment 30: BTAD on the untouched Causal Chamber recordings, time-ordered.\\
+31 & \texttt{9dddc37} & 2026-10-24 & Fit the LRG classifier on exp31 features; choose the threshold on validation; report held-out simulation metrics.\\
+31 & \texttt{d682048} & 2026-10-24 & Experiment 31: train the learned replicated-gain skeleton model (LRG) on simulated data.\\
+32 & \texttt{9dddc37} & 2026-10-24 & Experiment 32: the frozen LRG model on the untouched, time-ordered Causal Chamber recordings.\\
+33 & \texttt{b91cbf1} & 2026-10-24 & Experiment 33: frozen LRG and BTAD on the two Causal Chamber recordings with i.i.d. random actuators.\\
+34 & \texttt{985335e} & 2026-10-24 & Experiment 34: train the learned pair-direction model (PDM) on simulated pairs.\\
+34 & \texttt{ddb1d8f} & 2026-10-24 & Fit the pair-direction classifier on exp34 features; report held-out simulated accuracy.\\
+35 & \texttt{ddb1d8f} & 2026-10-24 & Experiment 35: the frozen pair-direction model (PDM) on real and held-out pair sets.\\
+36 & \texttt{5e7f00b} & 2026-10-24 & Experiment 36: Sachs data and NOTEARS, added to the graph benchmark.\\
+37 & \texttt{a83a699} & 2026-10-24 & Experiment 37: PC with the nonparametric test on the two i.i.d. chamber recordings (exp20 subsamples).\\
+38 & \texttt{c8e01d1} & 2026-10-24 & Experiment 38: LOCI and ANM added to the pair benchmark, and the Sachs pairs.\\
+39 & \texttt{6387fdc} & 2026-10-24 & Experiment 39: DAGMA and PCMCI+ added to the graph benchmark.\\
+40 & \texttt{ba11744} & 2026-10-24 & Experiment 40: LOCI on the Tuebingen pairs with up to 2000 rows per pair.\\
+41 & \texttt{c94369a} & 2026-10-24 & Experiment 41 (negative result): block-ICP pilot on five wind-tunnel walk recordings (development only).\\
+42 & \texttt{bbdeb3a} & 2026-10-24 & Experiment 42: 2025-2026 pair rules on the same pair sets as exp38.\\
+43 & \texttt{bbdeb3a} & 2026-10-24 & Experiment 43: BF-BIC with BOSS (arXiv 2510.04276) on the graph benchmark.\\
+44 & \texttt{cdf776c} & 2026-10-24 & Experiment 44: SNOE-style edge orientation (arXiv 2506.05590, see sprint\_cd/snoe\_lite.py).\\
+45 & \texttt{37f8d52} & 2026-10-25 & Experiment 45: published methods with public code on the graph benchmark.\\
+46 & \texttt{101841b} & 2026-10-25 & Experiment 46: published pair rules with public code (AVICI pretrained, RESIT) on the exp38 pair sets.\\
+47 & \texttt{b805f02} & 2026-10-25 & Experiment 47 (revision 4: the discordance rate and McNemar counts exclude missing values and exact ties, the Bonferroni\\
+48 & \texttt{211fb35} & 2026-10-25 & Experiment 48: resolution of the Sachs graph benchmark.\\
+49 & \texttt{02dfe48} & 2026-10-25 & Experiment 49: why do direction rules that exploit dependence lose to RECI/IGCI on real pairs?\\
+50 & \texttt{c17d1ad} & 2026-10-25 & Experiment 50: does heteroscedastic noise cause the loss of the noise-model rules? (simulation, dose-response)\\
+51 & \texttt{31dadda} & 2026-10-25 & Experiment 51: an assumption-gated direction rule (GATE), frozen on simulation, tested once on real pairs.\\
+52 & \texttt{4282166} & 2026-10-25 & Experiment 52: controls for experiments 49-50 (leakage-free marginal classifier, matched dose-response with marginal con\\
+53 & \texttt{37fc958} & 2026-10-25 & Experiment 53: three further real pair collections from the Causal Chambers, and the diagnostics of exp49.\\
+54 & \texttt{37d6d13} & 2026-10-25 & Experiment 54: sorted-conditional compression with the quantisation convention that reproduces its published figure.\\
+55 & \texttt{8f63bb7} & 2026-10-25 & Experiment 55: reference implementations from the cdt package, and LOCI/ANM-GP/PDM on the three new collections.\\
+56 & \texttt{04de9ce} & 2026-10-25 & Experiment 56: a factorial simulation of the regimes found in exp49-52, with label-free diagnostics.\\
+57 & \texttt{241d7b0} & 2026-10-25 & Experiment 57 (revision 3: the observed decisions of the three new collections are the raw-array ones of exp59 (IGCI, RE\\
+58 & \texttt{5c1c168} & 2026-10-25 & Experiment 58: pair rules on every untouched Causal Chambers recording (not only the first of each type).\\
+59 & \texttt{8b388ce} & 2026-10-25 & Experiment 59: tie handling as a free parameter, and raw-array versions for the three new collections.\\
+60 & \texttt{b592bf7} & 2026-10-25 & Experiment 60: TRA on raw arrays for the all-recordings walk pairs (exp58) and the three new collections (exp53).\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{Implementation details}\label{app:impl}
+\paragraph{Preprocessing.} T\"ubingen: at most $2000$ rows drawn with a seed that depends on the pair identifier; each variable with tied values dequantised by adding uniform noise in $\pm\frac12$ of the smallest positive gap between distinct values (experiment 14). Chamber and Sachs collections: raw values (Sachs on the log scale with a floor at $10^{-3}$), at most $2000$ random rows; walk recordings use random rows of the first $4000$ rows for pairs and the first $4000$ (graphs) or $2000$ (45) rows in time order for graphs. For the three new collections, rules that need distinct values receive a jitter of $10^{-6}$ times the range on tied values.
+\paragraph{Scores.} All rules return a signed score, positive for $x\to y$. IGCI, RECI, ANM-HSIC and pairwise LiNGAM return a direction label and a magnitude that we convert to a sign. A score of exactly zero counts as half correct (this affected $23$ pairs of the Gaussian-process ANM). A rule that returns no value on a pair (TRA's spline failure) is excluded from that pair and the denominator is reduced.
+\paragraph{Compression.} Section~\ref{sec:audit}. In both variants the score is $s=\mathrm{sc}(q_y,q_x)/\max(\mathrm{dc}(q_x),1)-\mathrm{sc}(q_x,q_y)/\max(\mathrm{dc}(q_y),1)$ with $\mathrm{sc}(\mathrm{key},\mathrm{val})=|\mathrm{bz2}(\Delta\,\mathrm{val}[\mathrm{argsort}(\mathrm{key})])|$ and $\mathrm{dc}(q)=|\mathrm{bz2}(\Delta q)|$, a stable sort, differences cast to \texttt{int8}, bzip2 level 9; $s>0$ means $x\to y$.
+\paragraph{TRA.} Cross-fitted smoothing-spline residuals ($5$ folds), a rank-uniform point cloud, the total length of the zero-dimensional persistence (minimum spanning tree) in the window $\alpha=\kappa n^{-2/3}$, $\beta=c_\beta\alpha$ with $\kappa=1$, $c_\beta=4$, at most $1000$ rows; the direction is the sign of the difference of the two residual functionals. The conservative variant TRA-C ($B=100$ Gaussian-copula bootstrap draws) took $27$\,s per pair at $n=800$ and was not run.
+\paragraph{AVICI.} The pretrained model \texttt{scm-v0}; edge probability matrix of the standardised data ($\le 2000$ rows for graphs, $\le 1000$ for pairs); graphs: skeleton from probability $\ge 0.5$; pairs: $P(x\to y)-P(y\to x)$. Run in a virtual environment with \texttt{jax 0.4.30}, \texttt{flax 0.8.5}, \texttt{dm-haiku 0.0.12}, \texttt{optax 0.2.2}, \texttt{numpy<2}.
+\paragraph{Graph packages.} GOLEM (gCastle, $10^4$ iterations), NOTEARS-MLP and GraN-DAG and DAG-GNN (gCastle defaults), GRaSP and BOSS (\texttt{causal-learn}, BIC), RESIT (random forest depth $4$, $\alpha=0.01$) and CAM-UV ($\alpha=0.01$, three explanatory values; \texttt{lingam}); a run over $900$\,s is a timeout.
+\paragraph{Marginal-only classifier.} Features as in Section~\ref{sec:marg}; scikit-learn \texttt{LogisticRegression} with $C=1$ on standardised features; both orientations of every training pair; $50$ repetitions of five-fold cross-validation for the first protocol, deterministic splits for the others.
+\paragraph{Heteroscedasticity.} Cubic B-splines with six knots on the standardised cause, ridge penalty one, two-fold cross-fitting, residual scale correlation $|\rho_S(|r|,x)|$.
+\paragraph{Factorial simulation.} Seeds are \texttt{default\_rng([20263200, mechanism, cause, scale, measurement, n, k])}; the scale of the noise is normalised so that the mean noise variance is $(0.3\,\mathrm{sd}\,f(c))^2$; measurement noise is Gaussian with $0.3$ times the sample sd of each variable.
+\paragraph{Software.} Python 3.11, \texttt{numpy 1.26}, \texttt{scipy 1.13}, \texttt{scikit-learn 1.9}, \texttt{statsmodels 0.15}, \texttt{causal-learn 0.1.4.8}, \texttt{lingam 1.13}, \texttt{gcastle}, \texttt{causalchamber 0.2.8}; four CPU cores, no GPU.
+
+\section{Negative results of the algorithm search}\label{app:negative}
+Each attempt was fixed before its run. Numbers are strict skeleton $F_1$ or forced accuracy against the reference.
+\begingroup\small\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}p{3.2cm}p{4.3cm}p{7.2cm}@{}}
+\toprule
+Attempt & Idea & Outcome on real data\\
+\midrule
+\endhead
+CERT-CD (sequential certificates) & assert edges only by rejecting; anytime-valid & False-edge control holds in simulation ($2.7\%$ against $27$--$91\%$), not on the chambers\\
+BTAD & block-replicated additive gains & highest precision ($0.60$) but recall $0.16$; $F_1$ $0.25$--$0.28$ on walk recordings\\
+LRG & gradient boosting on block-gain features, trained on simulations & $F_1$ $0.36$ (chambers), $0.67$ (Sachs); within-recording AUC $0.55$\\
+PDM & pair classifier trained on $40000$ simulated pairs & $95\%$ on simulated pairs, $40.2\%$ on T\"ubingen\\
+Block-ICP & invariant causal prediction with time blocks & empty graphs, $F_1\le 0.07$ on development recordings\\
+Compression, TRA, BF-BIC (exp 42--43, 54) & re-implemented 2025--2026 methods & compression: $60.8$--$64.7\%$ with our first implementation, $66.7\%$ ($74.7\%$ weighted) faithful, $38.3\%$ on i.i.d.\ chambers; TRA $64.6\%$ ($86.2\%$ on i.i.d.\ chambers); BF-BIC with BOSS: Sachs $0.67$, walks $0.42$\\
+Interventional route (pilot) & shift of each sensor under each intervened actuator (light tunnel) & KS: precision $1.00$, recall $0.72$ ($28$ of $39$ arcs), AUC $0.93$; the missed arcs show no shift; conditional version recall $0.79$ at precision $0.51$\\
+Published packages (exp 45--46) & AVICI, GOLEM, NOTEARS-MLP, GraN-DAG, DAG-GNN, GRaSP, BOSS, RESIT, CAM-UV & best: BOSS $0.55$ i.i.d.\ chambers; GRaSP $0.68$, BOSS $0.65$ large-ESS; Sachs $\le0.56$; walks $\le0.37$; many neural timeouts\\
+GATE (exp 51) & ANM-HSIC when a symmetric heteroscedasticity diagnostic is low, else RECI & T\"ubingen $65.7\%$ against $60.8\%$ ($p=0.30$); chambers $75.5\%$, $77.0\%$ against $97.9\%$, $94.3\%$\\
+Predictive validation (exp 57) & nearest simulated neighbours predict each rule's accuracy & Spearman $0.17$ (needed $0.5$); RMSE $0.30$ against $0.26$ for the constant; real pairs are $2$--$13$ sd from the simulation\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{Additional tables}\label{app:tables}
+
+\begin{table}[ht]
+\caption{Accuracy with exact 95\% intervals for every rule and collection.}
+\label{tab:collections_ci}
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Rule & T\"ubingen & iid & walks & walks (19)\\
+\midrule
+IGCI & 0.56 [0.46,0.66] & 0.94 [0.85,1.00] & 0.89 [0.71,0.99] & 0.96 [0.91,0.99]\\
+RECI & 0.61 [0.51,0.70] & 0.98 [0.94,1.00] & 0.94 [0.86,1.00] & 0.83 [0.79,0.87]\\
+ANM-HSIC & 0.61 [0.51,0.71] & 0.72 [0.61,0.83] & 0.63 [0.47,0.81] & 0.43 [0.38,0.50]\\
+Pairwise LiNGAM & 0.61 [0.51,0.70] & 0.78 [0.68,0.87] & 0.71 [0.60,0.80] & 0.67 [0.62,0.72]\\
+PDM & 0.40 [0.30,0.50] & 0.93 [0.84,0.99] & 0.84 [0.58,0.97] & --\\
+LOCI & 0.65 [0.56,0.74] & 0.77 [0.66,0.86] & 0.68 [0.57,0.84] & --\\
+ANM, Gaussian process & 0.55 [0.46,0.65] & 0.77 [0.68,0.87] & 0.67 [0.55,0.81] & --\\
+Compression, first impl. & 0.61 [0.52,0.70] & 0.30 [0.19,0.40] & 0.61 [0.48,0.69] & --\\
+Compression, faithful & 0.67 [0.58,0.75] & 0.38 [0.29,0.48] & 0.52 [0.45,0.57] & 0.50 [0.43,0.57]\\
+TRA & 0.65 [0.54,0.75] & 0.86 [0.77,0.94] & 0.61 [0.40,0.76] & 0.56 [0.50,0.61]\\
+AVICI & 0.59 [0.49,0.69] & 0.90 [0.82,0.97] & 0.56 [0.42,0.70] & 0.63 [0.58,0.68]\\
+RESIT & 0.61 [0.52,0.70] & 0.71 [0.61,0.81] & 0.65 [0.52,0.79] & 0.48 [0.43,0.53]\\
+\bottomrule
+\end{tabular}
+\medskip
+
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Rule & Sachs & Bernoulli & Changepoints & Malus\\
+\midrule
+IGCI & 0.65 [0.41,0.88] & 1.00 [1.00,1.00] & 1.00 [1.00,1.00] & 0.08 [0.00,0.17]\\
+RECI & 0.53 [0.29,0.76] & 0.25 [0.00,0.62] & 1.00 [1.00,1.00] & 0.56 [0.52,0.58]\\
+ANM-HSIC & 0.59 [0.35,0.82] & 0.31 [0.06,0.62] & 0.57 [0.29,0.84] & 0.31 [0.27,0.33]\\
+Pairwise LiNGAM & 0.53 [0.29,0.76] & 0.88 [0.69,1.00] & 0.43 [0.24,0.60] & 0.40 [0.21,0.58]\\
+PDM & -- & -- & -- & --\\
+LOCI & 0.47 [0.24,0.71] & 0.56 [0.38,0.75] & 0.80 [0.57,0.97] & 0.38 [0.29,0.46]\\
+ANM, Gaussian process & 0.56 [0.32,0.79] & 0.47 [0.22,0.72] & 0.54 [0.38,0.66] & 0.33 [0.25,0.50]\\
+Compression, first impl. & 0.76 [0.53,0.94] & -- & -- & --\\
+Compression, faithful & 0.65 [0.41,0.88] & 0.50 [0.19,0.81] & 1.00 [1.00,1.00] & 0.60 [0.48,0.71]\\
+TRA & 0.59 [0.35,0.82] & 0.62 [0.38,0.88] & -- & 0.54 [0.46,0.62]\\
+AVICI & 0.53 [0.29,0.76] & 0.62 [0.25,1.00] & 0.40 [0.17,0.67] & 0.02 [0.00,0.06]\\
+RESIT & 0.47 [0.29,0.65] & 0.25 [0.06,0.44] & 0.53 [0.24,0.77] & 0.50 [0.50,0.50]\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{The ten reporting universes with at least $30$ pairs per rule: weighting, minimum number of rows, coverage (\%), pairs in the subset, smallest number of pairs evaluated for any rule, and the accuracy of each rule (a subset of the columns of Table~\ref{tab:multi}; CmpF: faithful compression; the other four columns are in the repository file \texttt{results/exp47\_multiverse.json}).}
+\label{tab:universes}
+\tiny\setlength{\tabcolsep}{1.5pt}
+\begin{tabular}{@{}lrrrrccccccccc@{}}
+\toprule
+Weights & Rows & Cov. & $n$ & min & IGCI & RECI & ANM-H & LiNGAM & LOCI & TRA & CmpF & AVICI & RESIT\\
+\midrule
+official & 0 & 100 & 102 & 82 & 0.66 & 0.71 & 0.61 & 0.62 & 0.64 & 0.65 & 0.75 & 0.61 & 0.62\\
+official & 0 & 75 & 102 & 62 & 0.64 & 0.77 & 0.58 & 0.65 & 0.67 & 0.71 & 0.78 & 0.60 & 0.65\\
+official & 0 & 50 & 102 & 41 & 0.66 & 0.87 & 0.57 & 0.74 & 0.63 & 0.74 & 0.88 & 0.58 & 0.76\\
+official & 250 & 100 & 76 & 56 & 0.71 & 0.75 & 0.65 & 0.54 & 0.71 & 0.70 & 0.75 & 0.59 & 0.63\\
+official & 250 & 75 & 76 & 42 & 0.69 & 0.84 & 0.63 & 0.56 & 0.77 & 0.74 & 0.77 & 0.60 & 0.67\\
+none & 0 & 100 & 102 & 82 & 0.56 & 0.61 & 0.61 & 0.61 & 0.65 & 0.65 & 0.67 & 0.59 & 0.61\\
+none & 0 & 75 & 102 & 62 & 0.50 & 0.68 & 0.57 & 0.63 & 0.63 & 0.71 & 0.72 & 0.63 & 0.64\\
+none & 0 & 50 & 102 & 41 & 0.47 & 0.76 & 0.57 & 0.71 & 0.63 & 0.76 & 0.84 & 0.65 & 0.75\\
+none & 250 & 100 & 76 & 56 & 0.55 & 0.67 & 0.70 & 0.55 & 0.72 & 0.68 & 0.71 & 0.54 & 0.66\\
+none & 250 & 75 & 76 & 42 & 0.51 & 0.75 & 0.67 & 0.58 & 0.75 & 0.76 & 0.77 & 0.61 & 0.70\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\caption{Sachs: skeleton $F_1$ of $22$ configurations with a $95\%$ bootstrap interval over the $55$ variable pairs.}
+\label{tab:sachs_ci}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Configuration & $F_1$ & interval\\
+\midrule
+LRG & 0.67 & [0.42, 0.85]\\
+BF-BIC+BOSS & 0.67 & [0.42, 0.85]\\
+PC-GCM $\alpha=$0.01 & 0.64 & [0.38, 0.83]\\
+PC-GCM $\alpha=$0.05 & 0.62 & [0.36, 0.81]\\
+BTAD & 0.62 & [0.35, 0.81]\\
+PC $\alpha=$0.05 & 0.58 & [0.30, 0.80]\\
+GES-BIC & 0.58 & [0.30, 0.80]\\
+AVICI & 0.56 & [0.29, 0.77]\\
+NOTEARS-MLP & 0.56 & [0.29, 0.77]\\
+PC $\alpha=$0.01 & 0.52 & [0.24, 0.74]\\
+DirectLiNGAM & 0.52 & [0.24, 0.74]\\
+PCMCI+ & 0.52 & [0.24, 0.74]\\
+GRaSP & 0.52 & [0.24, 0.74]\\
+BOSS & 0.52 & [0.24, 0.74]\\
+CERT-CD nonparametric k=3 & 0.45 & [0.15, 0.69]\\
+DAGMA & 0.45 & [0.15, 0.69]\\
+RESIT & 0.45 & [0.24, 0.63]\\
+NOTEARS & 0.30 & [0.00, 0.56]\\
+GOLEM & 0.30 & [0.00, 0.56]\\
+DAG-GNN & 0.30 & [0.00, 0.56]\\
+GraN-DAG & 0.11 & [0.00, 0.32]\\
+CAM-UV & 0.11 & [0.00, 0.33]\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begingroup\scriptsize\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{@{}lllccccccccc@{}}
+\caption{Factorial simulation, accuracy per cell (25 pairs each; cause marginal, noise scale, measurement noise, $n$; rules in the order IGCI, RECI, ANM-HSIC, LiNGAM, compression (faithful), RESIT, AVICI).}\label{tab:cells}\\
+\toprule
+Mech. & Cause & Scale & Meas. & $n$ & IGCI & RECI & ANM-H & LiNGAM & Cmpr. & RESIT & AVICI\\
+\midrule
+\endfirsthead
+\toprule
+Mech. & Cause & Scale & Meas. & $n$ & IGCI & RECI & ANM-H & LiNGAM & Cmpr. & RESIT & AVICI\\
+\midrule
+\endhead
+tanh & uniform & homo & n & 200 & 0.88 & 1.00 & 1.00 & 0.00 & 0.68 & 0.92 & 0.56\\
+tanh & uniform & homo & n & 1000 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 1.00 & 0.20\\
+tanh & uniform & homo & y & 200 & 0.72 & 0.72 & 0.16 & 0.04 & 0.64 & 0.36 & 0.44\\
+tanh & uniform & homo & y & 1000 & 0.80 & 0.68 & 0.00 & 0.00 & 0.68 & 0.00 & 0.44\\
+tanh & uniform & cause & n & 200 & 1.00 & 1.00 & 0.00 & 0.04 & 0.84 & 0.00 & 1.00\\
+tanh & uniform & cause & n & 1000 & 1.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.00 & 1.00\\
+tanh & uniform & cause & y & 200 & 0.60 & 0.72 & 0.04 & 0.16 & 0.72 & 0.00 & 0.84\\
+tanh & uniform & cause & y & 1000 & 1.00 & 0.92 & 0.00 & 0.04 & 0.72 & 0.00 & 1.00\\
+tanh & uniform & indep & n & 200 & 1.00 & 1.00 & 0.80 & 0.00 & 0.88 & 0.80 & 0.32\\
+tanh & uniform & indep & n & 1000 & 1.00 & 1.00 & 0.96 & 0.12 & 1.00 & 1.00 & 0.52\\
+tanh & uniform & indep & y & 200 & 0.84 & 0.76 & 0.12 & 0.00 & 0.52 & 0.16 & 0.32\\
+tanh & uniform & indep & y & 1000 & 1.00 & 1.00 & 0.08 & 0.00 & 1.00 & 0.00 & 0.44\\
+tanh & normal & homo & n & 200 & 0.12 & 0.12 & 1.00 & 0.00 & 0.68 & 1.00 & 1.00\\
+tanh & normal & homo & n & 1000 & 0.00 & 0.04 & 1.00 & 0.00 & 1.00 & 1.00 & 1.00\\
+tanh & normal & homo & y & 200 & 0.12 & 0.00 & 0.80 & 0.00 & 0.36 & 0.84 & 1.00\\
+tanh & normal & homo & y & 1000 & 0.00 & 0.00 & 0.96 & 0.00 & 0.48 & 1.00 & 1.00\\
+tanh & normal & cause & n & 200 & 0.80 & 0.36 & 0.32 & 0.16 & 0.88 & 0.20 & 1.00\\
+tanh & normal & cause & n & 1000 & 1.00 & 0.72 & 0.32 & 0.16 & 1.00 & 0.32 & 1.00\\
+tanh & normal & cause & y & 200 & 0.48 & 0.28 & 0.52 & 0.16 & 0.48 & 0.56 & 1.00\\
+tanh & normal & cause & y & 1000 & 0.48 & 0.40 & 0.64 & 0.04 & 0.76 & 0.68 & 1.00\\
+tanh & normal & indep & n & 200 & 0.92 & 0.64 & 1.00 & 0.04 & 0.84 & 1.00 & 1.00\\
+tanh & normal & indep & n & 1000 & 0.96 & 0.92 & 1.00 & 0.04 & 1.00 & 1.00 & 1.00\\
+tanh & normal & indep & y & 200 & 0.20 & 0.12 & 0.56 & 0.04 & 0.52 & 0.56 & 1.00\\
+tanh & normal & indep & y & 1000 & 0.64 & 0.48 & 0.60 & 0.00 & 0.72 & 0.84 & 1.00\\
+tanh & bimodal & homo & n & 200 & 0.72 & 0.56 & 0.44 & 0.40 & 0.68 & 0.44 & 0.56\\
+tanh & bimodal & homo & n & 1000 & 0.68 & 0.60 & 0.56 & 0.12 & 0.76 & 0.60 & 0.56\\
+tanh & bimodal & homo & y & 200 & 0.52 & 0.56 & 0.48 & 0.44 & 0.56 & 0.60 & 0.48\\
+tanh & bimodal & homo & y & 1000 & 0.40 & 0.36 & 0.40 & 0.16 & 0.36 & 0.48 & 0.32\\
+tanh & bimodal & cause & n & 200 & 1.00 & 0.20 & 0.00 & 0.64 & 0.92 & 0.00 & 0.84\\
+tanh & bimodal & cause & n & 1000 & 1.00 & 0.48 & 0.00 & 0.92 & 1.00 & 0.00 & 0.72\\
+tanh & bimodal & cause & y & 200 & 0.84 & 0.72 & 0.04 & 0.84 & 0.44 & 0.08 & 0.84\\
+tanh & bimodal & cause & y & 1000 & 0.96 & 0.88 & 0.04 & 0.72 & 0.84 & 0.00 & 0.76\\
+tanh & bimodal & indep & n & 200 & 1.00 & 1.00 & 0.28 & 0.04 & 0.52 & 0.20 & 0.16\\
+tanh & bimodal & indep & n & 1000 & 1.00 & 1.00 & 0.28 & 0.00 & 1.00 & 0.68 & 0.04\\
+tanh & bimodal & indep & y & 200 & 0.92 & 0.80 & 0.32 & 0.16 & 0.56 & 0.52 & 0.40\\
+tanh & bimodal & indep & y & 1000 & 1.00 & 1.00 & 0.16 & 0.00 & 1.00 & 0.20 & 0.08\\
+tanh & discrete5 & homo & n & 200 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.32\\
+tanh & discrete5 & homo & n & 1000 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.08\\
+tanh & discrete5 & homo & y & 200 & 0.48 & 0.52 & 0.20 & 0.00 & 0.60 & 0.28 & 0.64\\
+tanh & discrete5 & homo & y & 1000 & 0.76 & 0.76 & 0.08 & 0.00 & 0.52 & 0.08 & 0.72\\
+tanh & discrete5 & cause & n & 200 & 0.00 & 1.00 & 0.00 & 0.48 & 0.00 & 0.16 & 0.84\\
+tanh & discrete5 & cause & n & 1000 & 0.00 & 1.00 & 0.04 & 0.40 & 0.00 & 0.08 & 1.00\\
+tanh & discrete5 & cause & y & 200 & 0.88 & 0.92 & 0.12 & 0.40 & 0.64 & 0.12 & 0.92\\
+tanh & discrete5 & cause & y & 1000 & 1.00 & 1.00 & 0.04 & 0.44 & 0.88 & 0.00 & 1.00\\
+tanh & discrete5 & indep & n & 200 & 0.00 & 1.00 & 0.88 & 0.08 & 0.00 & 1.00 & 0.36\\
+tanh & discrete5 & indep & n & 1000 & 0.00 & 1.00 & 1.00 & 0.04 & 0.00 & 1.00 & 0.24\\
+tanh & discrete5 & indep & y & 200 & 0.92 & 0.92 & 0.00 & 0.16 & 0.76 & 0.36 & 0.56\\
+tanh & discrete5 & indep & y & 1000 & 1.00 & 1.00 & 0.00 & 0.00 & 0.96 & 0.04 & 0.24\\
+cubic & uniform & homo & n & 200 & 1.00 & 1.00 & 1.00 & 0.96 & 0.84 & 1.00 & 0.00\\
+cubic & uniform & homo & n & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.00\\
+cubic & uniform & homo & y & 200 & 0.96 & 1.00 & 1.00 & 0.96 & 0.84 & 1.00 & 0.00\\
+cubic & uniform & homo & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.00\\
+cubic & uniform & cause & n & 200 & 1.00 & 1.00 & 0.00 & 0.40 & 0.88 & 0.08 & 0.00\\
+cubic & uniform & cause & n & 1000 & 1.00 & 1.00 & 0.00 & 0.32 & 1.00 & 0.12 & 0.00\\
+cubic & uniform & cause & y & 200 & 1.00 & 1.00 & 0.60 & 0.40 & 0.48 & 0.80 & 0.00\\
+cubic & uniform & cause & y & 1000 & 1.00 & 1.00 & 0.52 & 0.44 & 1.00 & 0.80 & 0.00\\
+cubic & uniform & indep & n & 200 & 1.00 & 1.00 & 1.00 & 0.84 & 0.92 & 1.00 & 0.24\\
+cubic & uniform & indep & n & 1000 & 1.00 & 1.00 & 1.00 & 0.68 & 1.00 & 1.00 & 0.00\\
+cubic & uniform & indep & y & 200 & 1.00 & 1.00 & 0.96 & 0.76 & 0.56 & 1.00 & 0.00\\
+cubic & uniform & indep & y & 1000 & 1.00 & 1.00 & 0.96 & 0.80 & 1.00 & 1.00 & 0.00\\
+cubic & normal & homo & n & 200 & 1.00 & 1.00 & 0.96 & 0.08 & 1.00 & 1.00 & 0.84\\
+cubic & normal & homo & n & 1000 & 1.00 & 1.00 & 1.00 & 0.04 & 1.00 & 0.96 & 0.92\\
+cubic & normal & homo & y & 200 & 1.00 & 1.00 & 0.40 & 0.04 & 0.64 & 0.88 & 0.80\\
+cubic & normal & homo & y & 1000 & 1.00 & 1.00 & 0.24 & 0.00 & 1.00 & 0.52 & 0.48\\
+cubic & normal & cause & n & 200 & 1.00 & 1.00 & 0.00 & 0.08 & 1.00 & 0.16 & 0.80\\
+cubic & normal & cause & n & 1000 & 1.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.48\\
+cubic & normal & cause & y & 200 & 1.00 & 1.00 & 0.04 & 0.00 & 0.64 & 0.56 & 0.52\\
+cubic & normal & cause & y & 1000 & 1.00 & 1.00 & 0.00 & 0.04 & 1.00 & 0.04 & 0.16\\
+cubic & normal & indep & n & 200 & 1.00 & 1.00 & 0.84 & 0.16 & 0.96 & 0.68 & 0.92\\
+cubic & normal & indep & n & 1000 & 1.00 & 1.00 & 1.00 & 0.32 & 1.00 & 0.28 & 0.96\\
+cubic & normal & indep & y & 200 & 1.00 & 1.00 & 0.24 & 0.00 & 0.56 & 0.64 & 0.64\\
+cubic & normal & indep & y & 1000 & 1.00 & 1.00 & 0.16 & 0.00 & 1.00 & 0.16 & 0.56\\
+cubic & bimodal & homo & n & 200 & 0.96 & 1.00 & 1.00 & 0.80 & 0.92 & 1.00 & 0.00\\
+cubic & bimodal & homo & n & 1000 & 1.00 & 1.00 & 1.00 & 0.44 & 1.00 & 1.00 & 0.00\\
+cubic & bimodal & homo & y & 200 & 1.00 & 1.00 & 1.00 & 0.64 & 0.48 & 1.00 & 0.00\\
+cubic & bimodal & homo & y & 1000 & 1.00 & 1.00 & 1.00 & 0.52 & 1.00 & 1.00 & 0.00\\
+cubic & bimodal & cause & n & 200 & 1.00 & 1.00 & 0.00 & 0.12 & 0.88 & 0.00 & 0.00\\
+cubic & bimodal & cause & n & 1000 & 1.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00\\
+cubic & bimodal & cause & y & 200 & 0.96 & 1.00 & 0.88 & 0.44 & 0.24 & 0.92 & 0.00\\
+cubic & bimodal & cause & y & 1000 & 1.00 & 1.00 & 0.96 & 0.08 & 1.00 & 1.00 & 0.00\\
+cubic & bimodal & indep & n & 200 & 0.96 & 1.00 & 0.96 & 0.64 & 0.88 & 0.92 & 0.00\\
+cubic & bimodal & indep & n & 1000 & 1.00 & 1.00 & 1.00 & 0.28 & 1.00 & 1.00 & 0.00\\
+cubic & bimodal & indep & y & 200 & 1.00 & 1.00 & 1.00 & 0.64 & 0.44 & 0.96 & 0.00\\
+cubic & bimodal & indep & y & 1000 & 1.00 & 1.00 & 1.00 & 0.28 & 1.00 & 1.00 & 0.00\\
+cubic & discrete5 & homo & n & 200 & 0.00 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 0.00\\
+cubic & discrete5 & homo & n & 1000 & 0.00 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 0.00\\
+cubic & discrete5 & homo & y & 200 & 0.96 & 0.96 & 1.00 & 1.00 & 0.72 & 1.00 & 0.00\\
+cubic & discrete5 & homo & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 0.88 & 1.00 & 0.00\\
+cubic & discrete5 & cause & n & 200 & 0.00 & 1.00 & 0.04 & 1.00 & 0.00 & 0.20 & 0.12\\
+cubic & discrete5 & cause & n & 1000 & 0.00 & 1.00 & 0.04 & 1.00 & 0.00 & 0.60 & 0.00\\
+cubic & discrete5 & cause & y & 200 & 1.00 & 1.00 & 0.80 & 1.00 & 0.68 & 0.88 & 0.00\\
+cubic & discrete5 & cause & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 0.92 & 1.00 & 0.00\\
+cubic & discrete5 & indep & n & 200 & 0.00 & 1.00 & 1.00 & 0.96 & 0.00 & 1.00 & 0.24\\
+cubic & discrete5 & indep & n & 1000 & 0.00 & 1.00 & 1.00 & 0.88 & 0.00 & 1.00 & 0.20\\
+cubic & discrete5 & indep & y & 200 & 0.92 & 1.00 & 1.00 & 0.96 & 0.56 & 1.00 & 0.04\\
+cubic & discrete5 & indep & y & 1000 & 1.00 & 1.00 & 1.00 & 0.96 & 1.00 & 1.00 & 0.00\\
+sin & uniform & homo & n & 200 & 0.96 & 1.00 & 0.96 & 0.04 & 0.84 & 0.84 & 0.88\\
+sin & uniform & homo & n & 1000 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 1.00 & 1.00\\
+sin & uniform & homo & y & 200 & 0.60 & 0.80 & 0.48 & 0.12 & 0.84 & 0.52 & 0.64\\
+sin & uniform & homo & y & 1000 & 0.80 & 0.88 & 0.40 & 0.00 & 0.64 & 0.28 & 0.84\\
+sin & uniform & cause & n & 200 & 0.96 & 1.00 & 0.00 & 0.76 & 1.00 & 0.00 & 0.92\\
+sin & uniform & cause & n & 1000 & 1.00 & 1.00 & 0.00 & 1.00 & 1.00 & 0.00 & 1.00\\
+sin & uniform & cause & y & 200 & 0.88 & 0.92 & 0.24 & 0.56 & 0.48 & 0.36 & 0.92\\
+sin & uniform & cause & y & 1000 & 0.96 & 1.00 & 0.04 & 0.72 & 0.84 & 0.00 & 1.00\\
+sin & uniform & indep & n & 200 & 1.00 & 1.00 & 0.88 & 0.00 & 0.92 & 0.68 & 0.60\\
+sin & uniform & indep & n & 1000 & 1.00 & 1.00 & 1.00 & 0.04 & 1.00 & 1.00 & 1.00\\
+sin & uniform & indep & y & 200 & 0.80 & 0.92 & 0.24 & 0.04 & 0.60 & 0.20 & 0.68\\
+sin & uniform & indep & y & 1000 & 1.00 & 1.00 & 0.20 & 0.08 & 0.96 & 0.16 & 0.76\\
+sin & normal & homo & n & 200 & 0.00 & 1.00 & 1.00 & 1.00 & 0.88 & 0.96 & 1.00\\
+sin & normal & homo & n & 1000 & 0.00 & 0.92 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00\\
+sin & normal & homo & y & 200 & 0.04 & 0.64 & 0.84 & 1.00 & 0.56 & 0.88 & 1.00\\
+sin & normal & homo & y & 1000 & 0.00 & 0.32 & 1.00 & 1.00 & 0.88 & 0.96 & 1.00\\
+sin & normal & cause & n & 200 & 0.32 & 1.00 & 0.24 & 0.96 & 0.92 & 0.28 & 1.00\\
+sin & normal & cause & n & 1000 & 0.96 & 1.00 & 0.28 & 0.84 & 1.00 & 0.72 & 1.00\\
+sin & normal & cause & y & 200 & 0.20 & 0.68 & 0.56 & 1.00 & 0.64 & 0.68 & 1.00\\
+sin & normal & cause & y & 1000 & 0.56 & 0.84 & 0.76 & 0.96 & 1.00 & 0.56 & 1.00\\
+sin & normal & indep & n & 200 & 0.48 & 1.00 & 1.00 & 0.96 & 0.96 & 1.00 & 1.00\\
+sin & normal & indep & n & 1000 & 0.80 & 1.00 & 1.00 & 0.92 & 1.00 & 1.00 & 1.00\\
+sin & normal & indep & y & 200 & 0.40 & 0.76 & 0.84 & 0.96 & 0.80 & 0.80 & 1.00\\
+sin & normal & indep & y & 1000 & 0.56 & 0.84 & 0.88 & 0.96 & 1.00 & 0.80 & 1.00\\
+sin & bimodal & homo & n & 200 & 0.00 & 1.00 & 1.00 & 1.00 & 0.88 & 1.00 & 0.60\\
+sin & bimodal & homo & n & 1000 & 0.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.36\\
+sin & bimodal & homo & y & 200 & 0.20 & 1.00 & 1.00 & 1.00 & 0.48 & 1.00 & 0.76\\
+sin & bimodal & homo & y & 1000 & 0.12 & 1.00 & 1.00 & 1.00 & 0.80 & 1.00 & 0.76\\
+sin & bimodal & cause & n & 200 & 0.44 & 1.00 & 0.00 & 1.00 & 0.72 & 0.20 & 0.84\\
+sin & bimodal & cause & n & 1000 & 0.76 & 1.00 & 0.00 & 1.00 & 1.00 & 0.84 & 0.68\\
+sin & bimodal & cause & y & 200 & 0.24 & 0.96 & 1.00 & 1.00 & 0.76 & 1.00 & 0.80\\
+sin & bimodal & cause & y & 1000 & 0.48 & 1.00 & 1.00 & 1.00 & 0.88 & 1.00 & 0.76\\
+sin & bimodal & indep & n & 200 & 0.60 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.44\\
+sin & bimodal & indep & n & 1000 & 0.88 & 1.00 & 1.00 & 0.96 & 1.00 & 1.00 & 0.16\\
+sin & bimodal & indep & y & 200 & 0.60 & 1.00 & 1.00 & 1.00 & 0.48 & 1.00 & 0.56\\
+sin & bimodal & indep & y & 1000 & 0.80 & 1.00 & 1.00 & 0.92 & 0.92 & 1.00 & 0.56\\
+sin & discrete5 & homo & n & 200 & 0.00 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 1.00\\
+sin & discrete5 & homo & n & 1000 & 0.00 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 1.00\\
+sin & discrete5 & homo & y & 200 & 0.92 & 1.00 & 1.00 & 1.00 & 0.76 & 1.00 & 0.96\\
+sin & discrete5 & homo & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 0.96 & 1.00 & 1.00\\
+sin & discrete5 & cause & n & 200 & 0.00 & 1.00 & 0.20 & 1.00 & 0.00 & 0.00 & 1.00\\
+sin & discrete5 & cause & n & 1000 & 0.00 & 1.00 & 0.00 & 1.00 & 0.00 & 0.12 & 1.00\\
+sin & discrete5 & cause & y & 200 & 0.92 & 1.00 & 1.00 & 1.00 & 0.60 & 1.00 & 1.00\\
+sin & discrete5 & cause & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 0.80 & 1.00 & 1.00\\
+sin & discrete5 & indep & n & 200 & 0.00 & 1.00 & 1.00 & 0.92 & 0.00 & 1.00 & 1.00\\
+sin & discrete5 & indep & n & 1000 & 0.00 & 1.00 & 1.00 & 1.00 & 0.00 & 1.00 & 1.00\\
+sin & discrete5 & indep & y & 200 & 1.00 & 1.00 & 1.00 & 0.96 & 0.72 & 1.00 & 0.68\\
+sin & discrete5 & indep & y & 1000 & 1.00 & 1.00 & 1.00 & 1.00 & 0.96 & 1.00 & 0.80\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\begin{table}[ht]
+\caption{Kendall rank correlation between the orderings of the rules on two collections, with a permutation $p$-value (5000 permutations of one ordering) in parentheses; rules run on both collections, at least five.}
+\label{tab:kendall}
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+ & T\"ub. & iid & walks & walks19 & Sachs & Bern. & Chgpt. & Malus\\
+\midrule
+T\"ubingen & -- & -0.38 (0.11) & -0.30 (0.21) & -0.42 (0.20) & -0.12 (0.68) & -0.19 (0.54) & +0.24 (0.46) & +0.51 (0.06)\\
+iid & -0.38 (0.11) & -- & +0.53 (0.02) & +0.57 (0.06) & -0.17 (0.53) & +0.34 (0.21) & -0.03 (1.00) & -0.16 (0.60)\\
+walks & -0.30 (0.21) & +0.53 (0.02) & -- & +0.43 (0.18) & -0.27 (0.30) & +0.07 (0.86) & +0.26 (0.41) & -0.02 (1.00)\\
+walks19 & -0.42 (0.20) & +0.57 (0.06) & +0.43 (0.18) & -- & +0.04 (1.00) & +0.52 (0.11) & +0.21 (0.65) & -0.07 (0.90)\\
+Sachs & -0.12 (0.68) & -0.17 (0.53) & -0.27 (0.30) & +0.04 (1.00) & -- & +0.27 (0.35) & +0.41 (0.18) & -0.02 (1.00)\\
+Bernoulli & -0.19 (0.54) & +0.34 (0.21) & +0.07 (0.86) & +0.52 (0.11) & +0.27 (0.35) & -- & -0.06 (0.92) & -0.25 (0.37)\\
+Changepoints & +0.24 (0.46) & -0.03 (1.00) & +0.26 (0.41) & +0.21 (0.65) & +0.41 (0.18) & -0.06 (0.92) & -- & +0.26 (0.40)\\
+Malus & +0.51 (0.06) & -0.16 (0.60) & -0.02 (1.00) & -0.07 (0.90) & -0.02 (1.00) & -0.25 (0.37) & +0.26 (0.40) & --\\
+\bottomrule
+\end{tabular}
+\end{table}

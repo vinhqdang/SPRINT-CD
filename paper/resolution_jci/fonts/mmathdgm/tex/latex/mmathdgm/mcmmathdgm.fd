@@ -1,0 +1,24 @@
+%Filename: mcmmathdgm.fd
+%Created by: tex mmathdgm-drv
+%Created using fontinst v1.933
+
+%THIS FILE SHOULD BE PUT IN A TEX INPUTS DIRECTORY
+
+\ProvidesFile{mcmmathdgm.fd}
+   [2014/08/24 Fontinst v1.933 font definitions for MC/mmathdgm.]
+
+\DeclareFontFamily{MC}{mmathdgm}{}
+
+\DeclareFontShape{MC}{mmathdgm}{m}{n}{
+   <-6> mmathdgm-Tiny-MC
+   <6-8.5> mmathdgm-Capt-MC
+   <8.5-> mmathdgm-MC
+}{}
+
+\DeclareFontShape{MC}{mmathdgm}{b}{n}{
+   <-> mmathdgm-Bold-MC
+}{}
+
+\DeclareFontShape{MC}{mmathdgm}{bx}{n}{<->ssub * mmathdgm/b/n}{}
+
+\endinput

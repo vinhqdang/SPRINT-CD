@@ -1,0 +1,37 @@
+\section{A multiverse of reporting choices}\label{sec:multi}
+
+A reader of a pair-rule paper meets choices that are each reasonable and that each change the number: whether to use the benchmark's official weights; whether to restrict to pairs with enough rows; whether to report accuracy on all pairs or only on the pairs on which the rule is most confident (decided-only accuracy, as for a rule that abstains). We cross them: official weights or none; all pairs or only pairs with at least $250$, $500$ or $1000$ rows; accuracy on the $100$, $75$, $50$ or $25\%$ of the pairs with the largest absolute score. This gives $32$ universes. The coverage is taken exactly (top $k$ by $|\mathrm{score}|$, ties broken at random with a fixed seed); the score of several rules is not a calibrated confidence, so this is the operation a reader could apply, not each rule's own abstention. A universe is kept only if every rule is evaluated on at least $30$ pairs: $10$ of $32$ qualify (all pairs, or pairs with $\ge 250$ rows; coverage $100$, $75$, and for all pairs $50\%$; each with and without weights). The other $22$ (for example the $25\%$ of the $36$ pairs with at least $1000$ rows, which is nine pairs) cannot be reported. A first run kept them, and the ranges were far wider ($0.27$ to $0.75$ for IGCI, up to $1.00$ for RECI); an accuracy on nine pairs is not a defensible report, and we dropped them on review.
+
+\paragraph{Results.} In the ten universes the accuracy of a single rule still moves by $11$ to $26$ points (Table~\ref{tab:multi}): $0.47$ to $0.71$ for IGCI, $0.61$ to $0.87$ for RECI, $0.67$ to $0.88$ for the faithful compression, $0.63$ to $0.77$ for LOCI. Ranks move by up to ten places (ANM-HSIC from third to thirteenth, pairwise LiNGAM from fifth to thirteenth). Three rules are first in at least one universe: faithful compression in $8$, RECI and LOCI in $1$ each; the faithful compression is above RECI in $9$ universes and no other rule is above RECI in more than four. The first counts are over universes, not within one universe, ties share the first rank, and they depend on which variants of a rule are in the panel: the faithful compression convention was selected because it reproduces a published figure (Section~\ref{sec:audit}), and under the other conventions its unweighted accuracy ranges from $60.8\%$ to $69.6\%$, so its lead in $8$ of the $10$ universes is partly a consequence of that selection. TRA returned no value on $20$ pairs; these are excluded from its accuracy ($82$ pairs) and from its coverage ranking.
+
+Single choices can be large. The official weights move RECI from $60.8\%$ to $70.9\%$, faithful compression from $66.7\%$ to $74.7\%$, and our first compression implementation from $60.8\%$ to $68.0\%$, while LOCI goes from $64.7\%$ to $63.9\%$. The quantisation convention of the compression rule (Section~\ref{sec:audit}) moves the weighted accuracy between $68.8$ and $74.7\%$.
+
+\section{Selective subsets}\label{sec:subsets}
+
+Pair benchmarks are often evaluated on a subset of pairs (a given variable type or sample size, or pairs where the other rules disagree). We drew $10000$ random subsets of $50$ of the $102$ pairs. The accuracy of a rule on a subset has a standard deviation of about $0.05$. For the eight rules whose full-sample accuracy is within $0.04$ of RECI the probability that a rule beats RECI on a subset lies between $0.36$ and $0.72$, so most subsets would support either order; for faithful compression, $0.059$ above RECI, it is $0.80$. The expected best accuracy over $m$ independently drawn subsets, which is what a researcher reports after trying $m$ subsets and keeping the best, grows with $m$: RECI $0.607$ ($m=1$), $0.649$ ($3$), $0.682$ ($10$); LOCI $0.647$, $0.687$, $0.721$; faithful compression $0.666$, $0.706$, $0.739$. The inflation at $m=10$ is seven to eight points for every rule, which leaves the order of the rules unchanged; what it changes is the claim of an absolute level. Each subset is half of the same $102$ pairs, so this measures selection noise about a known full-sample accuracy, not how a researcher actually chooses subsets (by type or size, not at random).
+
+\section{A protocol multiverse on T\"ubingen}\label{sec:protocol_multiverse}
+
+Section~\ref{sec:multi} varied how a result is reported. Here we vary how the data are prepared, for the same rule and the same pairs (experiment 61): the number of rows ($250$, $500$, $1000$, $2000$ or all, drawn at random), whether tied values are dequantised, and the seed (which changes the subsample and the rule's own randomness): $50$ configurations. Table~\ref{tab:protocol} gives the range of each rule's accuracy and the range of the marginal means of each factor.
+
+\begin{table}[t]
+\caption{T\"ubingen, $50$ protocol configurations (five row caps $\times$ dequantisation or not $\times$ five seeds). Range of the unweighted and of the official-weight accuracy over all configurations, and the range (in points) between the best and the worst level of each factor, averaged over the others.}
+\label{tab:protocol}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Rule & unweighted & weighted & rows & dequant. & seed\\
+\midrule
+IGCI (ours, uniform ref.) & 0.49--0.66 & 0.57--0.68 & 1 & 11 & 1\\
+RECI & 0.56--0.67 & 0.58--0.73 & 2 & 1 & 2\\
+ANM-HSIC & 0.54--0.61 & 0.52--0.60 & 3 & 0 & 2\\
+Pairwise LiNGAM & 0.56--0.64 & 0.58--0.67 & 2 & 0 & 3\\
+Compression, faithful & 0.61--0.71 & 0.60--0.78 & 2 & 1 & 1\\
+IGCI (cdt, Gaussian ref.) & 0.40--0.63 & 0.40--0.64 & 1 & 18 & 0\\
+RECI (cdt) & 0.60--0.68 & 0.66--0.79 & 2 & 2 & 1\\
+CDS (cdt) & 0.54--0.66 & 0.50--0.65 & 7 & 4 & 2\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The same rule on the same pairs moves by $7$ to $22$ points unweighted and $8$ to $23$ points weighted: IGCI with a uniform reference from $49.0$ to $65.7\%$, with cdt's Gaussian reference from $40.2$ to $62.7\%$ (the dequantisation alone: $52.4\%$ against $63.8\%$ on average for ours, so on raw T\"ubingen arrays IGCI is better than RECI, and with dequantisation worse), RECI weighted from $58.4$ to $72.5\%$, faithful compression weighted from $59.9$ to $78.4\%$, CDS unweighted from $53.9$ to $65.7\%$. The number of rows matters little on average (a few points) but through the random subsample the seed alone moves RECI, LiNGAM and ANM-HSIC by two to three points. The range of a single rule across protocol choices is as large as the range between the twelve rules of Table~\ref{tab:collections2} on T\"ubingen ($40$ to $67\%$, or $55$ to $67\%$ without the classifier below chance), and larger than the $2$ to $5$ points by which methods are usually separated. A comparison between two rules is therefore informative only under one identical protocol, run with the same preprocessing and several seeds; a comparison against a number quoted from a paper is not.

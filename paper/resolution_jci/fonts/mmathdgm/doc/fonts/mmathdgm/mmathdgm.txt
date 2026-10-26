@@ -1,0 +1,37 @@
+          The mmathdgm package
+Math fonts using Minion Math together with DGMeta
+
+
+File:       README
+Author:     giovanni, le-tex publishing services
+
+
+DESCRIPTION
+===========
+
+This package provides virtual math fonts on the basis of 
+Minion Math and DGMeta(Serif)Science fonts.
+
+Note that respective font packages for Minion Math and for
+the DGMeta fonts must be installed.
+
+Copyright:  (C) 2014 le-tex publishing services
+
+
+FILES IN DISTRIBUTION
+=====================
+
+   BASE DISTRIBUTION:
+
+      README             This file.
+      Some virtual font files
+      mmathdgm.sty       The file to use the font in a LaTeX document.
+
+
+BASIC INSTALLATION
+====================
+
+   The package ZIP file is structered to be unzipped into
+   the $TEXMFLOCAL directory of a TeXLive installation.
+
+   After unzipping run mktexlsr.

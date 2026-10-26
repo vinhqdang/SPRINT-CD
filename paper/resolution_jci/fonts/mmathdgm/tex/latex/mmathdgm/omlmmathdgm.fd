@@ -1,0 +1,27 @@
+%Filename: omlmmathdgm.fd
+%Created by: tex mmathdgm-drv
+%Created using fontinst v1.933
+
+%THIS FILE SHOULD BE PUT IN A TEX INPUTS DIRECTORY
+
+\ProvidesFile{omlmmathdgm.fd}
+   [2014/08/24 Fontinst v1.933 font definitions for OML/mmathdgm.]
+
+\DeclareFontFamily{OML}{mmathdgm}{}
+
+\DeclareFontShape{OML}{mmathdgm}{m}{it}{
+   <-6> mmathdgm-Tiny-OML
+   <6-8.5> mmathdgm-Capt-OML
+   <8.5-> mmathdgm-OML
+}{}
+
+\DeclareFontShape{OML}{mmathdgm}{b}{it}{
+   <-> mmathdgm-Bold-OML
+}{}
+
+\DeclareFontShape{OML}{mmathdgm}{m}{sl}{<->ssub * mmathdgm/m/it}{}
+\DeclareFontShape{OML}{mmathdgm}{bx}{it}{<->ssub * mmathdgm/b/it}{}
+\DeclareFontShape{OML}{mmathdgm}{b}{sl}{<->ssub * mmathdgm/b/it}{}
+\DeclareFontShape{OML}{mmathdgm}{bx}{sl}{<->ssub * mmathdgm/b/sl}{}
+
+\endinput

@@ -1,0 +1,27 @@
+%Filename: omlmmathdgmserif.fd
+%Created by: tex mmathdgm-drv
+%Created using fontinst v1.933
+
+%THIS FILE SHOULD BE PUT IN A TEX INPUTS DIRECTORY
+
+\ProvidesFile{omlmmathdgmserif.fd}
+   [2014/08/24 Fontinst v1.933 font definitions for OML/mmathdgmserif.]
+
+\DeclareFontFamily{OML}{mmathdgmserif}{}
+
+\DeclareFontShape{OML}{mmathdgmserif}{m}{it}{
+   <-6> mmathdgmserif-Tiny-OML
+   <6-8.5> mmathdgmserif-Capt-OML
+   <8.5-> mmathdgmserif-OML
+}{}
+
+\DeclareFontShape{OML}{mmathdgmserif}{b}{it}{
+   <-> mmathdgmserif-Bold-OML
+}{}
+
+\DeclareFontShape{OML}{mmathdgmserif}{m}{sl}{<->ssub * mmathdgmserif/m/it}{}
+\DeclareFontShape{OML}{mmathdgmserif}{bx}{it}{<->ssub * mmathdgmserif/b/it}{}
+\DeclareFontShape{OML}{mmathdgmserif}{b}{sl}{<->ssub * mmathdgmserif/b/it}{}
+\DeclareFontShape{OML}{mmathdgmserif}{bx}{sl}{<->ssub * mmathdgmserif/b/sl}{}
+
+\endinput
