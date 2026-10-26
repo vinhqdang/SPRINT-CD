@@ -1,0 +1,11 @@
+TITLE
+What can real cause–effect benchmarks resolve? Sampling noise, marginal shortcuts and assumption regimes
+
+ABSTRACT
+Causal-discovery methods are compared by small accuracy gains on a few real benchmarks. We ask what these benchmarks can resolve and why rules that test the conditional structure of a pair rarely beat simple rules. Twelve direction rules were run under one protocol fixed before the runs on eight real pair collections (four new) and on graph benchmarks. No rule leads across collections. On 102 Tübingen pairs a paired test needs a difference of 19 accuracy points for 80% power, and among ten non-degenerate rules no pairwise difference reaches a raw p<0.05. Unreported conventions move a rule as much: a rounding convention that a baseline's description does not fix changes its weighted accuracy by six points, and the treatment of tied values changes IGCI from 94% to 6% on one collection. Two mechanisms are supported: the chamber pairs can be oriented from the marginals alone, a property of their actuator-to-sensor design, and additive-noise rules are near-perfect when the noise scale is independent of the cause and reversed when it depends on it. Attempts to turn this into a rule or a predictive model fail their predictions fixed in advance, so the account is partial. We give recommendations.
+
+KEYWORDS
+causal discovery, cause–effect pairs, benchmark evaluation, reproducibility, additive noise models
+
+MSC
+62D20, 68T05
