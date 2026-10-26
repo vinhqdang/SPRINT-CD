@@ -1,6 +1,6 @@
 \section{Why dependence-based rules do not lead: mechanisms}\label{sec:mech}
 
-Sections~\ref{sec:coll}--\ref{sec:subsets} say that the benchmarks are small and that no rule leads across them. They do not say why the rules that test the conditional structure of the pair do not do better. We tested three explanations, each with a prediction fixed before the run (experiments 49--52, 56, 57), and report the ones that failed.
+Section~\ref{sec:results} says that the benchmarks are small and that no rule leads across them. They do not say why the rules that test the conditional structure of the pair do not do better. We tested three explanations, each with a prediction fixed before the run (experiments 49--52, 56, 57), and report the ones that failed.
 
 \subsection{The benchmarks can be solved from the marginals}\label{sec:marg}
 \emph{Hypothesis.} On the real collections, a classifier that never sees the joint distribution of $(x,y)$, only the two marginal distributions, orients the pairs about as well as the best rule. If so, the benchmark rewards a rule's sensitivity to marginal asymmetry between cause and effect, a property that conditional-structure rules do not use.
@@ -16,48 +16,20 @@ Sections~\ref{sec:coll}--\ref{sec:subsets} say that the benchmarks are small and
 \end{itemize}
 The unique-fraction feature separates discrete actuators from continuous sensors and is a measurement artefact when sets are preprocessed differently (T\"ubingen is dequantised, so the feature is constant there); dropping it leaves the picture unchanged. The prediction held: above $80\%$ without leakage.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.55\linewidth]{figs/transfer.png}
-\caption{Marginal-only classifier trained on one collection (rows) and tested on another (columns), accuracy. The cue learned on T\"ubingen, Sachs or the chambers orients the chamber pairs; nothing learned on the chambers or Sachs transfers to T\"ubingen.}
-\label{fig:transfer}
-\end{figure}
 
-\emph{Transfer across collections.} A classifier trained on the $102$ T\"ubingen pairs orients $87.2\%$ of the i.i.d.\ chamber pairs and $91.8\%$ of the walk pairs; one trained on the $17$ Sachs pairs orients $100\%$ of the i.i.d.\ chamber pairs ($96.8\%$ without the unique-fraction feature) and $81.1\%$ of the walk pairs; one trained on the chambers does not orient T\"ubingen ($52\%$ for the i.i.d.-trained and $58\%$ for the walk-trained model); Sachs is oriented by the walk-trained model ($100\%$, $88\%$ without the unique-fraction feature) but not by the i.i.d.-trained one ($53\%$; the Sachs set has $17$ pairs). Figure~\ref{fig:transfer} shows the matrix. The marginal asymmetry between an experimenter-set actuator and a sensor is a property shared by every device, and it is not present in T\"ubingen in a way that transfers: on T\"ubingen the marginal-only accuracy ($57.8$--$59.0\%$) is within the sampling error of chance and of most dependence-based rules.
+
+\emph{Transfer across collections.} A classifier trained on the $102$ T\"ubingen pairs orients $87.2\%$ of the i.i.d.\ chamber pairs and $91.8\%$ of the walk pairs; one trained on the $17$ Sachs pairs orients $100\%$ of the i.i.d.\ chamber pairs ($96.8\%$ without the unique-fraction feature) and $81.1\%$ of the walk pairs; one trained on the chambers does not orient T\"ubingen ($52\%$ for the i.i.d.-trained and $58\%$ for the walk-trained model); Sachs is oriented by the walk-trained model ($100\%$, $88\%$ without the unique-fraction feature) but not by the i.i.d.-trained one ($53\%$; the Sachs set has $17$ pairs). Appendix Figure~\ref{fig:transfer} shows the matrix. The marginal asymmetry between an experimenter-set actuator and a sensor is a property shared by every device, and it is not present in T\"ubingen in a way that transfers: on T\"ubingen the marginal-only accuracy ($57.8$--$59.0\%$) is within the sampling error of chance and of most dependence-based rules.
 
 \emph{Design confound.} In the chamber collections the cause is an actuator set by the experimenter and the effect a sensor, so a classifier that separates ``actuator-like'' from ``sensor-like'' marginals orients the pairs without any information about causation in general; the result concerns what these benchmarks reward, not what marginals say about cause and effect. The Sachs result rests on $17$ pairs and the Sachs transfer in the other direction is at chance (T\"ubingen to Sachs $47\%$, i.i.d.\ chambers to Sachs $53\%$; only the walk-trained model reaches $100\%$ on it).
 
 \emph{What this does and does not show.} It does not show that RECI or IGCI use only the marginals: both read the scale of regression errors and the marginal density. It shows that the chamber collections can be oriented from the marginals alone, so a rule that is sensitive to marginal asymmetry will do well on them for reasons that have nothing to do with conditional structure, and that a rule that tests only the conditional model, such as an additive-noise test, has no reason to profit. That the chamber rankings (Figure~\ref{fig:collections}) look like the marginal cue and the T\"ubingen ranking does not is consistent with this and is the first leg of the explanation.
 
 \subsection{Additive-noise rules work in one regime and reverse in another}\label{sec:regimes}
-\emph{Hypothesis.} The additive-noise family loses where its assumption fails. For every T\"ubingen pair we measured the heteroscedasticity of the residuals of a cross-fitted additive-spline regression of the true effect on the true cause: $h=|\rho_S(|r|,x)|$ with $\rho_S$ the Spearman correlation (six knots, ridge penalty one, two folds). Table~\ref{tab:h2} gives, for each rule, the mean $h$ on the pairs it orients wrongly and rightly. The four noise-model rules show a large difference: ANM-HSIC $0.32$ against $0.13$, the Gaussian-process ANM $0.29$ against $0.10$, RESIT $0.34$ against $0.13$, LOCI $0.27$ against $0.17$ (one-sided Mann--Whitney; Holm-adjusted $p\le 0.014$ for each, $3\times10^{-8}$ for ANM-HSIC and the Gaussian-process ANM); also TRA (adjusted $p=0.036$); not RECI and PDM (raw $0.021$, adjusted $0.17$), IGCI, pairwise LiNGAM, AVICI or the compression rules (adjusted $p\ge 0.45$). Pooling the decisions of the four noise-model rules ($396$ decisions) in a logistic regression of correctness on the standardised $h$ and $\log n$, one standard deviation of $h$ multiplies the odds of a correct decision by $0.26$ (we do not report the $p$-value, which is not interpretable because the four rules are scored on the same pairs); $n$ has no effect.
+\emph{Hypothesis.} The additive-noise family loses where its assumption fails. For every T\"ubingen pair we measured the heteroscedasticity of the residuals of a cross-fitted additive-spline regression of the true effect on the true cause: $h=|\rho_S(|r|,x)|$ with $\rho_S$ the Spearman correlation (six knots, ridge penalty one, two folds). Appendix Table~\ref{tab:h2} gives, for each rule, the mean $h$ on the pairs it orients wrongly and rightly. The four noise-model rules show a large difference: ANM-HSIC $0.32$ against $0.13$, the Gaussian-process ANM $0.29$ against $0.10$, RESIT $0.34$ against $0.13$, LOCI $0.27$ against $0.17$ (one-sided Mann--Whitney; Holm-adjusted $p\le 0.014$ for each, $3\times10^{-8}$ for ANM-HSIC and the Gaussian-process ANM); also TRA (adjusted $p=0.036$); not RECI and PDM (raw $0.021$, adjusted $0.17$), IGCI, pairwise LiNGAM, AVICI or the compression rules (adjusted $p\ge 0.45$). Pooling the decisions of the four noise-model rules ($396$ decisions) in a logistic regression of correctness on the standardised $h$ and $\log n$, one standard deviation of $h$ multiplies the odds of a correct decision by $0.26$ (we do not report the $p$-value, which is not interpretable because the four rules are scored on the same pairs); $n$ has no effect.
 
-\begin{table}[t]
-\caption{T\"ubingen: mean residual heteroscedasticity $h$ (true direction) on the pairs a rule orients wrongly and rightly; $p$: one-sided Mann--Whitney test that $h$ is larger on the wrong pairs. Twelve rules; $p_{\rm adj}$: Holm over the twelve.}
-\label{tab:h2}
-\small
-\begin{tabular}{@{}lccccc@{}}
-\toprule
-Rule & wrong/right & $h$ wrong & $h$ right & $p$ & $p_{\rm adj}$\\
-\midrule
-IGCI & 45/57 & 0.19 & 0.22 & 0.707 & 1\\
-RECI & 40/62 & 0.25 & 0.17 & 0.0214 & 0.165\\
-ANM-HSIC & 40/62 & 0.32 & 0.13 & 2.67e-09 & 3.2e-08\\
-Pairwise LiNGAM & 40/62 & 0.22 & 0.19 & 0.245 & 0.736\\
-PDM & 61/41 & 0.22 & 0.18 & 0.0206 & 0.165\\
-LOCI & 36/66 & 0.27 & 0.17 & 0.00141 & 0.0141\\
-ANM, Gaussian process & 42/53 & 0.29 & 0.10 & 2.83e-09 & 3.2e-08\\
-Compression, floor256 & 40/62 & 0.22 & 0.19 & 0.0879 & 0.452\\
-Compression, floor256, raw & 36/66 & 0.22 & 0.19 & 0.0946 & 0.452\\
-TRA & 29/53 & 0.26 & 0.17 & 0.00405 & 0.0365\\
-Compression, round255 & 34/68 & 0.23 & 0.19 & 0.0753 & 0.452\\
-AVICI & 42/60 & 0.18 & 0.22 & 0.926 & 1\\
-RESIT & 37/60 & 0.34 & 0.13 & 7.98e-10 & 1.04e-08\\
-\bottomrule
-\end{tabular}
-\end{table}
 
-Splitting T\"ubingen into thirds by $h$ (bounds $0.094$ and $0.268$, $34$ pairs each; TRA has $24$, $31$ and $27$ pairs with a value) shows the regimes (Table~\ref{tab:strata}, Figure~\ref{fig:strata}). In the least heteroscedastic third ANM-HSIC, RESIT and the Gaussian-process ANM are right on $97\%$, $96\%$ and $91\%$ of the pairs, far above RECI ($68\%$); in the most heteroscedastic third on $29\%$, $24\%$ and $22\%$, below chance. Averaged over the three thirds, ANM-HSIC ($0.61$) and RESIT ($0.62$) equal the baselines and the Gaussian-process ANM is lower ($0.55$): a rule that is excellent in one regime and reversed in another has the accuracy of one that is mediocre in both. This reading is descriptive: $h$ is computed in the true direction, so it is not a predictor; its bounds come from the same data; it is close to the dependence between the scale and the cause that the additive-noise tests probe, so part of the association is by construction.
+
+Splitting T\"ubingen into thirds by $h$ (bounds $0.094$ and $0.268$, $34$ pairs each; TRA has $24$, $31$ and $27$ pairs with a value) shows the regimes (Table~\ref{tab:strata}, Appendix Figure~\ref{fig:strata}). In the least heteroscedastic third ANM-HSIC, RESIT and the Gaussian-process ANM are right on $97\%$, $96\%$ and $91\%$ of the pairs, far above RECI ($68\%$); in the most heteroscedastic third on $29\%$, $24\%$ and $22\%$, below chance. Averaged over the three thirds, ANM-HSIC ($0.61$) and RESIT ($0.62$) equal the baselines and the Gaussian-process ANM is lower ($0.55$): a rule that is excellent in one regime and reversed in another has the accuracy of one that is mediocre in both. This reading is descriptive: $h$ is computed in the true direction, so it is not a predictor; its bounds come from the same data; it is close to the dependence between the scale and the cause that the additive-noise tests probe, so part of the association is by construction.
 
 \begin{table}[t]
 \caption{T\"ubingen accuracy by tercile of $h$ ($34$ pairs per tercile; TRA $24$, $31$, $27$).}
@@ -83,15 +55,10 @@ PDM & 0.56 & 0.35 & 0.29\\
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.85\linewidth]{figs/strata.png}
-\caption{T\"ubingen accuracy by tercile of the residual heteroscedasticity $h$.}
-\label{fig:strata}
-\end{figure}
+
 
 \subsection{Manipulation with a marginal control}\label{sec:dose}
-An association across pairs cannot separate heteroscedasticity from whatever else differs between pairs, and making the noise scale depend on the cause also changes the marginal of the effect (a scale mixture). We therefore set the factor by hand (experiment 52). Pairs $e=f(c)+\sigma\varepsilon$, $f\in\{\tanh 2c,c^3/3,\sin 1.5c\}$, $c$ uniform or Gaussian, $n=500$, the same $c$, $f$ and $\varepsilon$ at every level, $a\in\{0,0.5,1,1.5\}$, $100$ pairs per level, a random half swapped. In the heteroscedastic arm $\sigma(c)\propto\exp(ac)$; in the control arm $\sigma_i\propto\exp(au_i)$ with $u_i\sim N(0,1)$ independent of $c$, which gives the effect a similar heavy-tailed marginal but no dependence of the scale on the cause; the average noise variance is fixed in both. Figure~\ref{fig:dose} and Table~\ref{tab:dose}: ANM-HSIC falls from $100\%$ to $21\%$ with cause-dependent noise and only to $89\%$ with the independent scale, so the collapse is due to the dependence of the scale on the cause (ANM-HSIC is not monotone in $a$, $0.12$ at $a=1$ and $0.21$ at $a=1.5$, within the sampling error of $100$ pairs per level). IGCI and RECI rise in both arms ($64\to99\%$ and $78\to93\%$ with cause-dependent noise; $64\to99\%$ and $78\to98\%$ with the independent scale): they profit from the heavy-tailed marginal of the effect, not from heteroscedasticity. An earlier unmatched run without the control showed the same rise and we had attributed it to heteroscedasticity; the control refutes that, and the correct reading ties this experiment to Section~\ref{sec:marg}: IGCI and RECI are sensitive to marginal asymmetry.
+An association across pairs cannot separate heteroscedasticity from whatever else differs between pairs, and making the noise scale depend on the cause also changes the marginal of the effect (a scale mixture). We therefore set the factor by hand (experiment 52). Pairs $e=f(c)+\sigma\varepsilon$, $f\in\{\tanh 2c,c^3/3,\sin 1.5c\}$, $c$ uniform or Gaussian, $n=500$, the same $c$, $f$ and $\varepsilon$ at every level, $a\in\{0,0.5,1,1.5\}$, $100$ pairs per level, a random half swapped. In the heteroscedastic arm $\sigma(c)\propto\exp(ac)$; in the control arm $\sigma_i\propto\exp(au_i)$ with $u_i\sim N(0,1)$ independent of $c$, which gives the effect a similar heavy-tailed marginal but no dependence of the scale on the cause; the average noise variance is fixed in both. Table~\ref{tab:dose} and Appendix Figure~\ref{fig:dose}: ANM-HSIC falls from $100\%$ to $21\%$ with cause-dependent noise and only to $89\%$ with the independent scale, so the collapse is due to the dependence of the scale on the cause (ANM-HSIC is not monotone in $a$, $0.12$ at $a=1$ and $0.21$ at $a=1.5$, within the sampling error of $100$ pairs per level). IGCI and RECI rise in both arms ($64\to99\%$ and $78\to93\%$ with cause-dependent noise; $64\to99\%$ and $78\to98\%$ with the independent scale): they profit from the heavy-tailed marginal of the effect, not from heteroscedasticity. An earlier unmatched run without the control showed the same rise and we had attributed it to heteroscedasticity; the control refutes that, and the correct reading ties this experiment to Section~\ref{sec:marg}: IGCI and RECI are sensitive to marginal asymmetry.
 
 \begin{table}[t]
 \caption{Matched simulated pairs: accuracy against the strength $a$ ($100$ pairs per level). Left: noise scale depends on the cause. Right: independent random scale with the same kind of marginal (control).}
@@ -109,12 +76,7 @@ RECI & 0.78 & 0.77 & 0.87 & 0.93 & 0.78 & 0.84 & 0.96 & 0.98\\
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.95\linewidth]{figs/dose.png}
-\caption{Accuracy against the strength $a$ of the noise-scale variation. Left: scale depends on the cause. Right: independent scale (control).}
-\label{fig:dose}
-\end{figure}
+
 
 \subsection{What we could not build on the account}\label{sec:negative_mech}
 Three further analyses, in Appendix~\ref{app:mech}, test whether the account extends. A factorial simulation (experiment 56; five factors, $3600$ pairs, seven rules; Appendix Section~\ref{sec:factorial}) reproduces the regimes: ANM-HSIC and RESIT are at $0.95$ in the clean cell, $0.06$ and $0.17$ with a cause-dependent noise scale and $0.69$ and $0.74$ with measurement noise alone, and RECI has the highest average accuracy in $12$ of $14$ factor levels. A regime-gated rule (GATE, experiment 51; Section~\ref{sec:gate}) that switches between ANM-HSIC and RECI on a symmetric heteroscedasticity diagnostic, frozen on simulation, failed both predictions fixed in advance ($65.7\%$ against RECI's $60.8\%$ on T\"ubingen, $p=0.30$; $75.5\%$ against $97.9\%$ on the i.i.d.\ chambers, $p<10^{-6}$). A nearest-neighbour prediction of each rule's accuracy on the real collections from the factorial simulation (experiment 57; Section~\ref{sec:predict}) failed as well (Spearman $0.006$ against the required $0.5$, RMSE $0.31$ against $0.24$ for a constant prediction); the real pairs lie two to thirteen standard deviations from the simulation's support, so the test could not have succeeded with this simulator and is uninformative about the account beyond showing that the simulator does not cover the real collections. The account is therefore a set of demonstrated mechanisms, not a validated predictive model.

@@ -23,33 +23,7 @@ Malus & 48 & 4 & 12 & 1000 & Light tunnel with polarisers, Malus's law; causes \
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:diag} describes the collections with the quantities used later: the median number of rows, the median absolute Spearman correlation, the median residual heteroscedasticity $h$ of Section~\ref{sec:regimes} (true direction), the median excess kurtosis of the cause and of the effect, the median number of distinct values of the cause, and the share of pairs with many ties (fewer distinct values than $90\%$ of the rows) in either variable before any jitter (T\"ubingen is reported after dequantisation, hence zero). Figure~\ref{fig:examples} shows one randomly chosen pair per collection.
-
-\begin{table}[t]
-\caption{Descriptive diagnostics of the seven collections other than the all-recordings walks (medians over pairs unless stated; the $486$-pair walk collection has the same kind of pairs as the walk collection).}
-\label{tab:diag}
-\small
-\begin{tabular}{@{}lcccccccc@{}}
-\toprule
-Collection & Pairs & $n$ & $|\rho_S|$ & $h$ & kurt. cause & kurt. effect & distinct cause values & ties\\
-\midrule
-T\"ubingen & 102 & 392 & 0.50 & 0.18 & -0.2 & 0.2 & 392 & 0.00\\
-Chambers iid & 94 & 2000 & 0.27 & 0.02 & -1.2 & -0.4 & 86 & 1.00\\
-Chambers walks & 122 & 2000 & 0.26 & 0.08 & -1.2 & -0.6 & 255 & 1.00\\
-Sachs & 17 & 853 & 0.08 & 0.08 & 3.1 & 2.3 & 276 & 1.00\\
-Bernoulli & 16 & 2000 & 0.53 & 0.18 & -1.2 & -1.2 & 101 & 1.00\\
-Changepoints & 70 & 1983 & 0.45 & 0.22 & -0.7 & -0.1 & 4 & 1.00\\
-Malus & 48 & 1000 & 0.02 & 0.02 & -1.2 & -1.4 & 732 & 1.00\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{figs/examples.png}
-\caption{One randomly chosen pair (seed $7$) from each collection; $800$ random rows, cause on the horizontal axis.}
-\label{fig:examples}
-\end{figure}
+Appendix Table~\ref{tab:diag} gives descriptive diagnostics of the collections and Figure~\ref{fig:examples} one pair from each.
 
 \subsection{Rules}\label{sec:rules}
 Twelve rules, all run by us; IGCI, RECI, ANM-HSIC, pairwise LiNGAM, compression, TRA and PDM are our own implementations (statements about them below are statements about these implementations), LOCI, AVICI, RESIT and the Gaussian-process ANM come from the packages named. Each returns a score whose sign gives the direction; a score of exactly zero counts as half correct. Settings were fixed in the script before the run (Appendix~\ref{app:prereg}) and none was tuned on a collection in which it is scored. \emph{Tie handling:} every rule receives the raw arrays (ties kept), as for the chambers in the first experiments; T\"ubingen arrays are dequantised (experiment 14) and have no ties. Giving the rules a copy with a $10^{-6}$ jitter on tied values reverses IGCI (Section~\ref{sec:ties}) and breaks TRA's spline fit, so jitter is used only in the sensitivity analysis of Section~\ref{sec:ties} and for the simulations.

@@ -16,9 +16,9 @@ Causal-discovery methods are routinely ranked by small accuracy gains on a handf
 
 The topic is central to the journal's readership: it concerns how the empirical evidence for causal-discovery methods should be generated and read. All code, stored per-pair decisions and the commit-time-stamped experiment scripts are public at https://github.com/vinhqdang/SPRINT-CD.
 
-The manuscript has not been published or submitted elsewhere. I have no conflicts of interest to declare and received no funding.
+The manuscript has not been published or submitted elsewhere. The authors have no conflicts of interest to declare and received no funding.
 
 Sincerely,
-Quang-Vinh Dang
-British University Vietnam, Hung Yen, Vietnam
-vinh.dq4@buv.edu.vn  |  ORCID 0000-0002-3877-8024
+Quang-Vinh Dang (British University Vietnam, Hung Yen, Vietnam; vinh.dq4@buv.edu.vn; ORCID 0000-0002-3877-8024)
+Dat Le, corresponding author (Ho Chi Minh City University of Economics and Finance, Ho Chi Minh City, Vietnam; datla@uef.edu.vn; ORCID 0009-0005-5038-8570)
+Minh Ngoc Dinh (Millennia Education, Ho Chi Minh City, Vietnam; minh.dinh@maeducation.com; ORCID 0000-0003-4026-6068)
