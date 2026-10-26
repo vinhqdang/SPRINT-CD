@@ -1,0 +1,24 @@
+Dear Editors of the Journal of Causal Inference,
+
+Please consider the enclosed manuscript, "What can real cause-effect benchmarks resolve? Sampling noise, marginal shortcuts and assumption regimes", for publication as a Research Article.
+
+Causal-discovery methods are routinely ranked by small accuracy gains on a handful of real benchmarks. The manuscript gives the first quantitative account of what such benchmarks can and cannot resolve, and of why rules that test the conditional structure of a pair rarely lead on real data. It makes five contributions.
+
+1. A same-protocol comparison of twelve direction rules on eight real pair collections (Tuebingen, the Sachs arcs and six Causal Chambers collections, four of them new), with the stored decision of every rule on every pair, cluster-aware inference and a script-to-table map for every reported number.
+
+2. An analytic and simulated resolution analysis: with 102 pairs a paired test needs a difference of about 19 accuracy points for 80% power, and roughly 330 pairs are needed to resolve 10 points.
+
+3. A reproduction of a published headline result (68 of 102 pairs, 74.7% weighted accuracy) and the identification of two unreported implementation conventions, the quantiser rounding and the treatment of tied values, that move a rule's accuracy by 6 and by up to 88 points respectively.
+
+4. Mechanism evidence obtained by prediction, matched manipulation with a control, leakage-free validation and a factorial simulation: additive-noise rules are near-perfect when the noise scale does not depend on the cause and reversed when it does, while the chamber collections can be oriented from their marginal distributions alone.
+
+5. Recommendations for reporting and evaluating cause-effect benchmarks that follow directly from these results.
+
+The topic is central to the journal's readership: it concerns how the empirical evidence for causal-discovery methods should be generated and read. All code, stored per-pair decisions and the commit-time-stamped experiment scripts are public at https://github.com/vinhqdang/SPRINT-CD.
+
+The manuscript has not been published or submitted elsewhere. I have no conflicts of interest to declare and received no funding.
+
+Sincerely,
+Quang-Vinh Dang
+British University Vietnam, Hung Yen, Vietnam
+vinh.dq4@buv.edu.vn  |  ORCID 0000-0002-3877-8024
